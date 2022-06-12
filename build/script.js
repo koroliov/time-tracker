@@ -22,6 +22,8 @@ class Base extends HTMLElement {
     this.childTimeEntries = [];
     this.shadowRoot.addEventListener('child-is-active',
       this.childIsActiveHanlder.bind(this));
+    this.shadowRoot.addEventListener('child-is-inactive',
+      this.childIsInactiveHanlder.bind(this));
     toInsertContents.querySelector('#new-entry')
       .addEventListener('click', function(e) {
         e.preventDefault();
@@ -60,6 +62,13 @@ class Base extends HTMLElement {
     return `${days}d ${hrsRemainder}h ${minRemainder}m ${secRemainder}s`;
   }
 
+  dispatchChildIsInactiveEvent() {
+    const notifyEvent = new CustomEvent('child-is-inactive', {
+      bubbles: true,
+    });
+    this.parentNode.dispatchEvent(notifyEvent);
+  }
+
   dispatchChildIsActiveEvent(isBillable) {
     const notifyEvent = new CustomEvent('child-is-active', {
       detail: {
@@ -81,6 +90,12 @@ class Base extends HTMLElement {
     this.activeChildIndex =
       this.childTimeEntries.findIndex(el => el === e.detail.timeEntryEl);
     this.setIntervals(e.detail.isBillable);
+  }
+
+  childIsInactiveHanlder() {
+    this.activeChildIndex = -1;
+    clearInterval(this.counterInterval);
+    this.dispatchChildIsInactiveEvent();
   }
 
   setIntervals(isOriginTimeEntryBillble) {
@@ -179,12 +194,14 @@ class TimeEntry extends Base {
       if (this.isActiveItself) {
         e.target.innerHTML = 'Start';
         setTimeEntryInactiveItself.call(this, classList);
+        this.dispatchChildIsInactiveEvent();
+        clearInterval(this.counterInterval);
       } else {
         e.target.innerHTML = 'Stop';
         setTimeEntryActiveItself.call(this, classList);
         this.dispatchChildIsActiveEvent(this.isOwnTimeBillable);
+        this.setIntervals(this.isBillable);
       }
-      this.setIntervals(this.isBillable);
     }.bind(this));
 
     function setTimeEntryInactiveItself(classList) {
