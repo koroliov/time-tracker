@@ -66,6 +66,39 @@ class TimeEntry extends Base {
   constructor(data = Object.create(null)) {
     data.templateId = 'time-entry';
     super(data);
+
+    this.handleJobTitleLogic(data.jobTitle);
+    this.handleCommentLogic(data.comment);
+  }
+
+  handleJobTitleLogic(text) {
+    const jobTitleEl = this.shadowRoot.querySelector('#job-title');
+    if (text) {
+      jobTitleEl.innerHTML = text.trim();
+      this.jobTitle = text;
+    } else {
+      this.jobTitle = jobTitleEl.innerHTML.trim();
+    }
+    jobTitleEl.addEventListener('blur', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.jobTitle = e.target.innerHTML.trim();
+    }.bind(this));
+  }
+
+  handleCommentLogic(text) {
+    const commentEl = this.shadowRoot.querySelector('#comment');
+    if (text) {
+      commentEl.innerHTML = text.trim();
+      this.comment = text;
+    } else {
+      this.comment = commentEl.innerHTML.trim();
+    }
+    commentEl.addEventListener('blur', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.comment = e.target.innerHTML.trim();
+    }.bind(this));
   }
 }
 window.customElements.define('time-entry', TimeEntry);
@@ -80,4 +113,3 @@ function init() {
     document.body.appendChild(tt);
   }
 }
-
