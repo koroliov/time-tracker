@@ -19,7 +19,7 @@ class Base extends HTMLElement {
     this.timeTotal = data.timeTotal || 0;
 
     this.activeChildIndex = -1;
-    this.childTimeEntries = [];
+    this.childTimeEntries = data.childTimeEntries || [];
     this.shadowRoot.addEventListener('child-is-active',
       this.childIsActiveHanlder.bind(this));
     this.shadowRoot.addEventListener('child-is-inactive',
@@ -227,6 +227,9 @@ class TimeEntry extends Base {
     }
     const runButton = this.shadowRoot.querySelector('#run');
     runButton.addEventListener('click', function(e) {
+      if (!confirm("Don't forget if it's billable")) {
+        return;
+      }
       const classList = this.shadowRoot.querySelector('#grid-wrapper')
         .classList;
       if (this.isActiveItself) {
@@ -285,10 +288,53 @@ window.customElements.define('time-entry', TimeEntry);
 init();
 
 function init() {
-  const entriesStr = localStorage.getItem('entries');
-  if (entriesStr) {
-  } else {
-    const tt = new TimeTracker();
-    document.body.appendChild(tt);
-  }
+  document.body.appendChild(new TimeTracker());
+  //const ttObj = JSON.parse(localStorage.getItem('time-tracker'));
+  //if (ttObj) {
+  //  restoreTimeTracker(ttObj);
+  //} else {
+  //  document.body.appendChild(new TimeTracker());
+  //}
+  //window.addEventListener('beforeunload', function(e) {
+  //  const tt = this.document.querySelector('time-tracker');
+  //  const value = JSON.stringify(tt);
+  //  if (value) {
+  //    localStorage.setItem('time-tracker', value);
+  //  } else {
+  //    this.localStorage.clear();
+  //  }
+  //});
+
+  //function restoreTimeTracker(ttObj) {
+  //  const stack = [];
+  //  const children = ttObj.childTimeEntries;
+  //  let currentChildren = children;
+  //  let timeEntriesInstances = [];
+  //  let i = 0;
+  //  for (; i < currentChildren.length; i++) {
+  //    const timeEntry = currentChildren[i];
+  //    if (timeEntry.childTimeEntries.length) {
+  //      stack.push({
+  //        i,
+  //        currentChildren,
+  //      });
+  //      currentChildren = timeEntry.childTimeEntries;
+  //      i = 0;
+  //      continue;
+  //    } else {
+  //      timeEntriesInstances[i] = new TimeEntry(timeEntry);
+  //    }
+  //    if (i === currentChildren.length - 1) {
+  //      const pop = stack.pop();
+  //      if (pop) {
+  //        i = pop.i;
+  //        currentChildren = pop.currentChildren;
+  //        currentChildren[i].childTimeEntries = timeEntriesInstances;
+  //        currentChildren[i] = new TimeEntry(currentChildren[i]);
+  //        continue;
+  //      }
+  //    }
+  //  }
+  //  document.body.appendChild(new TimeTracker(ttObj));
+  //}
 }
