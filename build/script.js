@@ -24,6 +24,7 @@ class Base extends HTMLElement {
 
         childrenWrapper.appendChild(entry);
         this.childTimeEntries.push(entry);
+        this.openChildren(this.shadowRoot.querySelector('#collapse-open'));
       }.bind(this));
     this.shadowRoot.appendChild(toInsertContents);
 
@@ -33,16 +34,23 @@ class Base extends HTMLElement {
       .addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        const childrenWrapper = this.shadowRoot.querySelector('#children');
-        if (this.areChildrenOpen) {
-          e.target.innerHTML = 'Open';
-          childrenWrapper.style.display = 'none';
-        } else {
-          e.target.innerHTML = 'Collapse';
-          childrenWrapper.style.display = 'block';
-        }
-        this.areChildrenOpen = !this.areChildrenOpen;
+        this.areChildrenOpen ?  this.closeChildren(e.target) :
+          this.openChildren(e.target);
       }.bind(this));
+  }
+
+  openChildren(linkEl) {
+    const childrenWrapper = this.shadowRoot.querySelector('#children');
+    linkEl.innerHTML = 'Collapse';
+    childrenWrapper.style.display = 'block';
+    this.areChildrenOpen = true;
+  }
+
+  closeChildren(linkEl) {
+    const childrenWrapper = this.shadowRoot.querySelector('#children');
+    linkEl.innerHTML = 'Open';
+    childrenWrapper.style.display = 'none';
+    this.areChildrenOpen = false;
   }
 }
 
