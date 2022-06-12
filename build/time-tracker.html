@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>time-tracker</title>
+  <meta name="description" content="track time">
+  <meta name="author" content="d.koroliov@gmail.com">
+  <!--<meta http-equiv="refresh" content="2">-->
+  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon">
+  <style>
+    body {
+      --base-font-size: 16px;
+      font-size: var(--base-font-size);
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <template id="time-tracker">
+    <div id="wrapper">
+      <div id="grid-wrapper">
+        <h1>Time Tracker</h1>
+
+        <div class="head caption">Time spent</div>
+        <div class="head value">value</div>
+        <div class="head percent-current">current</div>
+        <div class="head percent-targed">target</div>
+
+        <div class="total caption">Total:</div>
+        <div class="total value"></div>
+        <div class="total percent-current">—</div>
+        <div class="total percent-target">—</div>
+
+        <div class="billable caption">Billable:</div>
+        <div class="billable value"></div>
+        <div class="billable percent-current"></div>
+        <div class="billable percent-target"></div>
+
+        <div id="controls">
+          <a href="#" id="clear">Clear</a>
+          <a href="#" id="new-entry">New Entry</a>
+          <a href="#" id="collapse-open">Collapse</a>
+        </div>
+      </div>
+
+      <style>
+        #wrapper {
+          font-size: calc(var(--base-font-size) * 0.9);
+          line-height: calc(var(--base-font-size) * 1.1);
+          max-width: 1200px;
+          margin: 0 auto;
+          border: 1px solid black;
+          padding: 0 var(--base-font-size);
+        }
+
+        #grid-wrapper {
+          display: grid;
+          --grid-columns: 4;
+          --grid-rows: 5;
+          grid-template-rows: repeat(var(--grid-rows), 0.8fr);
+          grid-template-columns: repeat(var(--grid-columns), 1fr);
+        }
+        h1 {
+          font-size: calc(var(--base-font-size) * 1.2);
+          line-height: calc(var(--base-font-size) * 0.5);
+          grid-row: 1;
+          grid-column: 1 / calc(var(--grid-columns) + 1);
+          text-align: center;
+        }
+
+        .caption {
+          font-size: calc(var(--base-font-size) * 1.1);
+          grid-column: 1;
+        }
+        .value {
+          grid-column: 2;
+        }
+        .percent-current {
+          grid-column: 3;
+        }
+        .percent-target {
+          grid-column: 4;
+        }
+
+        .head {
+          font-size: calc(var(--base-font-size) * 1.1);
+          grid-row: 2;
+        }
+        .total {
+          grid-row: 3;
+        }
+        .billable {
+          grid-row: 4;
+        }
+
+        #controls {
+          grid-row: 5;
+          grid-column: 1 / calc(var(--grid-columns) + 1);
+        }
+        #controls > a {
+          margin-left: 1ex;
+        }
+        #controls > a:first-child {
+          margin-left: 0;
+        }
+      </style>
+    </div>
+  </template>
+
+  <template id="time-entry">
+    <div id="wrapper">
+      <div id="grid-wrapper">
+        <div contenteditable="true" class="title row-1 column-1">
+          Default job
+        </div>
+        <div class="time-spent title row-1 column-2">time spent</div>
+        <div class="time-spent value row-1 column-3">value</div>
+        <div class="time-spent percent row-1 column-4">percent</div>
+
+        <div contenteditable="true" class="comment row-2 column-1">
+          Default comment
+        </div>
+        <div class="total title row-2 column-2">Total:</div>
+        <div class="total value row-2 column-3"></div>
+        <div class="total percent row-2 column-4">—</div>
+
+        <label class="is-own-time billable row-3 column-1">
+          Is own time billable: <input type="checkbox">
+        </label>
+        <div class="own title row-3 column-2">Own:</div>
+        <div class="own value row-3 column-3"></div>
+        <div class="own percent row-3 column-4">—</div>
+
+        <div class="billable title row-4 column-2">Billable:</div>
+        <div class="billable value row-4 column-3"></div>
+        <div class="billable percent row-4 column-4"></div>
+
+        <div id="controls">
+          <button id="start-stop">Start</button>
+          <a href="#" id="new-entry">New Entry</a>
+          <a href="#" id="collapse-open">Collapse</a>
+        </div>
+      </div><!-- grid-wrapper -->
+
+      <style>
+        #wrapper.even {
+          background-color: #ebebeb;
+        }
+        #wrapper {
+          --margin-vertical: calc(var(--base-font-size) * 0.5);
+          --padding-vertical: calc(var(--base-font-size) * 1);
+          margin: var(--margin-vertical) 0;
+          padding: var(--padding-vertical) calc(var(--base-font-size) * 1);
+        }
+
+        #grid-wrapper {
+          display: grid;
+          --grid-columns: 4;
+          --grid-rows: 5;
+          grid-template-columns: 5fr 1fr 1fr 1fr;
+          grid-template-rows: repeat(var(--grid-rows), 1fr);
+        }
+        .row-1 {
+          grid-row: 1;
+          font-weight: bold;
+        }
+        .row-2 {
+          grid-row: 2;
+        }
+        .row-3 {
+          grid-row: 3;
+        }
+        .column-1 {
+          grid-column: 1;
+        }
+        .column-2 {
+          grid-column: 2;
+        }
+        .column-3 {
+          grid-column: 3;
+        }
+      </style>
+    </div><!-- wrapper -->
+  </template>
+  <script src="./script.js"></script>
+</body>
+</html>
