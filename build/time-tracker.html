@@ -143,24 +143,27 @@
       </div><!-- grid-wrapper -->
 
       <style>
-        #wrapper.even {
-          background-color: #ebebeb;
-        }
         #wrapper {
-          --margin-vertical: calc(var(--base-font-size) * 0.5);
-          --padding-vertical: calc(var(--base-font-size) * 1);
-          margin: var(--margin-vertical) 0;
-          padding-left: calc(var(--base-font-size) * 1);
-          padding-top: var(--padding-vertical);
-          padding-bottom: var(--padding-vertical);
+          margin-left: calc(var(--base-font-size) * 0.3);
+          border-left: 1px solid black;
         }
 
         #grid-wrapper {
+          --margin-vertical: calc(var(--base-font-size) * 0.5);
+          --padding-vertical: calc(var(--base-font-size) * 1);
+          margin: var(--margin-vertical) 0;
+          padding-top: var(--padding-vertical);
+          padding-left: calc(var(--base-font-size) * 1);
+          padding-bottom: var(--padding-vertical);
+
           display: grid;
           --grid-columns: 4;
           --grid-rows: 5;
           grid-template-columns: 5fr 1fr 1fr 1fr;
           grid-template-rows: repeat(var(--grid-rows), 1fr);
+        }
+        #grid-wrapper.even {
+          background-color: #ebebeb;
         }
         .row-1 {
           grid-row: 1;
