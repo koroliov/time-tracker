@@ -10,7 +10,7 @@ class Base extends HTMLElement {
     childrenWrapper.setAttribute('id', 'children');
     toInsertContents.querySelector('#wrapper').appendChild(childrenWrapper);
 
-    this.counterInterval = null;
+    this.counterInterval = 0;
     this.isOwnTimeBillable = data.isOwnTimeBillable;
     this.timeOwn = data.timeOwn || 0;
     //Includes timeOwn if it's billable
@@ -60,20 +60,42 @@ class Base extends HTMLElement {
     return `${days}d ${hrsRemainder}h ${minRemainder}m ${secRemainder}s`;
   }
 
+  dispatchChildIsActiveEvent(isBillable) {
+    const notifyEvent = new CustomEvent('child-is-active', {
+      detail: {
+        timeEntryEl: this,
+        isBillable,
+      },
+      bubbles: true,
+    });
+    this.parentNode.dispatchEvent(notifyEvent);
+  }
+
   childIsActiveHanlder(e) {
     if (this.activeChildIndex !== -1) {
       const event = new CustomEvent('stop-counting');
       this.childTimeEntries[this.activeChildIndex].dispatchEvent(event);
+      clearInterval(this.counterInterval);
     }
-    this.parentNode.dispatchEvent(new CustomEvent('child-is-active', {
-      detail: {
-        TimeEntryEl: this,
-        isBillable: e.detail.isBillable,
-      },
-      bubbles: true,
-    }));
+    this.dispatchChildIsActiveEvent(e.detail.isBillable);
     this.activeChildIndex =
-      this.childTimeEntries.findIndex(el => el === e.detail.TimeEntryEl);
+      this.childTimeEntries.findIndex(el => el === e.detail.timeEntryEl);
+    this.setIntervals(e.detail.isBillable);
+  }
+
+  setIntervals(isOriginTimeEntryBillble) {
+    if (isOriginTimeEntryBillble) {
+      this.counterInterval = setInterval(() => {
+        this.timeTotal += 1000;
+        this.timeBillable += 1000;
+        this.updateTimeToUser();
+      }, 1000);
+    } else {
+      this.counterInterval = setInterval(() => {
+        this.timeTotal += 1000;
+        this.updateTimeToUser();
+      }, 1000);
+    }
   }
 
   openChildren(linkEl) {
@@ -160,15 +182,9 @@ class TimeEntry extends Base {
       } else {
         e.target.innerHTML = 'Stop';
         setTimeEntryActiveItself.call(this, classList);
-        const notifyEvent = new CustomEvent('child-is-active', {
-          detail: {
-            TimeEntryEl: this,
-            isBillable: this.isBillable,
-          },
-          bubbles: true,
-        });
-        this.parentNode.dispatchEvent(notifyEvent);
+        this.dispatchChildIsActiveEvent(this.isOwnTimeBillable);
       }
+      this.setIntervals(this.isBillable);
     }.bind(this));
 
     function setTimeEntryInactiveItself(classList) {
