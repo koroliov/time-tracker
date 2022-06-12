@@ -19,7 +19,7 @@ class Base extends HTMLElement {
         e.stopPropagation();
         const entry = new TimeEntry();
         if (childrenWrapper.children.length % 2) {
-          entry.shadowRoot.querySelector('#wrapper').classList.add('even');
+          entry.shadowRoot.querySelector('#grid-wrapper').classList.add('even');
         }
 
         childrenWrapper.appendChild(entry);
