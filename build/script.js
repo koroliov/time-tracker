@@ -167,6 +167,22 @@ class TimeEntry extends Base {
     this.handleCommentLogic(data.comment);
     this.handleTimeLogic(data.isActiveItself);
     this.updateTimeToUser();
+
+    this.addEventListener('stop-counting',
+      this.stopCountingHandler.bind(this));
+  }
+
+  stopCountingHandler() {
+    clearInterval(this.counterInterval);
+    if (this.isActiveItself) {
+      this.isActiveItself = false;
+      this.shadowRoot.querySelector('#run').innerHTML = 'Start';
+      this.shadowRoot.querySelector('#grid-wrapper').classList.remove('active');
+    } else if (this.activeChildIndex !== -1) {
+      const event = new CustomEvent('stop-counting');
+      this.childTimeEntries[this.activeChildIndex].dispatchEvent(event);
+      this.activeChildIndex = -1;
+    }
   }
 
   updateTimeToUser() {
@@ -192,15 +208,17 @@ class TimeEntry extends Base {
       const classList = this.shadowRoot.querySelector('#grid-wrapper')
         .classList;
       if (this.isActiveItself) {
+        this.isActiveItself = false;
         e.target.innerHTML = 'Start';
         setTimeEntryInactiveItself.call(this, classList);
-        this.dispatchChildIsInactiveEvent();
         clearInterval(this.counterInterval);
+        this.dispatchChildIsInactiveEvent();
       } else {
+        this.isActiveItself = true;
         e.target.innerHTML = 'Stop';
         setTimeEntryActiveItself.call(this, classList);
-        this.dispatchChildIsActiveEvent(this.isOwnTimeBillable);
         this.setIntervals(this.isBillable);
+        this.dispatchChildIsActiveEvent(this.isOwnTimeBillable);
       }
     }.bind(this));
 
