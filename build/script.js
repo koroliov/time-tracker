@@ -90,6 +90,12 @@ class Base extends HTMLElement {
       }
       clearInterval(this.counterInterval);
     }
+    if (this.isActiveItself) {
+      this.isActiveItself = false;
+      this.shadowRoot.querySelector('#run').innerHTML = 'Start';
+      this.shadowRoot.querySelector('#grid-wrapper').classList.remove('active');
+      clearInterval(this.counterInterval);
+    }
     this.dispatchChildIsActiveEvent(e.detail.isBillable);
     this.activeChildIndex = newActiveChildIndex;
     this.setIntervals(e.detail.isBillable);
