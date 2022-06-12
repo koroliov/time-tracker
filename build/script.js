@@ -14,7 +14,9 @@ class Base extends HTMLElement {
     toInsertContents.querySelector('#wrapper').appendChild(childrenWrapper);
 
     toInsertContents.querySelector('#new-entry')
-      .addEventListener('click', function() {
+      .addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         const entry = new TimeEntry();
         if (childrenWrapper.children.length % 2) {
           entry.shadowRoot.querySelector('#wrapper').classList.add('even');
@@ -24,11 +26,28 @@ class Base extends HTMLElement {
         this.childTimeEntries.push(entry);
       }.bind(this));
     this.shadowRoot.appendChild(toInsertContents);
+
+    this.areChildrenOpen = data.areChildrenOpen;
+    childrenWrapper.style.display = this.areChildrenOpen ? 'block' : 'none';
+    this.shadowRoot.querySelector('#collapse-open')
+      .addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const childrenWrapper = this.shadowRoot.querySelector('#children');
+        if (this.areChildrenOpen) {
+          e.target.innerHTML = 'Open';
+          childrenWrapper.style.display = 'none';
+        } else {
+          e.target.innerHTML = 'Collapse';
+          childrenWrapper.style.display = 'block';
+        }
+        this.areChildrenOpen = !this.areChildrenOpen;
+      }.bind(this));
   }
 }
 
 class TimeTracker extends Base {
-  constructor(data = {}) {
+  constructor(data = Object.create(null)) {
     data.templateId = 'time-tracker';
     super(data);
   }
@@ -36,7 +55,7 @@ class TimeTracker extends Base {
 window.customElements.define('time-tracker', TimeTracker);
 
 class TimeEntry extends Base {
-  constructor(data = {}) {
+  constructor(data = Object.create(null)) {
     data.templateId = 'time-entry';
     super(data);
   }
