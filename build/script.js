@@ -69,6 +69,37 @@ class TimeEntry extends Base {
 
     this.handleJobTitleLogic(data.jobTitle);
     this.handleCommentLogic(data.comment);
+    this.handleTimeLogic();
+  }
+
+  handleTimeLogic(activeChildIndex, isActiveItself) {
+    if (isActiveItself) {
+      setTimeEntryActive.call(this);
+    } else {
+      this.isActiveItself = false;
+    }
+    const runButton = this.shadowRoot.querySelector('#run');
+    runButton.addEventListener('click', function(e) {
+      const classList = this.shadowRoot.querySelector('#grid-wrapper')
+        .classList;
+      if (this.isActiveItself) {
+        e.target.innerHTML = 'Start';
+        setTimeEntryInactiveItself.call(this, classList);
+      } else {
+        e.target.innerHTML = 'Stop';
+        setTimeEntryActiveItself.call(this, classList);
+      }
+    }.bind(this));
+
+    function setTimeEntryInactiveItself(classList) {
+      this.isActiveItself = false;
+      classList.remove('active');
+    }
+
+    function setTimeEntryActiveItself(classList) {
+      this.isActiveItself = true;
+      classList.add('active');
+    }
   }
 
   handleJobTitleLogic(text) {
