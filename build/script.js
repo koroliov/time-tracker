@@ -3,7 +3,6 @@ class Base extends HTMLElement {
   constructor(data) {
     super();
     const requiredTime = 5 * 8 * 60 * 60000;
-    this.childTimeEntries = [];
 
     this.attachShadow({mode: 'open',});
     const templateContent = document.querySelector(`#${data.templateId}`)
@@ -13,6 +12,7 @@ class Base extends HTMLElement {
     childrenWrapper.setAttribute('id', 'children');
     toInsertContents.querySelector('#wrapper').appendChild(childrenWrapper);
 
+    this.childTimeEntries = [];
     toInsertContents.querySelector('#new-entry')
       .addEventListener('click', function(e) {
         e.preventDefault();
@@ -41,14 +41,14 @@ class Base extends HTMLElement {
 
   openChildren(linkEl) {
     const childrenWrapper = this.shadowRoot.querySelector('#children');
-    linkEl.innerHTML = 'Collapse';
+    linkEl.innerHTML = `Collapse ${this.childTimeEntries.length}`;
     childrenWrapper.style.display = 'block';
     this.areChildrenOpen = true;
   }
 
   closeChildren(linkEl) {
     const childrenWrapper = this.shadowRoot.querySelector('#children');
-    linkEl.innerHTML = 'Open';
+    linkEl.innerHTML = `Open ${this.childTimeEntries.length}`;
     childrenWrapper.style.display = 'none';
     this.areChildrenOpen = false;
   }
