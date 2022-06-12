@@ -27,7 +27,7 @@ class Base extends HTMLElement {
       }.bind(this));
     this.shadowRoot.appendChild(toInsertContents);
 
-    this.areChildrenOpen = data.areChildrenOpen;
+    this.areChildrenOpen = data.areChildrenOpen === false ? false : true;
     childrenWrapper.style.display = this.areChildrenOpen ? 'block' : 'none';
     this.shadowRoot.querySelector('#collapse-open')
       .addEventListener('click', function(e) {
