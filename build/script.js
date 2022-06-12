@@ -12,7 +12,10 @@ class Base extends HTMLElement {
     childrenWrapper.setAttribute('id', 'children');
     toInsertContents.querySelector('#wrapper').appendChild(childrenWrapper);
 
+    this.activeChildIndex = -1;
     this.childTimeEntries = [];
+    this.shadowRoot.addEventListener('child-is-active',
+      this.childIsActiveHanlder.bind(this));
     toInsertContents.querySelector('#new-entry')
       .addEventListener('click', function(e) {
         e.preventDefault();
@@ -26,9 +29,10 @@ class Base extends HTMLElement {
         this.childTimeEntries.push(entry);
         this.openChildren(this.shadowRoot.querySelector('#collapse-open'));
       }.bind(this));
+
     this.shadowRoot.appendChild(toInsertContents);
 
-    this.areChildrenOpen = data.areChildrenOpen === false ? false : true;
+    this.areChildrenOpen = !!data.areChildrenOpen;
     childrenWrapper.style.display = this.areChildrenOpen ? 'block' : 'none';
     this.shadowRoot.querySelector('#collapse-open')
       .addEventListener('click', function(e) {
@@ -37,6 +41,19 @@ class Base extends HTMLElement {
         this.areChildrenOpen ?  this.closeChildren(e.target) :
           this.openChildren(e.target);
       }.bind(this));
+  }
+
+  childIsActiveHanlder(e) {
+    if (this.activeChildIndex !== -1) {
+      const event = new CustomEvent('stop-counting');
+      this.childTimeEntries[this.activeChildIndex].dispatchEvent(event);
+    }
+    this.parentNode.dispatchEvent(new CustomEvent('child-is-active', {
+      detail: this,
+      bubbles: true,
+    }));
+    this.activeChildIndex =
+      this.childTimeEntries.findIndex(el => el === e.detail);
   }
 
   openChildren(linkEl) {
@@ -88,6 +105,11 @@ class TimeEntry extends Base {
       } else {
         e.target.innerHTML = 'Stop';
         setTimeEntryActiveItself.call(this, classList);
+        const notifyEvent = new CustomEvent('child-is-active', {
+          detail: this,
+          bubbles: true,
+        });
+        this.parentNode.dispatchEvent(notifyEvent);
       }
     }.bind(this));
 
