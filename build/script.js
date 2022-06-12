@@ -188,7 +188,9 @@ class TimeEntry extends Base {
   }
 
   isOwnTimeBillableChangeHandler(e) {
-    this.isOwnTimeBillable = e.target.checked;
+    if (confirm('Are you sure?')) {
+      this.isOwnTimeBillable = e.target.checked;
+    }
   }
 
   stopCountingHandler() {
