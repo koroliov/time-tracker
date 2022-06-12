@@ -2,8 +2,6 @@
 class Base extends HTMLElement {
   constructor(data) {
     super();
-    const requiredTime = 5 * 8 * 60 * 60000;
-
     this.attachShadow({mode: 'open',});
     const templateContent = document.querySelector(`#${data.templateId}`)
       .content;
@@ -11,6 +9,14 @@ class Base extends HTMLElement {
     const childrenWrapper = document.createElement('div');
     childrenWrapper.setAttribute('id', 'children');
     toInsertContents.querySelector('#wrapper').appendChild(childrenWrapper);
+
+    this.counterInterval = null;
+    this.isOwnTimeBillable = data.isOwnTimeBillable;
+    this.timeOwn = data.timeOwn || 0;
+    //Includes timeOwn if it's billable
+    this.timeBillable = data.timeBillable || 0;
+    //Includes timeBillable
+    this.timeTotal = data.timeTotal || 0;
 
     this.activeChildIndex = -1;
     this.childTimeEntries = [];
@@ -43,17 +49,31 @@ class Base extends HTMLElement {
       }.bind(this));
   }
 
+  convertTimeMsToDaysHoursMinSec(ms) {
+    const sec = ms / 1000;
+    const secRemainder = sec % 60;
+    const min = (sec - secRemainder) / 60;
+    const minRemainder = (min % 60);
+    const hrs = (min - minRemainder) / 60;
+    const hrsRemainder = hrs % 8;
+    const days = (hrs - hrsRemainder) / 8;
+    return `${days}d ${hrsRemainder}h ${minRemainder}m ${secRemainder}s`;
+  }
+
   childIsActiveHanlder(e) {
     if (this.activeChildIndex !== -1) {
       const event = new CustomEvent('stop-counting');
       this.childTimeEntries[this.activeChildIndex].dispatchEvent(event);
     }
     this.parentNode.dispatchEvent(new CustomEvent('child-is-active', {
-      detail: this,
+      detail: {
+        TimeEntryEl: this,
+        isBillable: e.detail.isBillable,
+      },
       bubbles: true,
     }));
     this.activeChildIndex =
-      this.childTimeEntries.findIndex(el => el === e.detail);
+      this.childTimeEntries.findIndex(el => el === e.detail.TimeEntryEl);
   }
 
   openChildren(linkEl) {
@@ -75,6 +95,28 @@ class TimeTracker extends Base {
   constructor(data = Object.create(null)) {
     data.templateId = 'time-tracker';
     super(data);
+
+    this.isOwnTimeBillable = false;
+    this.timeOwn = 0;
+    this.timeBillable = data.timeBillable || 0;
+    //Includes timeBillable
+    this.timeTotal = data.timeTotal || 0;
+    this.updateTimeToUser();
+  }
+
+  updateTimeToUser() {
+    const totalStr = this.convertTimeMsToDaysHoursMinSec(this.timeTotal);
+    this.shadowRoot.querySelector('.total.value').innerText = totalStr;
+    const billableStr = this.convertTimeMsToDaysHoursMinSec(this.timeBillable);
+    this.shadowRoot.querySelector('.billable.value').innerText = billableStr;
+    const billablePercentCurrent =
+      this.timeBillable / this.timeTotal * 100 || 0;
+    this.shadowRoot.querySelector('.billable.percent-current').innerText =
+      `${billablePercentCurrent}%`;
+    const billablePercentTarget =
+      this.timeBillable / (5 * 8 * 60 * 60 * 1000) * 100 || 0;
+    this.shadowRoot.querySelector('.billable.percent-target').innerText =
+      `${billablePercentTarget}%`;
   }
 }
 window.customElements.define('time-tracker', TimeTracker);
@@ -86,12 +128,25 @@ class TimeEntry extends Base {
 
     this.handleJobTitleLogic(data.jobTitle);
     this.handleCommentLogic(data.comment);
-    this.handleTimeLogic();
+    this.handleTimeLogic(data.isActiveItself);
+    this.updateTimeToUser();
   }
 
-  handleTimeLogic(activeChildIndex, isActiveItself) {
+  updateTimeToUser() {
+    const totalStr = this.convertTimeMsToDaysHoursMinSec(this.timeTotal);
+    this.shadowRoot.querySelector('#total-value').innerText = totalStr;
+    const ownStr = this.convertTimeMsToDaysHoursMinSec(this.timeOwn);
+    this.shadowRoot.querySelector('#own-value').innerText = ownStr;
+    const billableStr = this.convertTimeMsToDaysHoursMinSec(this.timeBillable);
+    this.shadowRoot.querySelector('#billable-value').innerText = billableStr;
+    const billablePercent = this.timeBillable / this.timeTotal * 100 || 0;
+    this.shadowRoot.querySelector('#billable-percent').innerText =
+      `${billablePercent}%`;
+  }
+
+  handleTimeLogic(isActiveItself) {
     if (isActiveItself) {
-      setTimeEntryActive.call(this);
+      setTimeEntryActiveItself.call(this);
     } else {
       this.isActiveItself = false;
     }
@@ -106,7 +161,10 @@ class TimeEntry extends Base {
         e.target.innerHTML = 'Stop';
         setTimeEntryActiveItself.call(this, classList);
         const notifyEvent = new CustomEvent('child-is-active', {
-          detail: this,
+          detail: {
+            TimeEntryEl: this,
+            isBillable: this.isBillable,
+          },
           bubbles: true,
         });
         this.parentNode.dispatchEvent(notifyEvent);
