@@ -231,6 +231,7 @@ class TimeEntry extends Base {
         if (this.activeChildIndex !== -1) {
           const event = new CustomEvent('stop-counting');
           this.childTimeEntries[this.activeChildIndex].dispatchEvent(event);
+          clearInterval(this.counterInterval);
         }
         this.isActiveItself = true;
         classList.add('active');
