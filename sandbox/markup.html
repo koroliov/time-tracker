@@ -5,7 +5,7 @@
   <title>template</title>
   <meta name="description" content="">
   <meta name="author" content="">
-  <!--<meta http-equiv="refresh" content="2">-->
+  <!--  <meta http-equiv="refresh" content="2">-->
   <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon">
   <style>
     body {
@@ -19,22 +19,27 @@
       max-width: 1200px;
       margin: 0 auto;
       border: 1px solid black;
-      padding: 0 var(--base-font-size);
+      padding: 0 0 0 calc(var(--base-font-size) * 0.5);
     }
 
-    #grid-wrapper {
+    #time-tracker > .grid-wrapper {
       display: grid;
       --grid-columns: 4;
-      --grid-rows: 5;
-      grid-template-rows: repeat(var(--grid-rows), 0.8fr);
+      grid-template-rows: 0.8fr;
       grid-template-columns: repeat(var(--grid-columns), 1fr);
     }
     h1 {
       font-size: calc(var(--base-font-size) * 1.2);
       line-height: calc(var(--base-font-size) * 0.5);
-      grid-row: 1;
-      grid-column: 1 / calc(var(--grid-columns) + 1);
       text-align: center;
+    }
+    h1 div {
+      font-size: calc(var(--base-font-size) * 1.1);
+      font-weight: normal;
+      margin-top: calc(var(--base-font-size));
+    }
+    h1 span {
+      margin: 0 calc(var(--base-font-size));
     }
 
     .caption {
@@ -53,40 +58,37 @@
 
     .head {
       font-size: calc(var(--base-font-size) * 1.1);
-      grid-row: 2;
-    }
-    .total {
-      grid-row: 3;
-    }
-    .billable {
-      grid-row: 4;
     }
 
-    .controls {
-      grid-row: 5;
+    #time-tracker > .grid-wrapper > .controls {
       grid-column: 1 / calc(var(--grid-columns) + 1);
+      margin-bottom: calc(var(--base-font-size) * 0.2);
     }
-    .controls > a {
+    #time-tracker > .controls > a {
       margin-left: 1ex;
     }
-    .controls > a:first-child {
+    #time-tracker > .controls > a:first-child {
       margin-left: 0;
     }
-
-    #children {
-      grid-row: 6;
+    .children {
       grid-column: 1 / calc(var(--grid-columns) + 1);
     }
     /* children */
 
     .entry {
-      padding-left: calc(var(--base-font-size) * 1);
-      padding-top: calc(var(--base-font-size) * 1);
+      border: solid 1px black;
+      border-right: none;
+      padding-left: calc(var(--base-font-size) * 0.5);
       display: grid;
       --grid-columns: 4;
-      --grid-rows: 5;
       grid-template-columns: 5fr 1fr 1fr 1fr;
-      grid-template-rows: repeat(var(--grid-rows), 1fr);
+    }
+    .entry:nth-child(2) {
+      background-color: #ebebeb;
+    }
+    .entry > .controls {
+      grid-column: 1/2;
+      grid-row: 4;
     }
     .row-1 {
       grid-row: 1;
@@ -111,8 +113,16 @@
 </head>
 <body>
   <div id="time-tracker">
-    <div id="grid-wrapper">
-      <h1>Time Tracker</h1>
+    <h1>Time Tracker
+      <div>
+        <span>target</span>
+        <span>total:</span>
+        <span contenteditable="true">4d</span>
+        <span>billable:</span>
+        <span contenteditable="true">50%</span>
+      </div>
+    </h1>
+    <div class="grid-wrapper">
 
       <div class="head caption">Time spent</div>
       <div class="head value">value</div>
@@ -130,79 +140,138 @@
       <div class="billable percent-target">12%</div>
 
       <div class="controls">
-        <a href="#" id="clear">Clear</a>
-        <a href="#" id="new-entry">New Entry</a>
-        <a href="#" id="collapse-open">Collapse</a>
+        <a href="#" class="clear">Clear</a>
+        <a href="#" class="new-entry">New Entry</a>
+        <a href="#" class="collapse-open">Collapse</a>
       </div>
     </div>
 
     <div id="children">
       <div class="entry">
-        <div id="title" contenteditable="true" class="row-1 column-1">
-          SB-2323 {Foo - bar}
+        <div class="row-1 column-1">
+          <div class="title" contenteditable="true">
+            SB-2323 {Foo - bar}
+          </div>
         </div>
-        <div id="time-spent-title" class="row-1 column-2">time spent</div>
-        <div id="time-spent-value" class="row-1 column-3">value</div>
-        <div id="time-spent-percent" class="row-1 column-4">percent</div>
+        <div class="time-spent-title row-1 column-2">time spent</div>
+        <div class="time-spent-value row-1 column-3">value</div>
+        <div class="time-spent-percent row-1 column-4">percent</div>
 
-        <div id="comment" contenteditable="true" class="row-2 column-1">
-          aaaaa
+        <div class="row-2 column-1">
+          <div class="comment" contenteditable="true">
+            aaaaa
+          </div>
         </div>
-        <div id="total-title" class="row-2 column-2">Total:</div>
-        <div id="total-value" class="row-2 column-3">2h 23m 12s</div>
-        <div id="total-percent" class="row-2 column-4">—</div>
+        <div class="total-title row-2 column-2">Total:</div>
+        <div class="total-value row-2 column-3">2h 23m 12s</div>
+        <div class="total-percent row-2 column-4">—</div>
 
-        <label id="is-own-time-billable" class="row-3 column-1">
+        <label class="is-own-time-billable row-3 column-1">
           Is own time billable: <input type="checkbox">
         </label>
-        <div id="own-title" class="row-3 column-2">Own:</div>
-        <div id="own-value" class="row-3 column-3">1h 23m 12s</div>
-        <div id="own-percent" class="row-3 column-4">—</div>
+        <div class="own-title row-3 column-2">Own:</div>
+        <div class="own-value row-3 column-3">
+          <div contenteditable="true">
+            1h 23m 12s
+          </div>
+        </div>
+        <div class="own-percent row-3 column-4">—</div>
 
-        <div id="billable-title" class="row-4 column-2">Billable:</div>
-        <div id="billable-value" class="row-4 column-3">1h 23m 12s</div>
-        <div id="billable-percent" class="row-4 column-4">22%</div>
+        <div class="billable-title row-4 column-2">Billable:</div>
+        <div class="billable-value row-4 column-3">1h 23m 12s</div>
+        <div class="billable-percent row-4 column-4">22%</div>
 
         <div class="controls">
-          <button id="start-stop">Start</button>
-          <a href="#" id="new-entry">New Entry</a>
-          <a href="#" id="collapse-open">Collapse</a>
+          <a href="#" class="start-stop">Start</a>
+          <a href="#" class="new-entry">New Entry</a>
+          <a href="#" class="collapse-open">Collapse</a>
         </div>
 
-        <div id="children">
+        <div class="children">
           <div class="entry">
-            <div id="title" contenteditable="true" class="row-1 column-1">
-              SB-2323 {Foo - bar}
+            <div class="row-1 column-1">
+              <div class="title" contenteditable="true">
+                SB-2323 {Foo - bar}
+              </div>
             </div>
-            <div id="time-spent-title" class="row-1 column-2">time spent</div>
-            <div id="time-spent-value" class="row-1 column-3">value</div>
-            <div id="time-spent-percent" class="row-1 column-4">percent</div>
+            <div class="time-spent-title row-1 column-2">time spent</div>
+            <div class="time-spent-value row-1 column-3">value</div>
+            <div class="time-spent-percent row-1 column-4">percent</div>
 
-            <div id="comment" contenteditable="true" class="row-2 column-1">
-              aaaaa
+            <div class="row-2 column-1">
+              <div class="comment" contenteditable="true">
+                aaaaa
+              </div>
             </div>
-            <div id="total-title" class="row-2 column-2">Total:</div>
-            <div id="total-value" class="row-2 column-3">2h 23m 12s</div>
-            <div id="total-percent" class="row-2 column-4">—</div>
+            <div class="total-title row-2 column-2">Total:</div>
+            <div class="total-value row-2 column-3">2h 23m 12s</div>
+            <div class="total-percent row-2 column-4">—</div>
 
-            <label id="is-own-time-billable" class="row-3 column-1">
+            <label class="is-own-time-billable row-3 column-1">
               Is own time billable: <input type="checkbox">
             </label>
-            <div id="own-title" class="row-3 column-2">Own:</div>
-            <div id="own-value" class="row-3 column-3">1h 23m 12s</div>
-            <div id="own-percent" class="row-3 column-4">—</div>
+            <div class="own-title row-3 column-2">Own:</div>
+            <div class="own-value row-3 column-3">
+              <div contenteditable="true">
+                1h 23m 12s
+              </div>
+            </div>
+            <div class="own-percent row-3 column-4">—</div>
 
-            <div id="billable-title" class="row-4 column-2">Billable:</div>
-            <div id="billable-value" class="row-4 column-3">1h 23m 12s</div>
-            <div id="billable-percent" class="row-4 column-4">22%</div>
+            <div class="billable-title row-4 column-2">Billable:</div>
+            <div class="billable-value row-4 column-3">1h 23m 12s</div>
+            <div class="billable-percent row-4 column-4">22%</div>
 
             <div class="controls">
-              <button id="start-stop">Start</button>
-              <a href="#" id="new-entry">New Entry</a>
-              <a href="#" id="collapse-open">Collapse</a>
+              <a href="#" class="start-stop">Start</a>
+              <a href="#" class="new-entry">New Entry</a>
+              <a href="#" class="collapse-open">Collapse</a>
             </div>
 
-            <div id="children">
+            <div class="children">
+            </div>
+          </div>
+          <div class="entry">
+            <div class="row-1 column-1">
+              <div class="title" contenteditable="true">
+                SB-2323 {Foo - bar}
+              </div>
+            </div>
+            <div class="time-spent-title row-1 column-2">time spent</div>
+            <div class="time-spent-value row-1 column-3">value</div>
+            <div class="time-spent-percent row-1 column-4">percent</div>
+
+            <div class="row-2 column-1">
+              <div class="comment" contenteditable="true">
+                aaaaa
+              </div>
+            </div>
+            <div class="total-title row-2 column-2">Total:</div>
+            <div class="total-value row-2 column-3">2h 23m 12s</div>
+            <div class="total-percent row-2 column-4">—</div>
+
+            <label class="is-own-time-billable row-3 column-1">
+              Is own time billable: <input type="checkbox">
+            </label>
+            <div class="own-title row-3 column-2">Own:</div>
+            <div class="own-value row-3 column-3">
+              <div contenteditable="true">
+                1h 23m 12s
+              </div>
+            </div>
+            <div class="own-percent row-3 column-4">—</div>
+
+            <div class="billable-title row-4 column-2">Billable:</div>
+            <div class="billable-value row-4 column-3">1h 23m 12s</div>
+            <div class="billable-percent row-4 column-4">22%</div>
+
+            <div class="controls">
+              <a href="#" class="start-stop">Start</a>
+              <a href="#" class="new-entry">New Entry</a>
+              <a href="#" class="collapse-open">Collapse</a>
+            </div>
+
+            <div class="children">
             </div>
           </div>
         </div>
