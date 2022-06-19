@@ -4,14 +4,6 @@ class Base extends HTMLElement {
     super();
   }
 
-  initChildEntries(childEntries = [], node) {
-    this.childEntries = childEntries.reduce((a, c) => {
-      const te = new TimeEntry(c);
-      node.querySelector('.children').appendChild(te);
-      return a.push(te), a;
-    }, []);
-  }
-
   addListeners(node) {
     node.querySelector('.controls .new-entry')
       .addEventListener('click', this.addNewTimeEntry.bind(this));
@@ -24,12 +16,29 @@ class Base extends HTMLElement {
     this.handleChildEntriesVisibility();
   }
 
+  initChildEntries(childEntries = [], node) {
+    this.childEntries = childEntries.reduce((a, c) => {
+      const te = new TimeEntry(c);
+      node.querySelector('.children').appendChild(te);
+      return a.push(te), a;
+    }, []);
+    this.setCollapseOpenLink(node);
+  }
+
   addNewTimeEntry(node) {
     const te = new TimeEntry(Object.create(null));
     this.childEntries.push(te);
     node.querySelector('.children').appendChild(te);;
-    node.querySelector('.controls .collapse-open')
-      .innerText = `Collapse (${this.childEntries.length})`;
+    this.setCollapseOpenLink(node);
+  }
+
+  setCollapseOpenLink(node) {
+    const collapseOpenLink = node.querySelector('.controls .collapse-open');
+    if (this.isCollapsed) {
+      collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
+    } else {
+      collapseOpenLink.innerText = `Collapse (${this.childEntries.length})`;
+    }
   }
 
   handleChildEntriesVisibility(node) {
@@ -134,11 +143,10 @@ function init() {
   window.addEventListener('beforeunload', function() {
     const tt = this.document.querySelector('time-tracker');
     const value = JSON.stringify(tt);
-    this.localStorage.clear();
-    //if (value) {
-    //  localStorage.setItem('time-tracker', value);
-    //} else {
-    //  this.localStorage.clear();
-    //}
+    if (value) {
+      localStorage.setItem('time-tracker', value);
+    } else {
+      this.localStorage.clear();
+    }
   });
 }
