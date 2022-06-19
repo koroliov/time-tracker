@@ -63,14 +63,72 @@ class Base extends HTMLElement {
   }
 
   initData(data) {
-    this.timeStarted = data?.timeStarted || 0;
+    this.countUpdatedAt = data?.countUpdatedAt || 0;
     this.timeSpentTotal = data?.timeSpentTotal || 0;
     this.timeSpentBillable = data?.timeSpentBillable || 0;
+    this.intervalId = 0;
+    this.isCountBillable = false;
+
     this.isCollapsed = data?.isCollapsed || false;
     this.activeChildIndex = -1;
     this.childEntries = [];
-    this.intervalId = 0;
     this.isActive = false;
+  }
+
+  handleStartStopClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.isActive) {
+      this.isActive = false;
+      this.classList.remove('is-active');
+      e.target.innerText = 'Start';
+      this.stopCount();
+    } else {
+      this.isActive = true;
+      this.classList.add('is-active');
+      e.target.innerText = 'Stop';
+      this.startCount();
+    }
+  }
+
+  stopCount() {
+    this.updateTime();
+    this.countUpdatedAt = 0;
+    this.isCountBillable = false;
+    clearInterval(this.intervalId);
+  }
+
+  startCount() {
+    this.countUpdatedAt = Date.now();
+    this.isCountBillable = this.isOwnTimeBillable;
+    this.updateTime();
+    this.intervalId = setInterval(this.updateTime.bind(this), 1000);
+  }
+
+  updateTime() {
+    const now = Date.now();
+    const timeSpentCurrent = now - this.countUpdatedAt;
+    this.countUpdatedAt = now;
+    if (this.isActive) {
+      this.timeSpentOwn += timeSpentCurrent;
+    }
+    if (this.isCountBillable) {
+      this.timeSpentBillable += timeSpentCurrent;
+    }
+    this.timeSpentTotal += timeSpentCurrent;
+
+    this.updateTimeText();
+  }
+
+  convertTimeToText(ms) {
+    const sec = ms / 1000;
+    const secRemainder = sec % 60;
+    const min = (sec - secRemainder) / 60;
+    const minRemainder = min % 60;
+    const hrs = (min - minRemainder) / 60;
+    const hrsRemainder = hrs % 8;
+    const days = (hrs - hrsRemainder) / 8;
+    return `${days}d ${hrs}h ${min}m ${sec}s`;
   }
 }
 
@@ -139,6 +197,13 @@ class TimeEntry extends Base {
       .addEventListener('blur', e => this.commentText = e.target.innerText);
     this.querySelector('.is-own-time-billable input').addEventListener('change',
       e => this.isOwnTimeBillable = e.target.checked);
+    this.querySelector('.start-stop')
+      .addEventListener('click', this.handleStartStopClick.bind(this));
+  }
+
+  updateTimeText() {
+    this.querySelector('.own-value').innerText =
+      this.convertTimeToText(this.timeSpentOwn);
   }
 
   handleChildEntriesVisibility() {
@@ -150,6 +215,8 @@ class TimeEntry extends Base {
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
     this.titleText = data?.titleText || 'SB-xxxx';
     this.commentText = data?.commentText || '';
+
+    this.timeSpentOwn = data?.timeSpentOwn || 0;
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
   }
 
