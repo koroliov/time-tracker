@@ -123,7 +123,7 @@
           <span>total:</span>
           <span contenteditable="true" class="abs-value">5d</span>
           <span>billable:</span>
-          <span contenteditable="true" class="percent-value">50%</span>
+          <span contenteditable="true" class="percent-value">50 %</span>
         </div>
       </h1>
       <div class="grid-wrapper">
@@ -146,11 +146,11 @@
         <div class="controls">
           <a href="#" class="clear">Clear</a>
           <a href="#" class="new-entry">New Entry</a>
-          <a href="#" class="collapse-open">Collapse</a>
+          <a href="#" class="collapse-open">Open (0)</a>
         </div>
       </div>
 
-      <div id="children"></div>
+      <div class="children"></div>
     </div>
   </template>
   <template id="time-entry">
@@ -165,12 +165,10 @@
       <div class="time-spent-percent row-1 column-4">percent</div>
 
       <div class="row-2 column-1">
-        <div class="comment" contenteditable="true">
-          aaaaa
-        </div>
+        <div class="comment" contenteditable="true"></div>
       </div>
       <div class="total-title row-2 column-2">Total:</div>
-      <div class="total-value row-2 column-3">2h 23m 12s</div>
+      <div class="total-value row-2 column-3">—</div>
       <div class="total-percent row-2 column-4">—</div>
 
       <label class="is-own-time-billable row-3 column-1">
@@ -178,15 +176,13 @@
       </label>
       <div class="own-title row-3 column-2">Own:</div>
       <div class="own-value row-3 column-3">
-        <div contenteditable="true">
-          1h 23m 12s
-        </div>
+        <div contenteditable="true">—</div>
       </div>
       <div class="own-percent row-3 column-4">—</div>
 
       <div class="billable-title row-4 column-2">Billable:</div>
-      <div class="billable-value row-4 column-3">1h 23m 12s</div>
-      <div class="billable-percent row-4 column-4">22%</div>
+      <div class="billable-value row-4 column-3">—</div>
+      <div class="billable-percent row-4 column-4">— %</div>
 
       <div class="controls">
         <a href="#" class="start-stop">Start</a>
