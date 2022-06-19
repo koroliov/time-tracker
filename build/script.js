@@ -220,6 +220,8 @@ class TimeEntry extends Base {
       this.convertTimeToText(this.timeSpentOwn);
     this.querySelector('.billable-value').innerText =
       this.convertTimeToText(this.timeSpentBillable);
+    this.querySelector('.billable-percent').innerText =
+      `${Math.floor(this.timeSpentBillable / this.timeSpentTotal) * 100 }%`;
   }
 
   handleChildEntriesVisibility() {
