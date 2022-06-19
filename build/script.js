@@ -16,7 +16,7 @@ class TimeTracker extends Base {
   }
 
   addListeners() {
-    this.shadowRoot.querySelector('.controls')
+    this.shadowRoot.querySelector('.controls .new-entry')
       .addEventListener('click', this.addNewTimeEntry.bind(this));
   }
 
@@ -66,7 +66,7 @@ class TimeEntry extends Base {
   }
 
   addListeners() {
-    this.querySelector('.controls')
+    this.querySelector('.controls .new-entry')
       .addEventListener('click', this.addNewTimeEntry.bind(this));
   }
 
