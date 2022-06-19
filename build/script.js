@@ -11,7 +11,9 @@ class Base extends HTMLElement {
       .addEventListener('click', this.toggleChildEntriesVisible.bind(this));
   }
 
-  toggleChildEntriesVisible() {
+  toggleChildEntriesVisible(e) {
+    e.preventDefault();
+    e.stopPropagation();
     this.isCollapsed = !this.isCollapsed;
     this.handleChildEntriesVisibility();
   }
@@ -25,11 +27,15 @@ class Base extends HTMLElement {
     this.setCollapseOpenLink(node);
   }
 
-  addNewTimeEntry(node) {
+  addNewTimeEntry(e, node) {
+    e.preventDefault();
+    e.stopPropagation();
     const te = new TimeEntry(Object.create(null));
     this.childEntries.push(te);
-    node.querySelector('.children').appendChild(te);;
+    this.isCollapsed = false;
+    this.handleChildEntriesVisibility();
     this.setCollapseOpenLink(node);
+    node.querySelector('.children').appendChild(te);
   }
 
   setCollapseOpenLink(node) {
@@ -83,8 +89,8 @@ class TimeTracker extends Base {
     super.handleChildEntriesVisibility(this.shadowRoot);
   }
 
-  addNewTimeEntry() {
-    super.addNewTimeEntry(this.shadowRoot);
+  addNewTimeEntry(e) {
+    super.addNewTimeEntry(e, this.shadowRoot);
   }
 
   initSelfDom(templateId) {
@@ -140,8 +146,8 @@ class TimeEntry extends Base {
       this.isOwnTimeBillable;
   }
 
-  addNewTimeEntry() {
-    super.addNewTimeEntry(this);
+  addNewTimeEntry(e) {
+    super.addNewTimeEntry(e, this);
   }
 }
 window.customElements.define('time-entry', TimeEntry);
