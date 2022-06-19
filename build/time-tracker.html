@@ -76,6 +76,9 @@
       #time-tracker > .controls > a:first-child {
         margin-left: 0;
       }
+      .controls a {
+        margin-right: var(--base-font-size);
+      }
       .children {
         grid-column: 1 / calc(var(--grid-columns) + 1);
       }
@@ -141,7 +144,7 @@
         <div class="controls">
           <a href="#" class="clear">Clear</a>
           <a href="#" class="new-entry">New Entry</a>
-          <a href="#" class="collapse-open">Open (0)</a>
+          <a href="#" class="collapse-open">Collapse (0)</a>
         </div>
       </div>
 
@@ -182,7 +185,7 @@
       <div class="controls">
         <a href="#" class="start-stop">Start</a>
         <a href="#" class="new-entry">New Entry</a>
-        <a href="#" class="collapse-open">Collapse</a>
+        <a href="#" class="collapse-open">Collapse (0)</a>
       </div>
 
       <div class="children"></div>

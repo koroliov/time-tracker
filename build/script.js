@@ -3,6 +3,57 @@ class Base extends HTMLElement {
   constructor(data) {
     super();
   }
+
+  initChildEntries(childEntries = [], node) {
+    this.childEntries = childEntries.reduce((a, c) => {
+      const te = new TimeEntry(c);
+      node.querySelector('.children').appendChild(te);
+      return a.push(te), a;
+    }, []);
+  }
+
+  addListeners(node) {
+    node.querySelector('.controls .new-entry')
+      .addEventListener('click', this.addNewTimeEntry.bind(this));
+    node.querySelector('.controls .collapse-open')
+      .addEventListener('click', this.toggleChildEntriesVisible.bind(this));
+  }
+
+  toggleChildEntriesVisible() {
+    this.isCollapsed = !this.isCollapsed;
+    this.handleChildEntriesVisibility();
+  }
+
+  addNewTimeEntry(node) {
+    const te = new TimeEntry(Object.create(null));
+    this.childEntries.push(te);
+    node.querySelector('.children').appendChild(te);;
+    node.querySelector('.controls .collapse-open')
+      .innerText = `Collapse (${this.childEntries.length})`;
+  }
+
+  handleChildEntriesVisibility(node) {
+    const collapseOpenLink = node.querySelector('.controls .collapse-open');
+    const childEntriesWrapper = node.querySelector('.children');
+    if (this.isCollapsed) {
+      collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
+      childEntriesWrapper.style.display = 'none';
+    } else {
+      collapseOpenLink.innerText = `Collapse (${this.childEntries.length})`;
+      childEntriesWrapper.style.display = 'block';
+    }
+  }
+
+  initData(data) {
+    this.timeStarted = data?.timeStarted || 0;
+    this.timeSpentTotal = data?.timeSpentTotal || 0;
+    this.timeSpentBillable = data?.timeSpentBillable || 0;
+    this.isCollapsed = data?.isCollapsed || false;
+    this.activeChildIndex = -1;
+    this.childEntries = [];
+    this.intervalId = 0;
+    this.isActive = false;
+  }
 }
 
 class TimeTracker extends Base {
@@ -11,31 +62,20 @@ class TimeTracker extends Base {
     super();
     this.initData(data);
     this.initSelfDom(data.templateId, data.childEntries);
-    this.initChildEntries(data.childEntries);
+    this.initChildEntries(data.childEntries, this.shadowRoot);
     this.addListeners();
   }
 
   addListeners() {
-    this.shadowRoot.querySelector('.controls .new-entry')
-      .addEventListener('click', this.addNewTimeEntry.bind(this));
+    super.addListeners(this.shadowRoot);
+  }
+
+  handleChildEntriesVisibility() {
+    super.handleChildEntriesVisibility(this.shadowRoot);
   }
 
   addNewTimeEntry() {
-    const te = new TimeEntry(Object.create(null));
-    this.childEntries.push(te);
-    this.shadowRoot.querySelector('.children').appendChild(te);;
-    this.shadowRoot.querySelector('.controls .collapse-open')
-      .innerText = `Collapse (${this.childEntries.length})`;
-  }
-
-  initData(data) {
-    this.timeStarted = data?.timeStarted || 0;
-    this.timeSpentTotal = data?.timeSpentTotal || 0;
-    this.timeSpentBillable = data?.timeSpentBillable || 0;
-    this.activeChildIndex = -1;
-    this.childEntries = [];
-    this.intervalId = 0;
-    this.isActive = false;
+    super.addNewTimeEntry(this.shadowRoot);
   }
 
   initSelfDom(templateId) {
@@ -43,14 +83,7 @@ class TimeTracker extends Base {
     const templateContent = document.querySelector(`#${templateId}`).content;
     const clone = templateContent.cloneNode(true);
     this.shadowRoot.appendChild(clone);
-  }
-
-  initChildEntries(childEntries = []) {
-    this.childEntries = childEntries.reduce((a, c) => {
-      const te = new TimeEntry(c);
-      this.shadowRoot.querySelector('.children').appendChild(te);
-      return a.push(te), a;
-    }, []);
+    this.handleChildEntriesVisibility();
   }
 }
 window.customElements.define('time-tracker', TimeTracker);
@@ -61,46 +94,32 @@ class TimeEntry extends Base {
     super();
     this.initData(data);
     this.initSelfDom(data.templateId, parentNode);
-    this.initChildEntries(data.childEntries);
+    this.initChildEntries(data.childEntries, this);
     this.addListeners();
   }
 
   addListeners() {
-    this.querySelector('.controls .new-entry')
-      .addEventListener('click', this.addNewTimeEntry.bind(this));
+    super.addListeners(this);
+  }
+
+  handleChildEntriesVisibility() {
+    super.handleChildEntriesVisibility(this);
   }
 
   initData(data) {
-    this.timeStarted = data?.timeStarted || 0;
-    this.timeSpentTotal = data?.timeSpentTotal || 0;
-    this.timeSpentBillable = data?.timeSpentBillable || 0;
+    super.initData(data);
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
-    this.activeChildIndex = -1;
-    this.childEntries = [];
-    this.intervalId = 0;
-    this.isActive = false;
   }
 
   initSelfDom(templateId) {
     const templateContent = document.querySelector(`#${templateId}`).content;
     const clone = templateContent.cloneNode(true);
     this.appendChild(clone);
-  }
-
-  initChildEntries(childEntries = []) {
-    this.childEntries = childEntries.reduce((a, c) => {
-      const te = new TimeEntry(c);
-      this.shadowRoot.querySelector('.children').appendChild(te);
-      return a.push(te), a;
-    }, []);
+    this.handleChildEntriesVisibility();
   }
 
   addNewTimeEntry() {
-    const te = new TimeEntry(Object.create(null));
-    this.childEntries.push(te);
-    this.querySelector('.children').appendChild(te);;
-    this.querySelector('.controls .collapse-open')
-      .innerText = `Collapse (${this.childEntries.length})`;
+    super.addNewTimeEntry(this);
   }
 }
 window.customElements.define('time-entry', TimeEntry);
