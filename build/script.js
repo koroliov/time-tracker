@@ -1,4 +1,5 @@
 'use stirct';
+//Base class
 class Base extends HTMLElement {
   constructor(data) {
     super();
@@ -73,6 +74,7 @@ class Base extends HTMLElement {
   }
 }
 
+//Time Tracker class
 class TimeTracker extends Base {
   constructor(data) {
     data.templateId = 'time-tracker';
@@ -118,6 +120,7 @@ class TimeTracker extends Base {
 }
 window.customElements.define('time-tracker', TimeTracker);
 
+//Time Entry class
 class TimeEntry extends Base {
   constructor(data, parentNode) {
     data.templateId = 'time-entry';
