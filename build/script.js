@@ -83,6 +83,19 @@ class TimeTracker extends Base {
 
   addListeners() {
     super.addListeners(this.shadowRoot);
+    this.shadowRoot.querySelector('.clear')
+      .addEventListener('click', this.removeAllEntries.bind(this));
+  }
+
+  removeAllEntries(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!window.confirm('Are you sure?')) {
+      return;
+    }
+    this.childEntries = [];
+    this.shadowRoot.querySelector('.children').innerHTML = '';
+    this.setCollapseOpenLink(this.shadowRoot);
   }
 
   handleChildEntriesVisibility() {
