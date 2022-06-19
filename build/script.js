@@ -18,17 +18,35 @@ class Base extends HTMLElement {
 
   handleEntryActive(e) {
     if (e.target === this) {
+      this.isActiveItself = true;
+      this.classList.add('is-active');
       this.isCountBillable = this.isOwnTimeBillable;
-      return;
+      this.querySelector('.start-stop').innerText = 'Stop';
+    } else {
+      this.isCountBillable = e.detail.isBillable;
     }
-    this.isCountBillable = e.detail.isBillable;
+    if (this.activeEntry) {
+      const entryInactiveEvent = new CustomEvent('entry-inactive', {
+        detail: { firedFrom: this, },
+        bubbles: true,
+      });
+      this.activeEntry.dispatchEvent(entryInactiveEvent);
+    }
+    this.activeEntry = e.target;
     this.startCount();
   }
 
   handleEntryInactive(e) {
-    if (e.target === this) {
+    if (e.detail.firedFrom === this) {
+      e.stopPropagation();
       return;
     }
+    if (e.target === this) {
+      this.querySelector('.start-stop').innerText = 'Start';
+    }
+    this.isActiveItself = false;
+    this.classList.remove('is-active');
+    this.activeEntry = null;
     this.isCountBillable = false;
     this.stopCount();
   }
@@ -94,12 +112,12 @@ class Base extends HTMLElement {
     this.activeChildIndex = -1;
     this.childEntries = [];
     this.isActiveItself = false;
+    this.activeEntry = null;
   }
 
   stopCount() {
-    this.countUpdatedAt = 0;
-    this.isCountBillable = false;
     clearInterval(this.intervalId);
+    this.intervalId = 0;
   }
 
   startCount() {
@@ -242,19 +260,12 @@ class TimeEntry extends Base {
     e.preventDefault();
     e.stopPropagation();
     if (this.isActiveItself) {
-      this.isActiveItself = false;
-      this.classList.remove('is-active');
-      e.target.innerText = 'Start';
-      this.stopCount();
-      const entryActiveEvent = new CustomEvent('entry-inactive', {
+      const entryInactiveEvent = new CustomEvent('entry-inactive', {
+        detail: { firedFrom: this, },
         bubbles: true,
       });
-      this.dispatchEvent(entryActiveEvent);
+      this.dispatchEvent(entryInactiveEvent);
     } else {
-      this.isActiveItself = true;
-      this.classList.add('is-active');
-      e.target.innerText = 'Stop';
-      this.startCount();
       const entryActiveEvent = new CustomEvent('entry-active', {
         detail: {isBillable: this.isOwnTimeBillable},
         bubbles: true,
@@ -283,8 +294,10 @@ class TimeEntry extends Base {
       this.convertTimeToText(this.timeSpentOwn);
     this.querySelector('.billable-value').innerText =
       this.convertTimeToText(this.timeSpentBillable);
-    this.querySelector('.billable-percent').innerText =
-      `${Math.floor(this.timeSpentBillable / this.timeSpentTotal) * 100 }%`;
+    const billablePercent = this.timeSpentTotal ?
+      Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) :
+      0;
+    this.querySelector('.billable-percent').innerText = `${billablePercent}%`;
   }
 
   handleChildEntriesVisibility() {
