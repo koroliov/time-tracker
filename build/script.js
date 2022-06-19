@@ -113,6 +113,8 @@ class TimeEntry extends Base {
       .addEventListener('blur', e => this.titleText = e.target.innerText);
     this.querySelector('.comment')
       .addEventListener('blur', e => this.commentText = e.target.innerText);
+    this.querySelector('.is-own-time-billable input').addEventListener('change',
+      e => this.isOwnTimeBillable = e.target.checked);
   }
 
   handleChildEntriesVisibility() {
@@ -124,6 +126,7 @@ class TimeEntry extends Base {
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
     this.titleText = data?.titleText || 'SB-xxxx';
     this.commentText = data?.commentText || '';
+    this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
   }
 
   initSelfDom(templateId) {
@@ -133,6 +136,8 @@ class TimeEntry extends Base {
     this.handleChildEntriesVisibility();
     this.querySelector('.title').innerText = this.titleText;
     this.querySelector('.comment').innerText = this.commentText;
+    this.querySelector('.is-own-time-billable input').checked =
+      this.isOwnTimeBillable;
   }
 
   addNewTimeEntry() {
