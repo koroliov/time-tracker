@@ -92,7 +92,6 @@ class Base extends HTMLElement {
   }
 
   stopCount() {
-    this.updateTime();
     this.countUpdatedAt = 0;
     this.isCountBillable = false;
     clearInterval(this.intervalId);
@@ -101,7 +100,6 @@ class Base extends HTMLElement {
   startCount() {
     this.countUpdatedAt = Date.now();
     this.isCountBillable = this.isOwnTimeBillable;
-    this.updateTime();
     this.intervalId = setInterval(this.updateTime.bind(this), 1000);
   }
 
@@ -121,14 +119,14 @@ class Base extends HTMLElement {
   }
 
   convertTimeToText(ms) {
-    const sec = ms / 1000;
+    const sec = Math.floor(ms / 1000);
     const secRemainder = sec % 60;
     const min = (sec - secRemainder) / 60;
     const minRemainder = min % 60;
     const hrs = (min - minRemainder) / 60;
     const hrsRemainder = hrs % 8;
     const days = (hrs - hrsRemainder) / 8;
-    return `${days}d ${hrs}h ${min}m ${sec}s`;
+    return `${days}d ${hrsRemainder}h ${minRemainder}m ${secRemainder}s`;
   }
 }
 
@@ -187,6 +185,7 @@ class TimeEntry extends Base {
     this.initSelfDom(data.templateId, parentNode);
     this.initChildEntries(data.childEntries, this);
     this.addListeners();
+    this.updateTimeText();
   }
 
   addListeners() {
@@ -196,14 +195,31 @@ class TimeEntry extends Base {
     this.querySelector('.comment')
       .addEventListener('blur', e => this.commentText = e.target.innerText);
     this.querySelector('.is-own-time-billable input').addEventListener('change',
-      e => this.isOwnTimeBillable = e.target.checked);
+      this.handleIsOwnTimeBillableChange.bind(this));
     this.querySelector('.start-stop')
       .addEventListener('click', this.handleStartStopClick.bind(this));
   }
 
+  handleIsOwnTimeBillableChange(e) {
+    this.isOwnTimeBillable = e.target.checked;
+    if (this.isOwnTimeBillable) {
+      this.timeSpentBillable += this.timeSpentOwn;
+    } else {
+      this.timeSpentBillable -= this.timeSpentOwn;
+    }
+    if (this.isActive) {
+      this.isCountBillable = this.isOwnTimeBillable;
+    }
+    this.updateTimeText();
+  }
+
   updateTimeText() {
-    this.querySelector('.own-value').innerText =
+    this.querySelector('.total-value').innerText =
+      this.convertTimeToText(this.timeSpentTotal);
+    this.querySelector('.own-value > div').innerText =
       this.convertTimeToText(this.timeSpentOwn);
+    this.querySelector('.billable-value').innerText =
+      this.convertTimeToText(this.timeSpentBillable);
   }
 
   handleChildEntriesVisibility() {
