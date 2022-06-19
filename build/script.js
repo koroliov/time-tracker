@@ -252,6 +252,8 @@ class TimeEntry extends Base {
       .addEventListener('blur', e => this.commentText = e.target.innerText);
     this.querySelector('.is-own-time-billable input').addEventListener('change',
       this.handleIsOwnTimeBillableChange.bind(this));
+    this.querySelector('.is-own-time-billable input').addEventListener('click',
+      this.handleIsOwnTimeBillableClick.bind(this));
     this.querySelector('.start-stop')
       .addEventListener('click', this.handleStartStopClick.bind(this));
   }
@@ -272,6 +274,14 @@ class TimeEntry extends Base {
       });
       this.dispatchEvent(entryActiveEvent);
     }
+  }
+
+  handleIsOwnTimeBillableClick(e) {
+    if (window.confirm('Are you sure?') && window.confirm('Repeat')) {
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
   }
 
   handleIsOwnTimeBillableChange(e) {
