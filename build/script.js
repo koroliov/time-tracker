@@ -1,7 +1,7 @@
 'use stirct';
 //Base class
 class Base extends HTMLElement {
-  constructor(data) {
+  constructor() {
     super();
   }
 
