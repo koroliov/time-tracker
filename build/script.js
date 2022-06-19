@@ -145,6 +145,17 @@ class TimeTracker extends Base {
     this.addListeners();
   }
 
+  toString() {
+    if (this.activeEntry) {
+      const entryInactiveEvent = new CustomEvent('entry-inactive', {
+        detail: { firedFrom: this, },
+        bubbles: true,
+      });
+      this.activeEntry.dispatchEvent(entryInactiveEvent);
+    }
+    return JSON.stringify(this);
+  }
+
   initData(data) {
     super.initData(data);
     this.percentBillableTarget = data?.percentBillableTarget || 50;
@@ -311,15 +322,16 @@ window.customElements.define('time-entry', TimeEntry);
 init();
 
 function init() {
-  const data = JSON.parse(localStorage.getItem('time-tracker')) ||
-    Object.create(null);
+  let data = Object.create(null);
+  try {
+    data = JSON.parse(localStorage.getItem('time-tracker'));
+  } catch(e) {}
   document.body.appendChild(new TimeTracker(data));
 
   window.addEventListener('beforeunload', function() {
     const tt = this.document.querySelector('time-tracker');
-    const value = JSON.stringify(tt);
-    if (value) {
-      localStorage.setItem('time-tracker', value);
+    if (tt) {
+      localStorage.setItem('time-tracker', tt);
     } else {
       this.localStorage.clear();
     }
