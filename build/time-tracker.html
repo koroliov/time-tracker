@@ -19,6 +19,7 @@
   <template id="time-tracker">
     <style>
       #time-tracker {
+        --main-bg-color: white;
         font-size: calc(var(--base-font-size) * 0.9);
         line-height: calc(var(--base-font-size) * 1.1);
         max-width: 1200px;
@@ -88,7 +89,13 @@
         --grid-columns: 4;
         grid-template-columns: 5fr 1fr 1fr 1fr;
       }
-      .entry:nth-child(2) {
+      time-entry {
+        display: block;
+      }
+      time-entry:nth-child(odd) {
+        background-color: var(--main-bg-color);
+      }
+      time-entry:nth-child(even) {
         background-color: #ebebeb;
       }
       .entry > .controls {

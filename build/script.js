@@ -33,6 +33,7 @@ class TimeTracker extends Base {
     this.timeSpentTotal = data?.timeSpentTotal || 0;
     this.timeSpentBillable = data?.timeSpentBillable || 0;
     this.activeChildIndex = -1;
+    this.childEntries = [];
     this.intervalId = 0;
     this.isActive = false;
   }
@@ -61,6 +62,12 @@ class TimeEntry extends Base {
     this.initData(data);
     this.initSelfDom(data.templateId, parentNode);
     this.initChildEntries(data.childEntries);
+    this.addListeners();
+  }
+
+  addListeners() {
+    this.querySelector('.controls')
+      .addEventListener('click', this.addNewTimeEntry.bind(this));
   }
 
   initData(data) {
@@ -69,6 +76,7 @@ class TimeEntry extends Base {
     this.timeSpentBillable = data?.timeSpentBillable || 0;
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
     this.activeChildIndex = -1;
+    this.childEntries = [];
     this.intervalId = 0;
     this.isActive = false;
   }
@@ -85,6 +93,14 @@ class TimeEntry extends Base {
       this.shadowRoot.querySelector('.children').appendChild(te);
       return a.push(te), a;
     }, []);
+  }
+
+  addNewTimeEntry() {
+    const te = new TimeEntry(Object.create(null));
+    this.childEntries.push(te);
+    this.querySelector('.children').appendChild(te);;
+    this.querySelector('.controls .collapse-open')
+      .innerText = `Collapse (${this.childEntries.length})`;
   }
 }
 window.customElements.define('time-entry', TimeEntry);
