@@ -33,19 +33,19 @@ class Base extends HTMLElement {
       this.activeEntry.dispatchEvent(entryInactiveEvent);
     }
     this.activeEntry = e.target;
+    this.stopCount();
     this.startCount();
   }
 
   handleEntryInactive(e) {
-    if (e.detail.firedFrom === this) {
+    if (e.target === this) {
+      this.querySelector('.start-stop').innerText = 'Start';
+      this.isActiveItself = false;
+      this.classList.remove('is-active');
+    } else if (e.detail.firedFrom === this) {
       e.stopPropagation();
       return;
     }
-    if (e.target === this) {
-      this.querySelector('.start-stop').innerText = 'Start';
-    }
-    this.isActiveItself = false;
-    this.classList.remove('is-active');
     this.activeEntry = null;
     this.isCountBillable = false;
     this.stopCount();
