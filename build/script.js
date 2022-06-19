@@ -109,6 +109,10 @@ class TimeEntry extends Base {
 
   addListeners() {
     super.addListeners(this);
+    this.querySelector('.title')
+      .addEventListener('blur', e => this.titleText = e.target.innerText);
+    this.querySelector('.comment')
+      .addEventListener('blur', e => this.commentText = e.target.innerText);
   }
 
   handleChildEntriesVisibility() {
@@ -118,6 +122,8 @@ class TimeEntry extends Base {
   initData(data) {
     super.initData(data);
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
+    this.titleText = data?.titleText || 'SB-xxxx';
+    this.commentText = data?.commentText || '';
   }
 
   initSelfDom(templateId) {
@@ -125,6 +131,8 @@ class TimeEntry extends Base {
     const clone = templateContent.cloneNode(true);
     this.appendChild(clone);
     this.handleChildEntriesVisibility();
+    this.querySelector('.title').innerText = this.titleText;
+    this.querySelector('.comment').innerText = this.commentText;
   }
 
   addNewTimeEntry() {
