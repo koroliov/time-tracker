@@ -1,0 +1,17 @@
+{
+  "name": "time-tracker",
+  "version": "0.0.0",
+  "description": "",
+  "main": "",
+  "directories": {},
+  "scripts": {
+    "test": "tape ./test/cases/*.test.js"
+  },
+  "author": "d.koroliov@gmail.com",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "tape": "^5.3.1",
+    "webdriverio": "^7.20.3"
+  },
+  "private": true
+}
