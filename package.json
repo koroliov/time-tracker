@@ -5,7 +5,8 @@
   "main": "",
   "directories": {},
   "scripts": {
-    "test": "tape ./test/cases/*.test.js"
+    "test-full": "tape ./test/cases/*.test.js",
+    "test": "tape"
   },
   "author": "d.koroliov@gmail.com",
   "license": "UNLICENSED",

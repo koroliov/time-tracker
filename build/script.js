@@ -213,6 +213,7 @@ class TimeTracker extends Base {
     const clone = templateContent.cloneNode(true);
     this.shadowRoot.appendChild(clone);
     this.handleChildEntriesVisibility();
+    this.updateTimeText();
   }
 
   updateTimeText() {

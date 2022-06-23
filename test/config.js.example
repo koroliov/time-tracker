@@ -1,0 +1,28 @@
+'use strict';
+const config = {
+  wdioConfig: {
+    path: '/wd/hub',
+    automationProtocol: 'webdriver',
+    logLevel: 'warn',
+    waitforTimeout: 20000,
+    capabilities: {
+      browserName: 'chrome',
+      'goog:chromeOptions': {
+        args: [
+          //'--window-position=1100,1000',
+          '--start-maximazed',
+          '--disable-notifications',
+          '--no-sandbox',
+          '--disable-gpu',
+          //'--user-data-dir=/path/to/project/time-tracker/test/' +
+            //'chrome-profile',
+        ],
+      },
+    }
+  },
+  //my data
+  pathToProjectNoTrailingSlash: '/path/to/project',
+  pauseTimeout: 10000,
+};
+
+module.exports = config;
