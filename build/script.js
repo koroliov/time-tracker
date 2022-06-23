@@ -347,8 +347,10 @@ init();
 function init() {
   let data = Object.create(null);
   try {
-    data = JSON.parse(localStorage.getItem('time-tracker')) || data;
-  } catch(e) {}
+    const localStorageVal = localStorage.getItem('time-tracker');
+    data = JSON.parse(localStorageVal) || data;
+  } catch(e) {
+  }
   document.body.appendChild(new TimeTracker(data));
 
   window.addEventListener('beforeunload', function() {
