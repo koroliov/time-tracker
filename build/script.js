@@ -221,12 +221,12 @@ class TimeTracker extends Base {
       this.convertTimeToText(this.timeSpentTotal);
     this.shadowRoot.querySelector('.billable.value').innerText =
       this.convertTimeToText(this.timeSpentBillable);
-    const percentCurrent =
-      Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100);
+    const percentCurrent = this.timeSpentTotal ?
+      Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) : 0;
     this.shadowRoot.querySelector('.billable.percent-current').innerText =
       `${percentCurrent}%`;
-    const percentTarget =
-      Math.floor(percentCurrent / this.percentBillableTarget);
+    const percentTarget = this.percentBillableTarget ?
+      Math.floor(percentCurrent / this.percentBillableTarget) : 0;
     this.shadowRoot.querySelector('.billable.percent-target').innerText =
       `${percentTarget}%`;
   }
