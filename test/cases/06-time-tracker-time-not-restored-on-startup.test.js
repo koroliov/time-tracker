@@ -42,9 +42,9 @@ tp('data exists', async t => {
     await u.timeTrackerCurrentBillablePercentGet();
   t.equal(curBillablePercentOnTimeTracker, '0%');
 
-  const billablePercentOnTimeTracker =
-    await u.timeTrackerBillbleTargetPercentGet();
-  t.equal(billablePercentOnTimeTracker, '0%');
+  const billablePercentToTargetOnTimeTracker =
+    await u.timeTrackerBillableCurrentToTargetPercentGet();
+  t.equal(billablePercentToTargetOnTimeTracker, '0%');
 
   await u.closeApp();
   t.end();
