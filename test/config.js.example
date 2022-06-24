@@ -4,7 +4,7 @@ const config = {
     path: '/wd/hub',
     automationProtocol: 'webdriver',
     logLevel: 'warn',
-    waitforTimeout: 20000,
+    waitforTimeout: 1000,
     capabilities: {
       browserName: 'chrome',
       'goog:chromeOptions': {
