@@ -41,10 +41,8 @@ class TestUser {
   async commonTimeEntryAddNew(address) {
     let selector;
     if (address.length) {
-      selector = address.reduce((s, a) => {
-        return `${s} > time-entry:nth-child(${a}) > .entry`;
-      }, '#time-tracker .children');
-      selector += ' > .controls .new-entry';
+      selector =
+        this._timeEntryInnerSelectorGet(address, '.controls .new-entry');
     } else {
       selector = `#time-tracker > .grid-wrapper > .controls .new-entry`;
     }
