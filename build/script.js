@@ -12,6 +12,8 @@ class Base extends HTMLElement {
       .addEventListener('click', this.toggleChildEntriesVisible.bind(this));
     node.addEventListener('entry-active',
       this.handleEntryActive.bind(this));
+    node.addEventListener('entry-active-changed',
+      this.handleEntryActiveChanded.bind(this));
     node.addEventListener('entry-inactive',
       this.handleEntryInactive.bind(this));
   }
@@ -31,10 +33,23 @@ class Base extends HTMLElement {
         bubbles: true,
       });
       this.activeEntry.dispatchEvent(entryInactiveEvent);
+      const entryActiveChangedEvent = new CustomEvent('entry-active-changed', {
+        detail: { activeEntry: e.target, },
+        bubbles: true,
+      });
+      this.dispatchEvent(entryActiveChangedEvent);
+      e.stopPropagation();
     }
     this.activeEntry = e.target;
     this.stopCount();
     this.startCount();
+  }
+
+  handleEntryActiveChanded(e) {
+    if (e.target !== this) {
+      this.isCountBillable = e.detail.activeEntry.isOwnTimeBillable;
+      this.activeEntry = e.detail.activeEntry;
+    }
   }
 
   handleEntryInactive(e) {
@@ -42,13 +57,16 @@ class Base extends HTMLElement {
       this.querySelector('.start-stop').innerText = 'Start';
       this.isActiveItself = false;
       this.classList.remove('is-active');
+      this.activeEntry = null;
+      this.isCountBillable = false;
+      this.stopCount();
     } else if (e.detail.firedFrom === this) {
       e.stopPropagation();
-      return;
+    } else {
+      this.activeEntry = null;
+      this.isCountBillable = false;
+      this.stopCount();
     }
-    this.activeEntry = null;
-    this.isCountBillable = false;
-    this.stopCount();
   }
 
   toggleChildEntriesVisible(e) {
@@ -225,10 +243,19 @@ class TimeTracker extends Base {
       Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) : 0;
     this.shadowRoot.querySelector('.billable.percent-current').innerText =
       `${percentCurrent}%`;
-    const percentTarget = this.percentBillableTarget ?
-      Math.floor(percentCurrent / this.percentBillableTarget) : 0;
+    const percentTarget =
+      calculatePercentTotalBillableSpentToTotalBillableTarget(this);
     this.shadowRoot.querySelector('.billable.percent-target').innerText =
       `${percentTarget}%`;
+
+    function calculatePercentTotalBillableSpentToTotalBillableTarget(that) {
+      if (!that.percentBillableTarget || !that.timeTotalTarget) {
+        return 0;
+      }
+      return Math.floor(that.timeSpentBillable /
+        (that.percentBillableTarget / 100 * that.timeTotalTarget)
+      );
+    }
   }
 }
 window.customElements.define('time-tracker', TimeTracker);
