@@ -23,7 +23,7 @@ const config = {
     }
   },
   //my data
-  pathToProjectNoTrailingSlash: '/path/to/project',
+  pathToProjectNoTraillingSlash: '/path/to/project',
 };
 
 module.exports = config;

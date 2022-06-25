@@ -13,7 +13,7 @@ class TestUser {
 
   async openApp(initData) {
     await this.browser.url(`file://${
-      config.pathToProjectNoTrailingSlash}/build/time-tracker.html`);
+      config.pathToProjectNoTraillingSlash}/build/time-tracker.html`);
     let str = 'window.localStorage.clear();';
     if (initData) {
       str += [
