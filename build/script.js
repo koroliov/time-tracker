@@ -243,14 +243,17 @@ class TimeTracker extends Base {
 
   initData(data) {
     super.initData(data);
-    this.percentBillableTarget = data?.percentBillableTarget || 50;
-    this.timeTotalTarget = data?.timeTotalTarget || 5 * 8 * 3600000;
+    this.percentBillableTargetDefault = 75;
+    this.percentBillableTarget = data?.percentBillableTarget ||
+      this.percentBillableTargetDefault;
+    this.timeTotalTargetDefault =  5 * 8 * 3600000;
+    this.timeTotalTarget = data?.timeTotalTarget || this.timeTotalTargetDefault;
   }
 
   addListeners() {
     super.addListeners(this.shadowRoot);
     this.shadowRoot.querySelector('.clear')
-      .addEventListener('click', this.removeAllEntries.bind(this));
+      .addEventListener('click', this.clear.bind(this));
     this.shadowRoot.querySelector('.percent-target')
       .addEventListener('blur', this.handleTargetPercentChange.bind(this));
     this.shadowRoot.querySelector('.abs-target')
@@ -305,7 +308,7 @@ class TimeTracker extends Base {
     this.updateTimeText();
   }
 
-  removeAllEntries(e) {
+  clear(e) {
     e.preventDefault();
     e.stopPropagation();
     if (!window.confirm('Are you sure?')) {
@@ -313,10 +316,13 @@ class TimeTracker extends Base {
     }
     this.timeSpentTotal = 0;
     this.timeSpentBillable = 0;
+    this.timeTotalTarget = this.timeTotalTargetDefault;
+    this.percentBillableTarget = this.percentBillableTargetDefault;
     this.childEntries = [];
     this.shadowRoot.querySelector('.children').innerHTML = '';
     this.setCollapseOpenLink(this.shadowRoot);
     this.stopCount();
+    this.updateTargetText();
     this.updateTimeText();
   }
 
