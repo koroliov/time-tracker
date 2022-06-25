@@ -5,6 +5,7 @@ const config = {
     automationProtocol: 'webdriver',
     logLevel: 'warn',
     waitforTimeout: 1000,
+    connectionRetryCount: 1,
     capabilities: {
       browserName: 'chrome',
       'goog:chromeOptions': {
