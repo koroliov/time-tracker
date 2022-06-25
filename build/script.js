@@ -79,7 +79,9 @@ class Base extends HTMLElement {
 
   handleDisactivateEvent(e) {
     if (e.detail.firedFrom === this) {
-      e.stopPropagation();
+      if (this.activeChildOrSelf) {
+        e.stopPropagation();
+      }
     } else {
       this.disactivate(e.target);
     }
@@ -305,6 +307,7 @@ class TimeEntry extends Base {
     e.preventDefault();
     e.stopPropagation();
     if (this.activeChildOrSelf === this) {
+      this.disactivate(this);
       const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },
         bubbles: true,
