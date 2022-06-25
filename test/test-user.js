@@ -124,8 +124,6 @@ class TestUser {
         address.join(',')} is already billable`);
     } else {
       await e.click();
-      await this.browser.acceptAlert();
-      await this.browser.acceptAlert();
     }
   }
 

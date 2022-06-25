@@ -15,6 +15,16 @@ class Base extends HTMLElement {
       this.handleEntryActiveChangedEvent.bind(this));
     node.addEventListener('disactivate',
       this.handleDisactivateEvent.bind(this));
+    node.addEventListener('is-billable-changed',
+      this.handleIsBillableChanged.bind(this));
+  }
+
+  handleIsBillableChanged(e) {
+    if (e.target === this.activeChildOrSelf) {
+      this.isCountBillable = e.detail.isBillable;
+    }
+    this.timeSpentBillable += e.detail.billableTimeChange;
+    this.updateTimeText();
   }
 
   handleActivateEvent(e) {
@@ -142,7 +152,7 @@ class Base extends HTMLElement {
     this.timeSpentTotal = data?.timeSpentTotal || 0;
     this.timeSpentBillable = data?.timeSpentBillable || 0;
     this.intervalId = 0;
-    this.isCountBillable = false;
+    this.isCountBillable = data?.isCountBillable || false;
 
     this.isCollapsed = data?.isCollapsed || false;
     this.activeChildIndex = -1;
@@ -235,6 +245,8 @@ class TimeTracker extends Base {
     this.childEntries = [];
     this.shadowRoot.querySelector('.children').innerHTML = '';
     this.setCollapseOpenLink(this.shadowRoot);
+    this.stopCount();
+    this.updateTimeText();
   }
 
   handleChildEntriesVisibility() {
@@ -324,8 +336,6 @@ class TimeEntry extends Base {
       .addEventListener('blur', e => this.titleText = e.target.innerText);
     this.querySelector('.comment')
       .addEventListener('blur', e => this.commentText = e.target.innerText);
-    this.querySelector('.is-own-time-billable input').addEventListener('change',
-      this.handleIsOwnTimeBillableChange.bind(this));
     this.querySelector('.is-own-time-billable input').addEventListener('click',
       this.handleIsOwnTimeBillableClick.bind(this));
     this.querySelector('.start-stop')
@@ -344,7 +354,7 @@ class TimeEntry extends Base {
       this.dispatchEvent(disactivateEvent);
     } else {
       const entryActiveEvent = new CustomEvent('activate', {
-        detail: {isBillable: this.isOwnTimeBillable},
+        detail: { isBillable: this.isOwnTimeBillable, },
         bubbles: true,
       });
       this.dispatchEvent(entryActiveEvent);
@@ -352,24 +362,18 @@ class TimeEntry extends Base {
   }
 
   handleIsOwnTimeBillableClick(e) {
-    if (window.confirm('Are you sure?') && window.confirm('Repeat')) {
-      return;
-    }
-    e.preventDefault();
     e.stopPropagation();
-  }
-
-  handleIsOwnTimeBillableChange(e) {
-    this.isOwnTimeBillable = e.target.checked;
-    if (this.isOwnTimeBillable) {
-      this.timeSpentBillable += this.timeSpentOwn;
-    } else {
-      this.timeSpentBillable -= this.timeSpentOwn;
-    }
-    if (this.activeChildOrSelf === this) {
-      this.isCountBillable = this.isOwnTimeBillable;
-    }
-    this.updateTimeText();
+    this.isOwnTimeBillable = !this.isOwnTimeBillable;
+    const billableTimeChange = this.isOwnTimeBillable ?
+      this.timeSpentOwn : -this.timeSpentOwn;
+    const ev = new CustomEvent('is-billable-changed', {
+      detail: {
+        isBillable: this.isOwnTimeBillable,
+        billableTimeChange,
+      },
+      bubbles: true,
+    });
+    this.dispatchEvent(ev);
   }
 
   updateTimeText() {
