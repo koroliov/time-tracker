@@ -3,7 +3,7 @@
 const tp = require('tape');
 const TestUser = require('../test-user.js');
 
-tp('data exists', async t => {
+tp('data exist', async t => {
   const initData = require('./06-time-tracker-time-not-restored-on-startup.js');
   const u = new TestUser();
   await u.prepare();
@@ -19,7 +19,7 @@ tp('data exists', async t => {
   t.end();
 });
 
-tp('data exists', async t => {
+tp('no data exist', async t => {
   const u = new TestUser();
   await u.prepare();
   await u.openApp();
