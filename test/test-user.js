@@ -161,14 +161,14 @@ class TestUser {
   }
 
   async timeTrackerTargetTotalGet() {
-    const selector = '#time-tracker > h1 .abs-value';
+    const selector = '#time-tracker > h1 .abs-target';
     const tt = await this.browser.$('time-tracker');
     const e = await tt.shadow$(selector);
     return await e.getText();
   }
 
   async timeTrackerTargetBillablePercentGet() {
-    const selector = '#time-tracker > h1 .percent-value';
+    const selector = '#time-tracker > h1 .percent-target';
     const tt = await this.browser.$('time-tracker');
     const e = await tt.shadow$(selector);
     return await e.getText();
