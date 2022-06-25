@@ -10,62 +10,78 @@ class Base extends HTMLElement {
       .addEventListener('click', this.addNewTimeEntry.bind(this));
     node.querySelector('.controls .collapse-open')
       .addEventListener('click', this.toggleChildEntriesVisible.bind(this));
-    node.addEventListener('entry-active',
-      this.handleEntryActive.bind(this));
-    node.addEventListener('entry-active-changed',
-      this.handleEntryActiveChanded.bind(this));
-    node.addEventListener('entry-inactive',
-      this.handleEntryInactive.bind(this));
+    node.addEventListener('activate', this.handleActivateEvent.bind(this));
+    node.addEventListener('active-entry-changed',
+      this.handleEntryActiveChangedEvent.bind(this));
+    node.addEventListener('disactivate',
+      this.handleDisactivateEvent.bind(this));
   }
 
-  handleEntryActive(e) {
+  handleActivateEvent(e) {
     if (e.target === this) {
-      this.isActiveItself = true;
-      this.classList.add('is-active');
-      this.isCountBillable = this.isOwnTimeBillable;
-      this.querySelector('.start-stop').innerText = 'Stop';
-    } else {
-      this.isCountBillable = e.detail.isBillable;
+      this.handleWhenActiveItself();
     }
-    if (this.activeEntry) {
-      const entryInactiveEvent = new CustomEvent('entry-inactive', {
-        detail: { firedFrom: this, },
-        bubbles: true,
-      });
-      this.activeEntry.dispatchEvent(entryInactiveEvent);
-      const entryActiveChangedEvent = new CustomEvent('entry-active-changed', {
-        detail: { activeEntry: e.target, },
-        bubbles: true,
-      });
-      this.dispatchEvent(entryActiveChangedEvent);
+    this.isCountBillable = e.detail.isBillable;
+    if (this.activeChildOrSelf) {
+      if (this.activeChildOrSelf !== this) {
+        this.fireDisactivateEventToCurrentlyActiveEntry();
+      }
+      this.fireActiveEntryChangedEvent(e.target);
       e.stopPropagation();
     }
-    this.activeEntry = e.target;
+    this.activeChildOrSelf = e.target;
     this.stopCount();
     this.startCount();
   }
 
-  handleEntryActiveChanded(e) {
-    if (e.target !== this) {
-      this.isCountBillable = e.detail.activeEntry.isOwnTimeBillable;
-      this.activeEntry = e.detail.activeEntry;
-    }
+  fireActiveEntryChangedEvent(newActiveEntry) {
+    const entryActiveChangedEvent = new CustomEvent('active-entry-changed', {
+      detail: { activeEntry: newActiveEntry, },
+      bubbles: true,
+    });
+    this.dispatchEvent(entryActiveChangedEvent);
   }
 
-  handleEntryInactive(e) {
-    if (e.target === this) {
-      this.querySelector('.start-stop').innerText = 'Start';
-      this.isActiveItself = false;
-      this.classList.remove('is-active');
-      this.activeEntry = null;
-      this.isCountBillable = false;
-      this.stopCount();
-    } else if (e.detail.firedFrom === this) {
+  fireDisactivateEventToCurrentlyActiveEntry() {
+    const disactivateEvent = new CustomEvent('disactivate', {
+      detail: { firedFrom: this, },
+      bubbles: true,
+    });
+    this.activeChildOrSelf.dispatchEvent(disactivateEvent);
+  }
+
+  handleWhenActiveItself() {
+    this.classList.add('is-active');
+    this.querySelector('.start-stop').innerText = 'Stop';
+  }
+
+  handleWhenInactiveItself() {
+    this.querySelector('.start-stop').innerText = 'Start';
+    this.classList.remove('is-active');
+  }
+
+  handleEntryActiveChangedEvent(e) {
+    if (this.activeChildOrSelf === this) {
+      this.handleWhenInactiveItself();
+    }
+    this.isCountBillable = e.detail.activeEntry.isOwnTimeBillable;
+    this.activeChildOrSelf = e.detail.activeEntry;
+  }
+
+  disactivate(evTarget) {
+    if (evTarget === this) {
+      this.handleWhenInactiveItself();
+    }
+    this.activeChildOrSelf = null;
+    this.isCountBillable = false;
+    this.stopCount();
+  }
+
+  handleDisactivateEvent(e) {
+    if (e.detail.firedFrom === this) {
       e.stopPropagation();
     } else {
-      this.activeEntry = null;
-      this.isCountBillable = false;
-      this.stopCount();
+      this.disactivate(e.target);
     }
   }
 
@@ -129,8 +145,7 @@ class Base extends HTMLElement {
     this.isCollapsed = data?.isCollapsed || false;
     this.activeChildIndex = -1;
     this.childEntries = [];
-    this.isActiveItself = false;
-    this.activeEntry = null;
+    this.activeChildOrSelf = null;
   }
 
   stopCount() {
@@ -147,7 +162,7 @@ class Base extends HTMLElement {
     const now = Date.now();
     const timeSpentCurrent = now - this.countUpdatedAt;
     this.countUpdatedAt = now;
-    if (this.isActiveItself) {
+    if (this.activeChildOrSelf === this) {
       this.timeSpentOwn += timeSpentCurrent;
     }
     if (this.isCountBillable) {
@@ -182,12 +197,12 @@ class TimeTracker extends Base {
   }
 
   toString() {
-    if (this.activeEntry) {
-      const entryInactiveEvent = new CustomEvent('entry-inactive', {
+    if (this.activeChildOrSelf) {
+      const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },
         bubbles: true,
       });
-      this.activeEntry.dispatchEvent(entryInactiveEvent);
+      this.activeChildOrSelf.dispatchEvent(disactivateEvent);
     }
     return JSON.stringify(this);
   }
@@ -289,14 +304,14 @@ class TimeEntry extends Base {
   handleStartStopClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (this.isActiveItself) {
-      const entryInactiveEvent = new CustomEvent('entry-inactive', {
+    if (this.activeChildOrSelf === this) {
+      const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },
         bubbles: true,
       });
-      this.dispatchEvent(entryInactiveEvent);
+      this.dispatchEvent(disactivateEvent);
     } else {
-      const entryActiveEvent = new CustomEvent('entry-active', {
+      const entryActiveEvent = new CustomEvent('activate', {
         detail: {isBillable: this.isOwnTimeBillable},
         bubbles: true,
       });
@@ -319,7 +334,7 @@ class TimeEntry extends Base {
     } else {
       this.timeSpentBillable -= this.timeSpentOwn;
     }
-    if (this.isActiveItself) {
+    if (this.activeChildOrSelf === this) {
       this.isCountBillable = this.isOwnTimeBillable;
     }
     this.updateTimeText();
@@ -350,7 +365,6 @@ class TimeEntry extends Base {
 
     this.timeSpentOwn = data?.timeSpentOwn || 0;
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
-    this.isActiveItself = false;
   }
 
   initSelfDom(templateId) {
