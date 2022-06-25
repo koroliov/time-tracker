@@ -196,6 +196,9 @@ class TimeTracker extends Base {
     this.initSelfDom(data.templateId, data.childEntries);
     this.initChildEntries(data.childEntries, this.shadowRoot);
     this.addListeners();
+    this.setFaviconData();
+    this.favIconData.favIcon
+      .setAttribute('href', this.favIconData.inactiveHref);
   }
 
   toString() {
@@ -273,6 +276,32 @@ class TimeTracker extends Base {
         (that.percentBillableTarget / 100 * that.timeTotalTarget)
       );
     }
+  }
+
+  handleActivateEvent(e) {
+    super.handleActivateEvent(e);
+    if (this.isCountBillable) {
+      this.favIconData.favIcon
+        .setAttribute('href', this.favIconData.activeBillableHref);
+    } else {
+      this.favIconData.favIcon
+        .setAttribute('href', this.favIconData.activeNotBillableHref);
+    }
+  }
+
+  handleDisactivateEvent(e) {
+    super.handleDisactivateEvent(e);
+    this.favIconData.favIcon
+      .setAttribute('href', this.favIconData.inactiveHref);
+  }
+
+  setFaviconData() {
+    const o = Object.create(null);
+    o.activeBillableHref = document.querySelector('#green-circle').innerHTML;
+    o.activeNotBillableHref = document.querySelector('#red-circle').innerHTML;
+    o.inactiveHref = document.querySelector('#grey-circle').innerHTML;
+    o.favIcon = document.querySelector('#favicon');
+    this.favIconData = o;
   }
 }
 window.customElements.define('time-tracker', TimeTracker);
