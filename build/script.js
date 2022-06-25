@@ -211,6 +211,25 @@ class TimeTracker extends Base {
       .setAttribute('href', this.favIconData.inactiveHref);
   }
 
+  handleIsBillableChanged(e) {
+    super.handleIsBillableChanged(e);
+    if (this.activeChildOrSelf) {
+      this.setBillableFavicon();
+    }
+  }
+
+  setBillableFavicon() {
+    const fi = this.isCountBillable ? this.favIconData.activeBillableHref :
+      this.favIconData.activeNotBillableHref;
+    this.favIconData.favIcon
+      .setAttribute('href', fi);
+  }
+
+  handleEntryActiveChangedEvent(e) {
+    super.handleEntryActiveChangedEvent(e);
+    this.setBillableFavicon();
+  }
+
   toString() {
     if (this.activeChildOrSelf) {
       const disactivateEvent = new CustomEvent('disactivate', {
