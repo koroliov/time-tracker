@@ -36,7 +36,7 @@ tp('no data exist', async t => {
   t.equal(targetTotal, '5d 0h 0m 0s');
 
   const targetBillablePercent = await u.timeTrackerTargetBillablePercentGet();
-  t.equal(targetBillablePercent, '50%');
+  t.equal(targetBillablePercent, '75%');
 
   const curBillablePercentOnTimeTracker =
     await u.timeTrackerCurrentBillablePercentGet();
