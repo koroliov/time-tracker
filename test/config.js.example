@@ -10,6 +10,7 @@ const config = {
       browserName: 'chrome',
       'goog:chromeOptions': {
         args: [
+          '--headless',
           //'--window-position=1100,1000',
           '--start-maximazed',
           '--disable-notifications',
@@ -23,7 +24,6 @@ const config = {
   },
   //my data
   pathToProjectNoTrailingSlash: '/path/to/project',
-  pauseTimeout: 10000,
 };
 
 module.exports = config;
