@@ -251,6 +251,58 @@ class TimeTracker extends Base {
     super.addListeners(this.shadowRoot);
     this.shadowRoot.querySelector('.clear')
       .addEventListener('click', this.removeAllEntries.bind(this));
+    this.shadowRoot.querySelector('.percent-target')
+      .addEventListener('blur', this.handleTargetPercentChange.bind(this));
+    this.shadowRoot.querySelector('.abs-target')
+      .addEventListener('blur', this.handleTargetValueChange.bind(this));
+  }
+
+  handleTargetValueChange(e) {
+    const r = /^(\d{1,}d)\s(\d{1}h)\s(\d{1,2}m)\s(\d{1,2}s)$/;
+    const match = e.target.innerText.match(r);
+    let isValid = true;
+    if (!match) {
+      alert('Invalid value, format must be Nd (0-7)h (0-59)m (0-59)s');
+    } else {
+      const d = parseInt(match[1]);
+      const h = parseInt(match[2]);
+      if (h > 7) {
+        alert('Invalid value, hours must be in range [0-7]');
+        isValid = false;
+      }
+      const m = parseInt(match[3]);
+      if (m > 59) {
+        alert('Invalid value, minutes must be in range [0-59]');
+        isValid = false;
+      }
+      const s = parseInt(match[4]);
+      if (s > 59) {
+        alert('Invalid value, seconds must be in range [0-59]');
+        isValid = false;
+      }
+      if (isValid) {
+        const value = (((d * 8 + h) * 60 + m) * 60 + s) * 1000;
+        this.timeTotalTarget = value;
+      }
+    }
+    this.updateTargetText();
+    this.updateTimeText();
+  }
+
+  handleTargetPercentChange(e) {
+    const match = e.target.innerText.match(/^(1?\d{1,2})\s*%$/);
+    if (!match) {
+      alert('Invalid value, format must be 0-100%');
+    } else {
+      const percent = Number(match[1]);
+      if (percent >= 0 && percent <= 100) {
+        this.percentBillableTarget = percent;
+      } else {
+        alert('Invalid value, format must be 0-100%');
+      }
+    }
+    this.updateTargetText();
+    this.updateTimeText();
   }
 
   removeAllEntries(e) {
@@ -282,7 +334,15 @@ class TimeTracker extends Base {
     const clone = templateContent.cloneNode(true);
     this.shadowRoot.appendChild(clone);
     this.handleChildEntriesVisibility();
+    this.updateTargetText();
     this.updateTimeText();
+  }
+
+  updateTargetText() {
+    this.shadowRoot.querySelector('.abs-target').innerText =
+      this.convertTimeToText(this.timeTotalTarget);
+    this.shadowRoot.querySelector('.percent-target').innerText =
+      this.percentBillableTarget + '%';
   }
 
   updateTimeText() {
@@ -303,8 +363,8 @@ class TimeTracker extends Base {
       if (!that.percentBillableTarget || !that.timeTotalTarget) {
         return 0;
       }
-      return Math.floor(that.timeSpentBillable /
-        (that.percentBillableTarget / 100 * that.timeTotalTarget)
+      return Math.floor((that.timeSpentBillable /
+        (that.percentBillableTarget / 100 * that.timeTotalTarget)) * 100
       );
     }
   }
