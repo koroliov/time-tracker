@@ -199,7 +199,7 @@ class Base extends HTMLElement {
 
 //Time Tracker class
 class TimeTracker extends Base {
-  constructor(data) {
+  constructor(data = Object.create(null)) {
     data.templateId = 'time-tracker';
     super();
     this.initData(data);
@@ -231,14 +231,15 @@ class TimeTracker extends Base {
   }
 
   toString() {
-    if (this.activeChildOrSelf) {
-      const disactivateEvent = new CustomEvent('disactivate', {
-        detail: { firedFrom: this, },
-        bubbles: true,
-      });
-      this.activeChildOrSelf.dispatchEvent(disactivateEvent);
-    }
-    return JSON.stringify(this);
+    return JSON.stringify(this, (key, val) => {
+      if (key === 'activeChildOrSelf') {
+        return null;
+      } else if (key === 'favIconData') {
+        return null;
+      } else {
+        return val;
+      }
+    });
   }
 
   initData(data) {
