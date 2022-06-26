@@ -513,16 +513,23 @@ function init() {
   try {
     const localStorageVal = localStorage.getItem('time-tracker');
     data = JSON.parse(localStorageVal) || data;
-  } catch(e) {
-  }
-  document.body.appendChild(new TimeTracker(data));
+  } catch(e) {}
+  const tt = new TimeTracker(data);
+  document.body.appendChild(tt);
+
+  setAutosave();
 
   window.addEventListener('beforeunload', function() {
-    const tt = this.document.querySelector('time-tracker');
     if (tt) {
       localStorage.setItem('time-tracker', tt);
     } else {
       this.localStorage.clear();
     }
   });
+
+  function setAutosave() {
+    setInterval(() => {
+      localStorage.setItem('time-tracker', tt);
+    }, 300000);
+  }
 }
