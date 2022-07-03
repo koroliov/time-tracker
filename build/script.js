@@ -121,9 +121,36 @@ class Base extends HTMLElement {
     const te = new TimeEntry(Object.create(null));
     this.childEntries.push(te);
     this.isCollapsed = false;
+    addWhiteBlackClass(this);
     this.handleChildEntriesVisibility();
     this.setCollapseOpenLink(node);
     node.querySelector('.children').appendChild(te);
+
+    function addWhiteBlackClass(that) {
+      if (isTimeTracker() || node.classList.contains('black-white')) {
+        addClass('black-white', 'white-black');
+      } else {
+        addClass('white-black', 'black-white');
+      }
+
+      function addClass(classEven, classOdd) {
+        if (nextChildIsOdd()) {
+          te.classList.add(classOdd);
+          te.classesToPreserve.push(classOdd);
+        } else {
+          te.classList.add(classEven);
+          te.classesToPreserve.push(classEven);
+        }
+      }
+
+      function isTimeTracker() {
+        return !node.classList;
+      }
+
+      function nextChildIsOdd() {
+        return that.childEntries.length % 2;
+      }
+    }
   }
 
   setCollapseOpenLink(node) {
@@ -487,11 +514,13 @@ class TimeEntry extends Base {
 
     this.timeSpentOwn = data?.timeSpentOwn || 0;
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
+    this.classesToPreserve = data?.classesToPreserve || [];
   }
 
   initSelfDom(templateId) {
     const templateContent = document.querySelector(`#${templateId}`).content;
     const clone = templateContent.cloneNode(true);
+    this.classesToPreserve.forEach((c) => this.classList.add(c));
     this.appendChild(clone);
     this.handleChildEntriesVisibility();
     this.querySelector('.title').innerText = this.titleText;
