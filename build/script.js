@@ -538,9 +538,10 @@ window.customElements.define('time-entry', TimeEntry);
 init();
 
 function init() {
+  const storageEntryName = getStorageEntryName();
   let data = Object.create(null);
   try {
-    const localStorageVal = localStorage.getItem('time-tracker');
+    const localStorageVal = localStorage.getItem(storageEntryName);
     data = JSON.parse(localStorageVal) || data;
   } catch(e) {}
   const tt = new TimeTracker(data);
@@ -550,15 +551,19 @@ function init() {
 
   window.addEventListener('beforeunload', function() {
     if (tt) {
-      localStorage.setItem('time-tracker', tt);
+      localStorage.setItem(storageEntryName, tt);
     } else {
-      this.localStorage.clear();
+      this.localStorage.removeItem(storageEntryName);
     }
   });
 
   function setAutosave() {
     setInterval(() => {
-      localStorage.setItem('time-tracker', tt);
+      localStorage.setItem(storageEntryName, tt);
     }, 300000);
+  }
+
+  function getStorageEntryName() {
+    return location.href.replace(/^file:\/\//, '');
   }
 }
