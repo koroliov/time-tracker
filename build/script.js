@@ -281,7 +281,10 @@
       this.percentBillableTarget = data?.percentBillableTarget ||
         this.percentBillableTargetDefault;
       this.timeTotalTargetDefault =  5 * 8 * 3600000;
-      this.timeTotalTarget = data?.timeTotalTarget || this.timeTotalTargetDefault;
+      this.timeTotalTarget = data?.timeTotalTarget ||
+        this.timeTotalTargetDefault;
+      this.dateCreated = data?.dateCreated ||
+        new Date().toDateString().toLowerCase().replace(/\s+/g, '-');
     }
 
     addListeners() {
@@ -304,6 +307,11 @@
       e.preventDefault();
       e.stopPropagation();
       const json = this.toString();
+      const l = this.shadowRoot.querySelector('.export-link');
+      l.download = `time-tracker-${this.dateCreated}.json`;
+      const blob = new Blob([json], {type: 'text/json',});
+      l.href = window.URL.createObjectURL(blob);
+      l.click();
     }
 
     async handleImport(e) {
