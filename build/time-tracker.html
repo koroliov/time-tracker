@@ -20,6 +20,7 @@
   <template id="time-tracker">
     <style>
       #time-tracker {
+        position: relative;
         --base-font-size: 16px;
         --main-bg-color: white;
         font-size: calc(var(--base-font-size) * 0.9);
@@ -81,9 +82,21 @@
       .controls a {
         margin-right: var(--base-font-size);
       }
+      #message,
       .controls input,
       .controls .export-link {
         display: none;
+      }
+      #message {
+        position: absolute;
+        --width: 70%;
+        --height: calc(50vh);
+        top: 2vh;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        width: var(--width);
+        min-height: var(--height);
       }
       .children {
         grid-column: 1 / calc(var(--grid-columns) + 1);
@@ -160,6 +173,7 @@
         </div>
         <div class="children"></div>
       </div>
+      <textarea id="message"></textarea>
     </div>
   </template>
   <template id="time-entry">
@@ -194,6 +208,7 @@
       <a href="#" class="start-stop">Start</a>
       <a href="#" class="new-entry">New Entry</a>
       <a href="#" class="collapse-open">Collapse (0)</a>
+      <a href="#" class="generate-message">Generate message</a>
     </div>
 
     <div class="children"></div>
