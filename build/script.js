@@ -61,11 +61,6 @@
       this.activeChildOrSelf.dispatchEvent(disactivateEvent);
     }
 
-    handleWhenActiveItself() {
-      this.classList.add('is-active');
-      this.querySelector('.start-stop').innerText = 'Stop';
-    }
-
     handleWhenInactiveItself() {
       this.querySelector('.start-stop').innerText = 'Start';
       this.classList.remove('is-active');
@@ -240,7 +235,11 @@
 
     destroy() {
       if (this.activeChildOrSelf) {
-        this.disactivateAll();
+        const disactivateEvent = new CustomEvent('disactivate', {
+          detail: { firedFrom: this, },
+          bubbles: true,
+        });
+        this.activeChildOrSelf.dispatchEvent(disactivateEvent);
       }
       this.remove();
     }
@@ -296,13 +295,22 @@
       this.shadowRoot.querySelector('.import')
         .addEventListener('click', this.initiateImport.bind(this));
       this.shadowRoot.querySelector('.import-input')
-        .addEventListener('change', this.handleImport.bind(this));
+        .addEventListener('input', this.handleImport.bind(this));
+      this.shadowRoot.querySelector('.export')
+        .addEventListener('click', this.handleExport.bind(this));
+    }
+
+    async handleExport(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const json = this.toString();
     }
 
     async handleImport(e) {
       e.preventDefault();
       e.stopPropagation();
       const json = await e.target.files[0].text();
+      e.target.value = '';
       init(json);
     }
 
@@ -470,6 +478,11 @@
       this.updateTimeText();
     }
 
+    handleWhenActiveItself() {
+      this.classList.add('is-active');
+      this.querySelector('.start-stop').innerText = 'Stop';
+    }
+
     addListeners() {
       super.addListeners(this);
       this.querySelector('.title')
@@ -482,20 +495,16 @@
         .addEventListener('click', this.handleStartStopClick.bind(this));
     }
 
-    disactivateAll() {
-      this.disactivate(this);
-      const disactivateEvent = new CustomEvent('disactivate', {
-        detail: { firedFrom: this, },
-        bubbles: true,
-      });
-      this.dispatchEvent(disactivateEvent);
-    }
-
     handleStartStopClick(e) {
       e.preventDefault();
       e.stopPropagation();
       if (this.activeChildOrSelf === this) {
-        this.disactivateAll();
+        this.disactivate(this);
+        const disactivateEvent = new CustomEvent('disactivate', {
+          detail: { firedFrom: this, },
+          bubbles: true,
+        });
+        this.dispatchEvent(disactivateEvent);
       } else {
         const entryActiveEvent = new CustomEvent('activate', {
           detail: { isBillable: this.isOwnTimeBillable, },
