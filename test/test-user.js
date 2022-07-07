@@ -12,12 +12,14 @@ class TestUser {
   }
 
   async openApp(initData) {
-    await this.browser.url(`file://${
-      config.pathToProjectNoTraillingSlash}/build/time-tracker.html`);
+    const localStorageEntry =
+      `${config.pathToProjectNoTraillingSlash}/build/time-tracker.html`;
+    const url = `file://${localStorageEntry}`;
+    await this.browser.url(url);
     let str = 'window.localStorage.clear();';
     if (initData) {
       str += [
-        "window.localStorage.setItem('time-tracker', `",
+        "window.localStorage.setItem('" + localStorageEntry + "', `",
         initData,
         '`);',
       ].join(' ');
@@ -66,10 +68,11 @@ class TestUser {
 
   _timeEntryInnerSelectorGet(address, selectorLast) {
     const nthChildrenSelector = address.reduce((s, a, i, ar) => {
-      return `${s} > time-entry:nth-child(${a}) > .entry ${
+      return `${s} > time-entry:nth-child(${a}) ${
         i === ar.length - 1 ? '' :  '> .children'}`;
     }, '');
-   return `#time-tracker .children ${nthChildrenSelector} > ${selectorLast}`;
+   return `#time-tracker > .grid-wrapper > .children ${nthChildrenSelector} > ${
+     selectorLast}`;
   }
 
   async _timeEntryInnerValueGet(selector) {
