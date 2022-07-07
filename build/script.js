@@ -318,6 +318,8 @@
       const textArea = this.shadowRoot.querySelector('#message');
       textArea.value = e.detail.message;
       textArea.style.display = 'block';
+      textArea.focus();
+      textArea.select();
     }
 
     async handleExport(e) {
