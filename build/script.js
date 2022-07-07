@@ -1,4 +1,4 @@
-'use stirct';
+'use strict';
 (function() {
   //Base class
   class Base extends HTMLElement {
