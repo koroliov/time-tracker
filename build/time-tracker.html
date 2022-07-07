@@ -81,6 +81,9 @@
       .controls a {
         margin-right: var(--base-font-size);
       }
+      .controls input {
+        display: none;
+      }
       .children {
         grid-column: 1 / calc(var(--grid-columns) + 1);
       }
@@ -146,6 +149,9 @@
         <div class="billable percent-target">— %</div>
 
         <div class="controls">
+          <a href="#" class="import">Import</a>
+          <input type="file" class="import-input">
+          <a href="#" class="export">Export</a>
           <a href="#" class="clear">Clear</a>
           <a href="#" class="new-entry">New Entry</a>
           <a href="#" class="collapse-open">Collapse (0)</a>
