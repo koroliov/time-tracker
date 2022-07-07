@@ -301,6 +301,23 @@
         .addEventListener('input', this.handleImport.bind(this));
       this.shadowRoot.querySelector('.export')
         .addEventListener('click', this.handleExport.bind(this));
+      this.shadowRoot.querySelector('#time-tracker')
+        .addEventListener('showmessage', this.showMessageHander.bind(this));
+      this.shadowRoot.querySelector('#message')
+        .addEventListener('blur', this.hideMessageHander.bind(this));
+    }
+
+    async hideMessageHander(e) {
+      e.stopPropagation();
+      e.target.style.display = 'none';
+      e.target.value = '';
+    }
+
+    async showMessageHander(e) {
+      e.stopPropagation();
+      const textArea = this.shadowRoot.querySelector('#message');
+      textArea.value = e.detail.message;
+      textArea.style.display = 'block';
     }
 
     async handleExport(e) {
@@ -501,6 +518,52 @@
         'click', this.handleIsOwnTimeBillableClick.bind(this));
       this.querySelector('.start-stop')
         .addEventListener('click', this.handleStartStopClick.bind(this));
+      this.querySelector('.generate-message')
+        .addEventListener('click', this.generateMessageHandler.bind(this));
+    }
+
+    generateMessageArr(paddingLevel, useTotalNotOwnTime = false) {
+      const pad = '  ';
+      const commentLines = this.commentText ? this.commentText.split('\n') : [];
+      const messageOwn = [
+        `${pad.repeat(paddingLevel)}${getTime(this)} ${this.titleText}`,
+        ...commentLines.reduce((a, l) => {
+          return a.push(`${pad.repeat(paddingLevel + 1)}${l}`), a;
+        }, []),
+        `${pad.repeat(paddingLevel)}${'-'.repeat(10)}`,
+      ];
+      const childMessages = this.childEntries.reduce((a, e) => {
+        //recursion is acceptable here, no huge trees are exptected
+        return a.push(...e.generateMessageArr(paddingLevel + 1)), a;
+      }, []);
+      return [
+        ...messageOwn,
+        ...childMessages,
+      ];
+
+      function getTime(that) {
+        const ts = useTotalNotOwnTime ? that.timeSpentTotal : that.timeSpentOwn;
+        const m = Math.ceil(ts / 60000);
+        const mRemainder = m % 60;
+        const h = (m - mRemainder) / 60;
+        return `${h}h ${mRemainder}m`;
+      }
+    }
+
+    generateMessageHandler(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const messageArr = this.generateMessageArr(0, true);
+      removeLastDelimiter();
+      const showMessageEvent = new CustomEvent('showmessage', {
+        detail: { message: messageArr.join('\n'), },
+        bubbles: true,
+      });
+      this.dispatchEvent(showMessageEvent);
+
+      function removeLastDelimiter() {
+        messageArr.pop();
+      }
     }
 
     handleStartStopClick(e) {
