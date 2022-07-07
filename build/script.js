@@ -1,4 +1,5 @@
 'use stirct';
+(function() {
 //Base class
 class Base extends HTMLElement {
   constructor() {
@@ -182,7 +183,6 @@ class Base extends HTMLElement {
     this.isCountBillable = data?.isCountBillable || false;
 
     this.isCollapsed = data?.isCollapsed || false;
-    this.activeChildIndex = -1;
     this.childEntries = [];
     this.activeChildOrSelf = null;
   }
@@ -238,6 +238,13 @@ class TimeTracker extends Base {
       .setAttribute('href', this.favIconData.inactiveHref);
   }
 
+  destroy() {
+    if (this.activeChildOrSelf) {
+      this.disactivateAll();
+    }
+    this.remove();
+  }
+
   handleIsBillableChanged(e) {
     super.handleIsBillableChanged(e);
     if (this.activeChildOrSelf) {
@@ -286,6 +293,26 @@ class TimeTracker extends Base {
       .addEventListener('blur', this.handleTargetPercentChange.bind(this));
     this.shadowRoot.querySelector('.abs-target')
       .addEventListener('blur', this.handleTargetValueChange.bind(this));
+    this.shadowRoot.querySelector('.import')
+      .addEventListener('click', this.initiateImport.bind(this));
+    this.shadowRoot.querySelector('.import-input')
+      .addEventListener('change', this.handleImport.bind(this));
+  }
+
+  async handleImport(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const json = await e.target.files[0].text();
+    init(json);
+  }
+
+  initiateImport(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!window.confirm('This will overwrite current data, are you sure?')) {
+      return;
+    }
+    this.shadowRoot.querySelector('.import-input').click();
   }
 
   handleTargetValueChange(e) {
@@ -449,22 +476,26 @@ class TimeEntry extends Base {
       .addEventListener('blur', e => this.titleText = e.target.innerText);
     this.querySelector('.comment')
       .addEventListener('blur', e => this.commentText = e.target.innerText);
-    this.querySelector('.is-own-time-billable input').addEventListener('click',
-      this.handleIsOwnTimeBillableClick.bind(this));
+    this.querySelector('.is-own-time-billable input').addEventListener(
+      'click', this.handleIsOwnTimeBillableClick.bind(this));
     this.querySelector('.start-stop')
       .addEventListener('click', this.handleStartStopClick.bind(this));
+  }
+
+  disactivateAll() {
+    this.disactivate(this);
+    const disactivateEvent = new CustomEvent('disactivate', {
+      detail: { firedFrom: this, },
+      bubbles: true,
+    });
+    this.dispatchEvent(disactivateEvent);
   }
 
   handleStartStopClick(e) {
     e.preventDefault();
     e.stopPropagation();
     if (this.activeChildOrSelf === this) {
-      this.disactivate(this);
-      const disactivateEvent = new CustomEvent('disactivate', {
-        detail: { firedFrom: this, },
-        bubbles: true,
-      });
-      this.dispatchEvent(disactivateEvent);
+      this.disactivateAll();
     } else {
       const entryActiveEvent = new CustomEvent('activate', {
         detail: { isBillable: this.isOwnTimeBillable, },
@@ -535,16 +566,26 @@ class TimeEntry extends Base {
 }
 window.customElements.define('time-entry', TimeEntry);
 
+let autoSaveInterval = 0;
+let tt = null;
 init();
 
-function init() {
+function init(jsonArg) {
   const storageEntryName = getStorageEntryName();
+  const json = jsonArg || localStorage.getItem(storageEntryName);
   let data = Object.create(null);
   try {
-    const localStorageVal = localStorage.getItem(storageEntryName);
-    data = JSON.parse(localStorageVal) || data;
-  } catch(e) {}
-  const tt = new TimeTracker(data);
+    data = JSON.parse(json) || data;
+  } catch(e) {
+    if (jsonArg) {
+      alert('Failed to parse JSON data');
+      return;
+    }
+  }
+  if (tt) {
+    tt.destroy();
+  }
+  tt = new TimeTracker(data);
   document.body.appendChild(tt);
 
   setAutosave();
@@ -558,7 +599,10 @@ function init() {
   });
 
   function setAutosave() {
-    setInterval(() => {
+    if (autoSaveInterval) {
+      clearInterval(autoSaveInterval);
+    }
+    autoSaveInterval = setInterval(() => {
       localStorage.setItem(storageEntryName, tt);
     }, 300000);
   }
@@ -567,3 +611,4 @@ function init() {
     return location.href.replace(/^file:\/\//, '');
   }
 }
+})();
