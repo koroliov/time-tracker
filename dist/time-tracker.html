@@ -87,15 +87,13 @@
         display: none;
       }
       #message {
-        position: absolute;
-        --width: 70%;
-        --height: calc(50vh);
+        position: fixed;
         top: 2vh;
         left: 0;
         right: 0;
         margin: 0 auto;
-        width: var(--width);
-        min-height: var(--height);
+        width: calc(var(--main-max-width) * 0.8);
+        min-height: calc(80vh);
       }
       .children {
         grid-column: 1 / calc(var(--grid-columns) + 1);
