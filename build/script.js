@@ -528,9 +528,10 @@
       const pad = '  ';
       const commentLines = this.commentText ? this.commentText.split('\n') : [];
       const messageOwn = [
-        `${pad.repeat(paddingLevel)}${getTime(this)} ${this.titleText}`,
+        `${pad.repeat(paddingLevel)}${getTime(this)} ${
+            this.titleText.trimEnd()}`,
         ...commentLines.reduce((a, l) => {
-          return a.push(`${pad.repeat(paddingLevel + 1)}${l}`), a;
+          return a.push(`${pad.repeat(paddingLevel + 1)}${l.trimEnd()}`), a;
         }, []),
         `${pad.repeat(paddingLevel)}${'-'.repeat(10)}`,
       ];
