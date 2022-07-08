@@ -20,12 +20,12 @@
   <template id="time-tracker">
     <style>
       #time-tracker {
-        position: relative;
         --base-font-size: 16px;
         --main-bg-color: white;
+        --main-max-width: calc(var(--base-font-size) * 75);
         font-size: calc(var(--base-font-size) * 0.9);
         line-height: calc(var(--base-font-size) * 1.1);
-        max-width: 1200px;
+        max-width: var(--main-max-width);
         margin: 0 auto;
         border: 1px solid black;
         padding: 0 0 0 calc(var(--base-font-size) * 0.5);
@@ -88,15 +88,13 @@
         display: none;
       }
       #message {
-        position: absolute;
-        --width: 70%;
-        --height: calc(50vh);
+        position: fixed;
         top: 2vh;
         left: 0;
         right: 0;
         margin: 0 auto;
-        width: var(--width);
-        min-height: var(--height);
+        width: calc(var(--main-max-width) * 0.8);
+        min-height: calc(80vh);
       }
       .children {
         grid-column: 1 / calc(var(--grid-columns) + 1);
