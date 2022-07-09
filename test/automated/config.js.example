@@ -17,7 +17,7 @@ const config = {
           '--no-sandbox',
           '--disable-gpu',
           //'--user-data-dir=/path/to/project/time-tracker/test/' +
-            //'chrome-profile',
+            //'automated/chrome-profile',
         ],
       },
     }

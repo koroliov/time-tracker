@@ -1,3 +1,3 @@
 node_modules
-test/config.js
-test/chrome-profile
+test/automated/config.js
+test/automated/chrome-profile
