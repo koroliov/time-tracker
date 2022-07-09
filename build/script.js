@@ -284,8 +284,11 @@
       this.timeTotalTargetDefault =  5 * 8 * 3600000;
       this.timeTotalTarget = data?.timeTotalTarget ||
         this.timeTotalTargetDefault;
-      this.dateCreated = data?.dateCreated ||
-        new Date().toDateString().toLowerCase().replace(/\s+/g, '-');
+      this.dateCreated = data?.dateCreated || this.getNewDateCreatedValue();
+    }
+
+    getNewDateCreatedValue() {
+      return new Date().toDateString().toLowerCase().replace(/\s+/g, '-');
     }
 
     addListeners() {
@@ -421,6 +424,7 @@
       this.stopCount();
       this.updateTargetText();
       this.updateTimeText();
+      this.dateCreated = this.getNewDateCreatedValue();
     }
 
     handleChildEntriesVisibility() {
