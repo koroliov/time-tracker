@@ -1,7 +1,7 @@
 'use strict';
 
 const tp = require('tape');
-const TestUser = require('../test-user.js');
+const TestUser = require('../../test-user.js');
 
 tp('', async t => {
   const u = new TestUser();
