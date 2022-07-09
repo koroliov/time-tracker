@@ -50,6 +50,11 @@
       h1 span {
         margin: 0 calc(var(--base-font-size));
       }
+      h1 .version {
+        font-size: calc(var(--base-font-size) * 0.9);
+        margin: 0;
+        font-weight: normal;
+      }
 
       .caption {
         font-size: calc(var(--base-font-size) * 1.1);
@@ -135,7 +140,7 @@
     </style>
 
     <div id="time-tracker">
-      <h1>Time Tracker
+      <h1>Time Tracker <span class="version"></span>
         <div>
           <span>target</span>
           <span>total:</span>
@@ -161,12 +166,12 @@
         <div class="billable percent-target">— %</div>
 
         <div class="controls">
+          <a href="#" class="clear">Clear</a>
+          <a href="#" class="new-entry">New Entry</a>
           <a href="#" class="import">Import</a>
           <input type="file" class="import-input">
           <a href="#" class="export">Export</a>
           <a href="#" class="export-link"></a>
-          <a href="#" class="clear">Clear</a>
-          <a href="#" class="new-entry">New Entry</a>
           <a href="#" class="collapse-open">Collapse (0)</a>
         </div>
         <div class="children"></div>
