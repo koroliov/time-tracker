@@ -1,7 +1,7 @@
 'use strict';
 
 const tp = require('tape');
-const TestUser = require('../test-user.js');
+const TestUser = require('../../test-user.js');
 
 tp('data exist', async t => {
   const initData = require('./06-time-tracker-time-not-restored-on-startup.js');
