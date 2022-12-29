@@ -134,6 +134,19 @@
         grid-column: 1/2;
         grid-row: 4;
       }
+      .time-entry > .row-3 input {
+        vertical-align: middle;
+      }
+      .round-up-to-minutes input {
+        height: 1.5ex;
+        width: 3ex;
+        text-align: center;
+      }
+      .drag-n-drop {
+        cursor: move;
+        border: 1px solid black;
+        padding: 0 1ex;
+      }
     </style>
 
     <div id="time-tracker">
@@ -191,9 +204,18 @@
     <div class="total-value">—</div>
     <div class="total-percent">—</div>
 
-    <label class="is-own-time-billable">
-      Is own time billable: <input type="checkbox">
-    </label>
+    <div class="row-3 column-1">
+      <span class="drag-n-drop">drag-n-drop</span>
+      <label class="is-own-time-billable">
+        Is own time billable: <input type="checkbox">
+      </label>
+      <label class="round-up-to">
+        Round up to: <input type="checkbox">
+      </label>
+      <label class="round-up-to-minutes">
+        minutes: <input>
+      </label>
+    </div>
     <div class="own-title">Own:</div>
     <div class="own-value">
       <div contenteditable="true">—</div>

@@ -118,7 +118,8 @@ class TestUser {
 
   async timeEntrySetBillable(address) {
     const selector =
-      this._timeEntryInnerSelectorGet(address, '.is-own-time-billable input');
+      this._timeEntryInnerSelectorGet(address,
+        '.row-3.column-1 > .is-own-time-billable input');
     const tt = await this.browser.$('time-tracker');
     const e = await tt.shadow$(selector);
     const isChecked = await e.isSelected();
