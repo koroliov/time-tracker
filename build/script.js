@@ -249,11 +249,11 @@
       initChildEntries(childEntries = [], node) {
         //This will be a recursive call, but it's acceptable, since no huge data
         //structures are expected
-        this.childEntries = childEntries.reduce((a, c) => {
+        this.childEntries = childEntries.map((c) => {
           const te = new TimeEntry(c);
           node.querySelector('.children').appendChild(te);
-          return a.push(te), a;
-        }, []);
+          return te;
+        });
         this.setCollapseOpenLink(node);
       }
 
