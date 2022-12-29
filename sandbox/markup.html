@@ -90,6 +90,19 @@
       grid-column: 1/2;
       grid-row: 4;
     }
+    .entry > .row-3 input {
+      vertical-align: middle;
+    }
+    .round-up-to-minutes input {
+      height: 1.5ex;
+      width: 3ex;
+      text-align: center;
+    }
+    .drag-n-drop {
+      cursor: move;
+      border: 1px solid black;
+      padding: 0 1ex;
+    }
     .row-1 {
       grid-row: 1;
       font-weight: bold;
@@ -168,9 +181,18 @@
         <div class="total-value row-2 column-3">2h 23m 12s</div>
         <div class="total-percent row-2 column-4">—</div>
 
-        <label class="is-own-time-billable row-3 column-1">
-          Is own time billable: <input type="checkbox">
-        </label>
+        <div class="row-3 column-1">
+          <span class="drag-n-drop">drag-n-drop</span>
+          <label class="is-own-time-billable">
+            Is own time billable: <input type="checkbox">
+          </label>
+          <label class="round-up-to">
+            Round up to: <input type="checkbox">
+          </label>
+          <label class="round-up-to-minutes">
+            minutes: <input>
+          </label>
+        </div>
         <div class="own-title row-3 column-2">Own:</div>
         <div class="own-value row-3 column-3">
           <div contenteditable="true">
