@@ -254,11 +254,12 @@
         this.handleChildEntriesVisibility();
       }
 
-      initChildEntries(childEntries = [], timeTrackerShadowRootOrTimeEntry) {
+      initChildEntries(childEntries = [], timeTrackerShadowRootOrTimeEntry,
+          timeTracker, parentTimeEntry) {
         //This will be a recursive call, but it's acceptable, since no huge data
         //structures are expected
         this.childEntries = childEntries.map((c) => {
-          const te = new TimeEntry(c);
+          const te = new TimeEntry(c, timeTracker, parentTimeEntry);
           timeTrackerShadowRootOrTimeEntry
               .querySelector('.children').appendChild(te);
           return te;
@@ -266,10 +267,12 @@
         this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
       }
 
-      addNewTimeEntry(e, timeTrackerShadowRootOrTimeEntry) {
+      addNewTimeEntry(e, timeTrackerShadowRootOrTimeEntry, timeTracker,
+          parentTimeEntry) {
         e.preventDefault();
         e.stopPropagation();
-        const te = new TimeEntry(Object.create(null));
+        const te =
+            new TimeEntry(Object.create(null), timeTracker, parentTimeEntry);
         this.childEntries.push(te);
         this.isCollapsed = false;
         addWhiteBlackClass(this);
@@ -389,8 +392,10 @@
         data.templateId = 'time-tracker';
         super();
         this.initData(data);
+        this.timeTracker = null;
+        this.parentTimeEntry = null;
         this.initSelfDom(data.templateId);
-        this.initChildEntries(data.childEntries, this.shadowRoot);
+        this.initChildEntries(data.childEntries, this.shadowRoot, this, null);
         this.addListeners();
         this.setFaviconData();
         this.favIconData.favIcon
@@ -430,6 +435,10 @@
       toString() {
         return JSON.stringify(this, (key, val) => {
           if (key === 'activeChildOrSelf') {
+            return null;
+          } else if (key === 'timeTracker') {
+            return null;
+          } else if (key === 'parentTimeEntry') {
             return null;
           } else if (key === 'favIconData') {
             return null;
@@ -596,7 +605,7 @@
       }
 
       addNewTimeEntry(e) {
-        super.addNewTimeEntry(e, this.shadowRoot);
+        super.addNewTimeEntry(e, this.shadowRoot, this, null);
       }
 
       initSelfDom(templateId) {
@@ -679,12 +688,14 @@
 
     //Time Entry class
     class TimeEntry extends Base {
-      constructor(data, parentNode) {
+      constructor(data, timeTracker, parentTimeEntry) {
         data.templateId = 'time-entry';
         super();
         this.initData(data);
+        this.timeTracker = timeTracker;
+        this.parentTimeEntry = parentTimeEntry;
         this.initSelfDom(data.templateId);
-        this.initChildEntries(data.childEntries, this);
+        this.initChildEntries(data.childEntries, this, timeTracker, this);
         this.addListeners();
         this.updateTimeText();
       }
@@ -832,7 +843,7 @@
       }
 
       addNewTimeEntry(e) {
-        super.addNewTimeEntry(e, this);
+        super.addNewTimeEntry(e, this, this.timeTracker, this);
       }
     }
     window.customElements.define('time-entry', TimeEntry);
