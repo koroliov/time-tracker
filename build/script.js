@@ -254,18 +254,19 @@
         this.handleChildEntriesVisibility();
       }
 
-      initChildEntries(childEntries = [], node) {
+      initChildEntries(childEntries = [], timeTrackerShadowRootOrTimeEntry) {
         //This will be a recursive call, but it's acceptable, since no huge data
         //structures are expected
         this.childEntries = childEntries.map((c) => {
           const te = new TimeEntry(c);
-          node.querySelector('.children').appendChild(te);
+          timeTrackerShadowRootOrTimeEntry
+              .querySelector('.children').appendChild(te);
           return te;
         });
-        this.setCollapseOpenLink(node);
+        this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
       }
 
-      addNewTimeEntry(e, node) {
+      addNewTimeEntry(e, timeTrackerShadowRootOrTimeEntry) {
         e.preventDefault();
         e.stopPropagation();
         const te = new TimeEntry(Object.create(null));
@@ -273,14 +274,24 @@
         this.isCollapsed = false;
         addWhiteBlackClass(this);
         this.handleChildEntriesVisibility();
-        this.setCollapseOpenLink(node);
-        node.querySelector('.children').appendChild(te);
+        this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
+        timeTrackerShadowRootOrTimeEntry
+            .querySelector('.children').appendChild(te);
 
         function addWhiteBlackClass(that) {
-          if (isTimeTracker() || node.classList.contains('black-white')) {
+          if (isFirstBlackWhite()) {
             addClass('black-white', 'white-black');
           } else {
             addClass('white-black', 'black-white');
+          }
+
+          function isFirstBlackWhite() {
+            return isTimeTracker() || timeTrackerShadowRootOrTimeEntry
+                .classList.contains('black-white');
+
+            function isTimeTracker() {
+              return !timeTrackerShadowRootOrTimeEntry.classList;
+            }
           }
 
           function addClass(classEven, classOdd) {
@@ -293,18 +304,15 @@
             }
           }
 
-          function isTimeTracker() {
-            return !node.classList;
-          }
-
           function nextChildIsOdd() {
             return that.childEntries.length % 2;
           }
         }
       }
 
-      setCollapseOpenLink(node) {
-        const collapseOpenLink = node.querySelector('.controls .collapse-open');
+      setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry) {
+        const collapseOpenLink = timeTrackerShadowRootOrTimeEntry
+            .querySelector('.controls .collapse-open');
         if (this.isCollapsed) {
           collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
         } else {
@@ -312,9 +320,11 @@
         }
       }
 
-      handleChildEntriesVisibility(node) {
-        const collapseOpenLink = node.querySelector('.controls .collapse-open');
-        const childEntriesWrapper = node.querySelector('.children');
+      handleChildEntriesVisibility(timeTrackerShadowRootOrTimeEntry) {
+        const collapseOpenLink = timeTrackerShadowRootOrTimeEntry
+            .querySelector('.controls .collapse-open');
+        const childEntriesWrapper = timeTrackerShadowRootOrTimeEntry
+            .querySelector('.children');
         if (this.isCollapsed) {
           collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
           childEntriesWrapper.style.display = 'none';
