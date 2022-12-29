@@ -371,7 +371,7 @@
         data.templateId = 'time-tracker';
         super();
         this.initData(data);
-        this.initSelfDom(data.templateId, data.childEntries);
+        this.initSelfDom(data.templateId);
         this.initChildEntries(data.childEntries, this.shadowRoot);
         this.addListeners();
         this.setFaviconData();
@@ -665,7 +665,7 @@
         data.templateId = 'time-entry';
         super();
         this.initData(data);
-        this.initSelfDom(data.templateId, parentNode);
+        this.initSelfDom(data.templateId);
         this.initChildEntries(data.childEntries, this);
         this.addListeners();
         this.updateTimeText();
