@@ -151,18 +151,26 @@
         super();
       }
 
-      addListeners(node) {
-        node.querySelector('.controls .new-entry')
+      addListeners(timeTrackerShadowRootOrTimeEntry) {
+        timeTrackerShadowRootOrTimeEntry.querySelector('.controls .new-entry')
           .addEventListener('click', this.addNewTimeEntry.bind(this));
-        node.querySelector('.controls .collapse-open')
-          .addEventListener('click', this.toggleChildEntriesVisible.bind(this));
-        node.addEventListener('activate', this.handleActivateEvent.bind(this));
-        node.addEventListener('active-entry-changed',
-          this.handleEntryActiveChangedEvent.bind(this));
-        node.addEventListener('disactivate',
-          this.handleDisactivateEvent.bind(this));
-        node.addEventListener('is-billable-changed',
-          this.handleIsBillableChanged.bind(this));
+
+        timeTrackerShadowRootOrTimeEntry
+            .querySelector('.controls .collapse-open').addEventListener('click',
+                this.toggleChildEntriesVisible.bind(this));
+
+        timeTrackerShadowRootOrTimeEntry
+            .addEventListener('activate', this.handleActivateEvent.bind(this));
+
+        timeTrackerShadowRootOrTimeEntry
+            .addEventListener('active-entry-changed',
+                this.handleEntryActiveChangedEvent.bind(this));
+
+        timeTrackerShadowRootOrTimeEntry.addEventListener('disactivate',
+            this.handleDisactivateEvent.bind(this));
+
+        timeTrackerShadowRootOrTimeEntry.addEventListener('is-billable-changed',
+            this.handleIsBillableChanged.bind(this));
       }
 
       handleIsBillableChanged(e) {
