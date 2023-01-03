@@ -392,8 +392,6 @@
         data.templateId = 'time-tracker';
         super();
         this.initData(data);
-        this.timeTracker = null;
-        this.parentTimeEntry = null;
         this.initSelfDom(data.templateId);
         this.initChildEntries(data.childEntries, this.shadowRoot, this, null);
         this.addListeners();
@@ -692,9 +690,8 @@
         data.templateId = 'time-entry';
         super();
         this.initData(data);
-        this.timeTracker = timeTracker;
-        this.parentTimeEntry = parentTimeEntry;
         this.initSelfDom(data.templateId);
+        this.initDomElementReferences(timeTracker, parentTimeEntry);
         this.initChildEntries(data.childEntries, this, timeTracker, this);
         this.addListeners();
         this.updateTimeText();
@@ -827,6 +824,11 @@
         this.timeSpentOwn = data?.timeSpentOwn || 0;
         this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
         this.classesToPreserve = data?.classesToPreserve || [];
+      }
+
+      initDomElementReferences(timeTracker, parentTimeEntry) {
+        this.timeTracker = timeTracker;
+        this.parentTimeEntry = parentTimeEntry;
       }
 
       initSelfDom(templateId) {
