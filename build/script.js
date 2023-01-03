@@ -431,15 +431,15 @@
       }
 
       toString() {
+        const propertiesNotToIncludeInJson = new Set([
+          'activeChildOrSelf',
+          'timeTracker',
+          'parentTimeEntry',
+          'favIconData',
+        ]);
         return JSON.stringify(this, (key, val) => {
-          if (key === 'activeChildOrSelf') {
-            return null;
-          } else if (key === 'timeTracker') {
-            return null;
-          } else if (key === 'parentTimeEntry') {
-            return null;
-          } else if (key === 'favIconData') {
-            return null;
+          if (propertiesNotToIncludeInJson.has(key)) {
+            return;
           } else {
             return val;
           }
