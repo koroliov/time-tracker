@@ -103,7 +103,8 @@
       }
       /* children */
 
-      time-entry {
+      /* time-entry */
+      .border-and-grid-wrapper {
         border: solid 1px black;
         border-right: none;
         padding-left: calc(var(--base-font-size) * 0.5);
@@ -112,29 +113,33 @@
         grid-template-columns: 5fr repeat(3, calc(var(--base-font-size) * 6));
         column-gap: calc(var(--base-font-size) * 1);
       }
-      .white-black > .children > time-entry:nth-child(even),
-      .black-white > .children > time-entry:nth-child(odd) {
+      .white-black .children > time-entry:nth-child(even) >
+        .border-and-grid-wrapper,
+      .black-white .children > time-entry:nth-child(odd) >
+        .border-and-grid-wrapper {
         background-color: #ebebeb;
       }
-      .white-black > .children > time-entry:nth-child(odd),
-      .black-white > .children > time-entry:nth-child(even) {
+      .white-black > .border-and-grid-wrapper > .children >
+          time-entry:nth-child(odd) > .border-and-grid-wrapper,
+      .black-white > .border-and-grid-wrapper > .children >
+          time-entry:nth-child(even) > .border-and-grid-wrapper {
         background-color: var(--main-bg-color);
       }
-      time-entry.is-active {
+      .is-active > .border-and-grid-wrapper {
         background-color: #e0ffe9 !important;
       }
       /* I don't know a better way to do it in CSS */
-      time-entry > div:nth-child(1),
-      time-entry > div:nth-child(2),
-      time-entry > div:nth-child(3),
-      time-entry > div:nth-child(4) {
+      .border-and-grid-wrapper > div:nth-child(1),
+      .border-and-grid-wrapper > div:nth-child(2),
+      .border-and-grid-wrapper > div:nth-child(3),
+      .border-and-grid-wrapper > div:nth-child(4) {
         font-weight: bold;
       }
-      time-entry > .controls {
+      .border-and-grid-wrapper > .controls {
         grid-column: 1/2;
         grid-row: 4;
       }
-      time-entry > .row-3 input {
+      .border-and-grid-wrapper > .row-3 input {
         vertical-align: middle;
       }
       .round-up-to-minutes input {
@@ -190,50 +195,52 @@
     </div>
   </template>
   <template id="time-entry">
+    <div class="border-and-grid-wrapper">
+      <div>
+        <div class="title" contenteditable="true"></div>
+      </div>
+      <div class="time-spent-title">time spent</div>
+      <div class="time-spent-value">value</div>
+      <div class="time-spent-percent">percent</div>
+
+      <div>
+        <div class="comment" contenteditable="true"></div>
+      </div>
+      <div class="total-title">Total:</div>
+      <div class="total-value">—</div>
+      <div class="total-percent">—</div>
+
+      <div class="row-3 column-1">
+        <span class="drag-n-drop">drag-n-drop</span>
+        <label class="is-own-time-billable">
+          Is own time billable: <input type="checkbox">
+        </label>
+        <label class="round-up-to">
+          Round up to: <input type="checkbox">
+        </label>
+        <label class="round-up-to-minutes">
+          minutes: <input>
+        </label>
+      </div>
+      <div class="own-title">Own:</div>
+      <div class="own-value">
+        <div contenteditable="true">—</div>
+      </div>
+      <div class="own-percent">—</div>
+
+      <div class="billable-title">Billable:</div>
+      <div class="billable-value">—</div>
+      <div class="billable-percent">— %</div>
+
+      <div class="controls">
+        <a href="#" class="start-stop">Start</a>
+        <a href="#" class="new-entry">New Entry</a>
+        <a href="#" class="collapse-open">Collapse (0)</a>
+        <a href="#" class="generate-message">Generate message</a>
+      </div>
+
+      <div class="children"></div>
     <div>
-      <div class="title" contenteditable="true"></div>
-    </div>
-    <div class="time-spent-title">time spent</div>
-    <div class="time-spent-value">value</div>
-    <div class="time-spent-percent">percent</div>
-
-    <div>
-      <div class="comment" contenteditable="true"></div>
-    </div>
-    <div class="total-title">Total:</div>
-    <div class="total-value">—</div>
-    <div class="total-percent">—</div>
-
-    <div class="row-3 column-1">
-      <span class="drag-n-drop">drag-n-drop</span>
-      <label class="is-own-time-billable">
-        Is own time billable: <input type="checkbox">
-      </label>
-      <label class="round-up-to">
-        Round up to: <input type="checkbox">
-      </label>
-      <label class="round-up-to-minutes">
-        minutes: <input>
-      </label>
-    </div>
-    <div class="own-title">Own:</div>
-    <div class="own-value">
-      <div contenteditable="true">—</div>
-    </div>
-    <div class="own-percent">—</div>
-
-    <div class="billable-title">Billable:</div>
-    <div class="billable-value">—</div>
-    <div class="billable-percent">— %</div>
-
-    <div class="controls">
-      <a href="#" class="start-stop">Start</a>
-      <a href="#" class="new-entry">New Entry</a>
-      <a href="#" class="collapse-open">Collapse (0)</a>
-      <a href="#" class="generate-message">Generate message</a>
-    </div>
-
-    <div class="children"></div>
   </template>
   <template id="grey-circle">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAACBklEQVRIx8WXwWoTURSGv3OTFsyiG1GIC3EtUsRSuixiN0WooBafYUaro4jv0IUQmubclYjLQJfahUihtAuFKqm+gXFRWqwgtYFYc1x0UkhTmiFNJv92LvPx3zlzzn+EhAqiICcHMoUxCoxhnANA+AN8Qdi0rK34gt9P8j7pdCCcCyZoSIQxA+Q6HN9DeAvMa0krXYGDKLgkdSkAs3QjoYwj0qJuJQaHD8NbGGXgPGeRsAPc1ZKuH3/k2pw+CR5gLJ8ZCmBcwHgfPg5un+o4droMDNNb1cjYtBb9ahs4/qZfe+L0ZG0DV1X1Z8tVx4XULyjAReBli+NwLpjgn3yk/2rguKGLunnouCER6chhPAOQIApyUpedBM2hV/ptw5Z3ciBTKUIBRuSvjLu496atSQeMDQCcd0dTJl1dcQxGDYdQGwD4uwM+DwBcdQiVAYDXnGVtBdhLEbprQ7bhfMHvx3ElHQlLvuBrzaqeByylIbF4NBa1pBWEcgrg11rUb63Rx/EUYbuP0B+WtRdtmStOg/egL/91DeG+X/C7J4Y9Lek6WZvtMbwGzGhJP52aMnXBvyNj0whbPajgKsJNVf3QMd4eXrtfBa4Bb4BGV9ULryxj1487Tb7CPApHMZ5j3AFGOhz/hbCEo9is3q53p5alrS7jCJNAHrjcbPhAFVizIdvwBZ+oPv4DrvCs3jt9gZMAAAAASUVORK5CYII=</template>
   <template id="green-circle">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAACV0lEQVRIx8WX30uTYRTHv9/zrKm78CYK5kV0HSGRiJcSuc1NcJqt/g2L6H/wIhDqNqJLh7p3YPtlCKIXBRZa/0F2IUoGYc717n1OF7pgWW7M7fV7+z68X86Xz3POeYgmlconQ26gMqK0/QAGFOgBAAI/ofhIla1gtWslncgeNvM/NjowWYoPWbHTSjsOINTg+AFVlmg540QLmy0ZT5XG+lxxZ0FNoQVRZc54Znoxlttp2nhiefSuFTsH6GWcQ1TuUXnPiRTX//4mp6Jdjj+04uXOawoASr1ixZYmlkfHzqz4uFIvByCI9qpsvEA8E82vnjKeKo71VY37SXn+Sv8T+y493nBixW91UVeNO9sp05PYr6rRZ3UVT5biQ56pvkPnZU3V3M7EClsCAFa8afgjsUYfAwBT+WSoEjzca6I5tCvzH92/esLimqMR30yPKeutXDoaFBXth88iMCwABvw2VmpYalPGZ10XXIysEChfgPEXAfDBd7iU20Llpu9wAWsSdLtXoDjwEen9LrdnQ9KJ7CGVSz7e4fl0winLyZoyc5yADzRb8+LPWHSihU2qzPkA1atMNP+5bh4bzzyicreDRH0NeMGnp3auxVhuhypT6My9LouV+wuxpf1/LntOpLAu1qTabF6m5bgTLb4/c8t0IoU3xgvEqdxpS6OwcicbKb1tuN4CQCaaX4XlTSpfA7Ct0Evly4AXvOVE6itt+gkzURrtV9EnCk2C2tsAoO8E58Wa5zV6W3471fQgnwxVTHmQ5LBSwwCu1Ro+ldsKrHW53RvpRLYpPn4DeCPyNirucBcAAAAASUVORK5CYII=</template>
