@@ -68,7 +68,7 @@ class TestUser {
 
   _timeEntryInnerSelectorGet(address, selectorLast) {
     const nthChildrenSelector = address.reduce((s, a, i, ar) => {
-      return `${s} > time-entry:nth-child(${a}) ${
+      return `${s} > time-entry:nth-child(${a}) > .border-and-grid-wrapper ${
         i === ar.length - 1 ? '' :  '> .children'}`;
     }, '');
    return `#time-tracker > .grid-wrapper > .children ${nthChildrenSelector} > ${
