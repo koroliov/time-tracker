@@ -444,7 +444,7 @@
       initData(data) {
         super.initData(data);
         this.version = data.version;
-        this.percentBillableTargetDefault = 75;
+        this.percentBillableTargetDefault = 100;
         this.percentBillableTarget = data?.percentBillableTarget ||
           this.percentBillableTargetDefault;
         this.timeTotalTargetDefault =  5 * 8 * 3600000;
