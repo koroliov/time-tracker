@@ -25,16 +25,18 @@
       try {
         data = JSON.parse(json);
       } catch(e) {
-        const message = [
-          `Failed to restore data from localStorage entry ${storageEntryName}`,
-          'either it is corrupted or an unknown error has occurred',
-          'Would you like to delete the entry and start a new time-tracker?',
-        ].join('\n');
-        if (window.confirm(message)) {
-          window.localStorage.removeItem(storageEntryName);
-          createTimeTrackerFromScratch();
-        }
-        return;
+        return Promise.resolve().then(() => {
+          const message = [
+            `Failed to restore data from localStorage entry`,
+            `${storageEntryName}: either it is corrupted or an unknown error`,
+            'has occurred. Would you like to delete the entry and start',
+            'a new time-tracker?',
+          ].join('\n');
+          if (window.confirm(message)) {
+            window.localStorage.removeItem(storageEntryName);
+            createTimeTrackerFromScratch();
+          }
+        });
       }
       const {isAcceptable, versionToRestore} = checkVersion(data);
       if (isAcceptable) {
@@ -585,20 +587,22 @@
       clear(e) {
         e.preventDefault();
         e.stopPropagation();
-        if (!window.confirm('Are you sure?')) {
-          return;
-        }
-        this.timeSpentTotal = 0;
-        this.timeSpentBillable = 0;
-        this.timeTotalTarget = this.timeTotalTargetDefault;
-        this.percentBillableTarget = this.percentBillableTargetDefault;
-        this.childEntries = [];
-        this.shadowRoot.querySelector('.children').innerHTML = '';
-        this.setCollapseOpenLink(this.shadowRoot);
-        this.stopCount();
-        this.updateTargetText();
-        this.updateTimeText();
-        this.dateCreated = this.getNewDateCreatedValue();
+        return Promise.resolve().then(() => {
+          if (!window.confirm('Are you sure?')) {
+            return;
+          }
+          this.timeSpentTotal = 0;
+          this.timeSpentBillable = 0;
+          this.timeTotalTarget = this.timeTotalTargetDefault;
+          this.percentBillableTarget = this.percentBillableTargetDefault;
+          this.childEntries = [];
+          this.shadowRoot.querySelector('.children').innerHTML = '';
+          this.setCollapseOpenLink(this.shadowRoot);
+          this.stopCount();
+          this.updateTargetText();
+          this.updateTimeText();
+          this.dateCreated = this.getNewDateCreatedValue();
+        });
       }
 
       handleChildEntriesVisibility() {
