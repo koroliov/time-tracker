@@ -387,12 +387,17 @@
         data.templateId = 'time-tracker';
         super();
         this.initData(data);
+        this.initAuxProperties();
         this.initSelfDom(data.templateId);
         this.initChildEntries(data.childEntries, this.shadowRoot, this, null);
         this.addListeners();
         this.setFaviconData();
         this.favIconData.favIcon
           .setAttribute('href', this.favIconData.inactiveHref);
+      }
+
+      initAuxProperties() {
+        this.elementBeingDragged = null;
       }
 
       destroy() {
@@ -430,6 +435,7 @@
           'activeChildOrSelf',
           'timeTracker',
           'parentTimeEntry',
+          'elementBeingDragged',
           'favIconData',
         ]);
         return JSON.stringify(this, (key, val) => {
@@ -709,6 +715,162 @@
           .addEventListener('click', this.handleStartStopClick.bind(this));
         this.querySelector('.generate-message')
           .addEventListener('click', this.generateMessageHandler.bind(this));
+
+        this.addEventListener('mousedown', this.mouseDownHander.bind(this));
+
+        this.addEventListener('dragstart', this.dragStartHandler.bind(this));
+        this.addEventListener('dragenter', this.dragEnterHandler.bind(this));
+        this.addEventListener('dragleave', this.dragLeaveHandler.bind(this));
+        this.addEventListener('dragover', this.dragOverHandler.bind(this));
+        this.addEventListener('dragend', this.dragEndHandler.bind(this));
+        this.addEventListener('drop', this.dropHandler.bind(this));
+      }
+
+      mouseDownHander(e) {
+        this.mouseDownOnEl = e.target;
+        e.stopPropagation();
+      }
+
+      dragStartHandler(e) {
+        e.stopPropagation();
+        if (this.mouseDownOnEl !== this.dragEl) {
+          e.preventDefault();
+          return;
+        }
+        this.timeTracker.elementBeingDragged = this;
+        //console.log('start');
+      }
+
+      dragEndHandler(e) {
+        e.stopPropagation();
+        this.mouseDownOnEl = null;
+        this.timeTracker.elementBeingDragged = null;
+      }
+
+      dragEnterHandler(e) {
+        e.stopPropagation();
+        //console.log('enter');
+      }
+
+      dragLeaveHandler(e) {
+        e.stopPropagation();
+        if (e.target instanceof TimeEntry) {
+          if (entryIsBeingDraggedBackOnItselfDownwards()) {
+            e.target.classList.remove('padding-bottom');
+          }
+          if (entryIsBeingDraggedBackOnItselUpwards()) {
+            e.target.classList.remove('padding-top');
+          }
+          e.target.childEntries[0]?.classList.remove('padding-top');
+        }
+
+        function entryIsBeingDraggedBackOnItselfDownwards() {
+          return e.target?.nextElementSibling ===
+              e.target.timeTracker.elementBeingDragged;
+        }
+
+        function entryIsBeingDraggedBackOnItselUpwards() {
+          return e.target?.prevElementSibling ===
+              e.target.timeTracker.elementBeingDragged;
+        }
+      }
+
+      dragOverHandler(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!(this instanceof TimeEntry)) {
+          return;
+        }
+        const dragOverZone = determineDragOverZone(this, e);
+        if (dragOverZone === 'top') {
+          this.showSiblingTopDropArea();
+        } else if (dragOverZone === 'bottom') {
+          if (this.isCollapsed || !this.childEntries.length) {
+            this.showSiblingBottomDropArea();
+          }
+        } else {
+          this.hideSiblingDropArea(e.target);
+          //if (this.isCollapsed || !this.childEntries.length) {
+          //  this.showDropAsChildArea();
+          //}
+        }
+
+        function determineDragOverZone(thisTimeEntry, event) {
+          const borderWrapper =
+              thisTimeEntry.querySelector('.border-and-grid-wrapper');
+          const childrenEl = thisTimeEntry.querySelector('.children');
+          if (borderWrapper.offsetParent !== childrenEl.offsetParent) {
+            throw new Error([
+              'Sorry, an error has occurred, please report to',
+              'd.koroliov@gmail.com with steps to reproduce',
+            ].join('\n'));
+          }
+          if (e.clientX < childrenEl.offsetLeft) {
+            return null;
+          }
+          const boundingRect = borderWrapper.getBoundingClientRect();
+          const mouseYInElement = e.clientY - boundingRect.y;
+          const borderWrapperHeightWoChildrenSection =
+            borderWrapper.offsetHeight - childrenEl.offsetHeight;
+          const rel = mouseYInElement / borderWrapperHeightWoChildrenSection;
+          if (rel < 0.3) {
+            return 'top';
+          } else if (rel > 0.7) {
+            return 'bottom';
+          } else {
+            return null;
+          }
+        }
+      }
+
+      dropHandler(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.hideSiblingDropArea();
+      }
+
+      showDropAsChildArea() {
+        this.classList.add('drop-as-child-area');
+      }
+
+      showSiblingTopDropArea() {
+        const paddingTopCssClass = 'padding-top';
+        const paddingBottomCssClass = 'padding-bottom';
+        const prevTimeEntry = this.previousElementSibling;
+        if (this.classList.contains(paddingTopCssClass)) {
+          return;
+        } else if (prevTimeEntry?.classList.contains(paddingBottomCssClass)) {
+          return;
+        } else {
+          this.classList.add(paddingTopCssClass);
+        }
+      }
+
+      showSiblingBottomDropArea() {
+        const paddingTopCssClass = 'padding-top';
+        const paddingBottomCssClass = 'padding-bottom';
+        const nextTimeEntry = this.nextElementSibling;
+        if (this.classList.contains(paddingBottomCssClass)) {
+          return;
+        } else if (nextTimeEntry?.classList.contains(paddingTopCssClass)) {
+          return;
+        } else {
+          this.classList.add(paddingBottomCssClass);
+        }
+      }
+
+      hideSiblingDropArea(eventTarget) {
+        const prevTimeEntry = this.previousElementSibling;
+        const nextTimeEntry = this.nextElementSibling;
+        prevTimeEntry?.classList.remove('padding-bottom');
+        nextTimeEntry?.classList.remove('padding-top');
+        eventTarget?.classList.remove('padding-bottom');
+        eventTarget?.classList.remove('padding-top');
+        this.childEntries[0]?.classList.remove('padding-bottom', 'padding-top');
+        this.classList.remove('padding-bottom', 'padding-top');
+      }
+
+      isValidDropTargetForBeingDraggedElement() {
       }
 
       generateMessageArr(paddingLevel, useTotalNotOwnTime = false) {
@@ -824,6 +986,8 @@
       initDomElementReferences(timeTracker, parentTimeEntry) {
         this.timeTracker = timeTracker;
         this.parentTimeEntry = parentTimeEntry;
+        this.dragEl = this.querySelector('.drag-n-drop');
+        this.mouseDownOnEl = null;
       }
 
       initSelfDom(templateId) {
@@ -831,6 +995,7 @@
           document.querySelector(`#${templateId}`).content;
         const clone = templateContent.cloneNode(true);
         this.classesToPreserve.forEach((c) => this.classList.add(c));
+        this.setAttribute('draggable', 'true');
         this.appendChild(clone);
         this.handleChildEntriesVisibility();
         this.querySelector('.title').innerText = this.titleText;
