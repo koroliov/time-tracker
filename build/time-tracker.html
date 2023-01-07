@@ -127,12 +127,20 @@
         grid-template-columns: 5fr repeat(3, calc(var(--base-font-size) * 6));
         column-gap: calc(var(--base-font-size) * 1);
       }
-      .white-black .children > time-entry:nth-child(even) >
-        .border-and-grid-wrapper,
-      .black-white .children > time-entry:nth-child(odd) >
-        .border-and-grid-wrapper {
+      .white-black > .children > time-entry:nth-child(even) >
+          .border-and-grid-wrapper,
+      .black-white > .children > time-entry:nth-child(odd) >
+          .border-and-grid-wrapper,
+      .white-black > .border-and-grid-wrapper > .children >
+          time-entry:nth-child(even) > .border-and-grid-wrapper,
+      .black-white > .border-and-grid-wrapper > .children >
+          time-entry:nth-child(odd) > .border-and-grid-wrapper {
         background-color: #ebebeb;
       }
+      .white-black > .children > time-entry:nth-child(odd) >
+          .border-and-grid-wrapper,
+      .black-white > .children > time-entry:nth-child(even) >
+          .border-and-grid-wrapper,
       .white-black > .border-and-grid-wrapper > .children >
           time-entry:nth-child(odd) > .border-and-grid-wrapper,
       .black-white > .border-and-grid-wrapper > .children >
