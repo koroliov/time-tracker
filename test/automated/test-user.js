@@ -44,7 +44,7 @@ class TestUser {
     let selector;
     if (address.length) {
       selector =
-        this._timeEntryInnerSelectorGet(address, '.controls .new-entry');
+        this.#timeEntryInnerSelectorGet(address, '.controls .new-entry');
     } else {
       selector = `#time-tracker > .grid-wrapper > .controls .new-entry`;
     }
@@ -66,7 +66,7 @@ class TestUser {
     return await e.getText() === '';
   }
 
-  _timeEntryInnerSelectorGet(address, selectorLast) {
+  #timeEntryInnerSelectorGet(address, selectorLast) {
     const nthChildrenSelector = address.reduce((s, a, i, ar) => {
       return `${s} > time-entry:nth-child(${a}) > .border-and-grid-wrapper ${
         i === ar.length - 1 ? '' :  '> .children'}`;
@@ -75,37 +75,37 @@ class TestUser {
      selectorLast}`;
   }
 
-  async _timeEntryInnerValueGet(selector) {
+  async #timeEntryInnerValueGet(selector) {
     const tt = await this.browser.$('time-tracker');
     const e = await tt.shadow$(selector);
     return await e.getText();
   }
 
   async timeEntryTotalTimeGet(address) {
-    const selector = this._timeEntryInnerSelectorGet(address, '.total-value');
-    return await this._timeEntryInnerValueGet(selector);
+    const selector = this.#timeEntryInnerSelectorGet(address, '.total-value');
+    return await this.#timeEntryInnerValueGet(selector);
   }
 
   async timeEntryOwnTimeGet(address) {
-    const selector = this._timeEntryInnerSelectorGet(address, '.own-value');
-    return await this._timeEntryInnerValueGet(selector);
+    const selector = this.#timeEntryInnerSelectorGet(address, '.own-value');
+    return await this.#timeEntryInnerValueGet(selector);
   }
 
   async timeEntryBillableTimeGet(address) {
     const selector =
-      this._timeEntryInnerSelectorGet(address, '.billable-value');
-    return await this._timeEntryInnerValueGet(selector);
+      this.#timeEntryInnerSelectorGet(address, '.billable-value');
+    return await this.#timeEntryInnerValueGet(selector);
   }
 
   async timeEntryBillableTimePercentGet(address) {
     const selector =
-      this._timeEntryInnerSelectorGet(address, '.billable-percent');
-    return await this._timeEntryInnerValueGet(selector);
+      this.#timeEntryInnerSelectorGet(address, '.billable-percent');
+    return await this.#timeEntryInnerValueGet(selector);
   }
 
   async timeEntryStart(address) {
     const selector =
-      this._timeEntryInnerSelectorGet(address, '.controls .start-stop');
+      this.#timeEntryInnerSelectorGet(address, '.controls .start-stop');
     const tt = await this.browser.$('time-tracker');
     const e = await tt.shadow$(selector);
     const text = await e.getText();
@@ -118,7 +118,7 @@ class TestUser {
 
   async timeEntrySetBillable(address) {
     const selector =
-      this._timeEntryInnerSelectorGet(address,
+      this.#timeEntryInnerSelectorGet(address,
         '.row-3.column-1 > .is-own-time-billable input');
     const tt = await this.browser.$('time-tracker');
     const e = await tt.shadow$(selector);
