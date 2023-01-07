@@ -438,6 +438,7 @@
           'elementBeingDragged',
           'favIconData',
           'percentBillableTargetDefault',
+          'timeTotalTargetDefault',
         ]);
         return JSON.stringify(this, (key, val) => {
           if (propertiesNotToIncludeInJson.has(key)) {
