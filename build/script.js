@@ -437,6 +437,7 @@
           'parentTimeEntry',
           'elementBeingDragged',
           'favIconData',
+          'percentBillableTargetDefault',
         ]);
         return JSON.stringify(this, (key, val) => {
           if (propertiesNotToIncludeInJson.has(key)) {
