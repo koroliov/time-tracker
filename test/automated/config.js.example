@@ -18,12 +18,17 @@ const config = {
           '--disable-gpu',
           //'--user-data-dir=/path/to/project/time-tracker/test/' +
             //'automated/chrome-profile',
+          //For Windows
+          //'--user-data-dir=C:/Users/foo/Documents/' +
+            //'path-to-project/test/automated/chrome-profile',
         ],
       },
     }
   },
   //my data
   pathToProjectNoTraillingSlash: '/path/to/project',
+  //For Windows
+  //pathToProjectNoTraillingSlash: '/C:/Users/path/to/project',
 };
 
 module.exports = config;
