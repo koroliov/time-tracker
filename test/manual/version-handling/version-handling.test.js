@@ -1,3 +1,6 @@
+//These code snippets are supposed to be run from the browser's console when
+//the time tracker page is open
+
 //Open first time
 //
 //run this, then reload
