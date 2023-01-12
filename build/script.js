@@ -400,6 +400,7 @@
 
       initAuxProperties() {
         this.elementBeingDragged = null;
+        this.entryWithDropAreaCssClasses = null;
       }
 
       destroy() {
@@ -441,6 +442,8 @@
           'favIconData',
           'percentBillableTargetDefault',
           'timeTotalTargetDefault',
+          'mouseDownOnEl',
+          'entryWithDropAreaCssClasses',
         ]);
         return JSON.stringify(this, (key, val) => {
           if (propertiesNotToIncludeInJson.has(key)) {
@@ -744,62 +747,60 @@
           return;
         }
         this.timeTracker.elementBeingDragged = this;
-        //console.log('start');
       }
 
       dragEndHandler(e) {
         e.stopPropagation();
         this.mouseDownOnEl = null;
         this.timeTracker.elementBeingDragged = null;
+        this.timeTracker.entryWithDropAreaCssClasses.removeDropAreaCssClasses();
+        this.timeTracker.entryWithDropAreaCssClasses = null;
       }
 
       dragEnterHandler(e) {
         e.stopPropagation();
-        //console.log('enter');
       }
 
       dragLeaveHandler(e) {
         e.stopPropagation();
-        if (e.target instanceof TimeEntry) {
-          if (entryIsBeingDraggedBackOnItselfDownwards()) {
-            e.target.classList.remove('padding-bottom');
-          }
-          if (entryIsBeingDraggedBackOnItselUpwards()) {
-            e.target.classList.remove('padding-top');
-          }
-          e.target.childEntries[0]?.classList.remove('padding-top');
-        }
+        //if (e.target instanceof TimeEntry) {
+        //  if (entryIsBeingDraggedBackOnItselfDownwards()) {
+        //    e.target.classList.remove('padding-bottom');
+        //  }
+        //  if (entryIsBeingDraggedBackOnItselUpwards()) {
+        //    e.target.classList.remove('padding-top');
+        //  }
+        //  e.target.childEntries[0]?.classList.remove('padding-top');
+        //}
 
-        function entryIsBeingDraggedBackOnItselfDownwards() {
-          return e.target?.nextElementSibling ===
-              e.target.timeTracker.elementBeingDragged;
-        }
+        //function entryIsBeingDraggedBackOnItselfDownwards() {
+        //  return e.target?.nextElementSibling ===
+        //      e.target.timeTracker.elementBeingDragged;
+        //}
 
-        function entryIsBeingDraggedBackOnItselUpwards() {
-          return e.target?.prevElementSibling ===
-              e.target.timeTracker.elementBeingDragged;
-        }
+        //function entryIsBeingDraggedBackOnItselUpwards() {
+        //  return e.target?.prevElementSibling ===
+        //      e.target.timeTracker.elementBeingDragged;
+        //}
       }
 
       dragOverHandler(e) {
         e.preventDefault();
         e.stopPropagation();
-        if (!(this instanceof TimeEntry)) {
-          return;
-        }
         const dragOverZone = determineDragOverZone(this, e);
-        if (dragOverZone === 'top') {
-          this.showSiblingTopDropArea();
-        } else if (dragOverZone === 'bottom') {
-          if (this.isCollapsed || !this.childEntries.length) {
-            this.showSiblingBottomDropArea();
-          }
-        } else {
-          this.hideSiblingDropArea(e.target);
-          //if (this.isCollapsed || !this.childEntries.length) {
-          //  this.showDropAsChildArea();
-          //}
-        }
+        this.handleDropAreaCssClasses(dragOverZone);
+        //if (dragOverZone === 'top') {
+        //  this.showSiblingTopDropArea();
+        //} else if (dragOverZone === 'bottom') {
+        //  if (this.isCollapsed || !this.childEntries.length) {
+        //    this.showSiblingBottomDropArea();
+        //  }
+        //} else {
+        //  this.hideSiblingDropArea(e.target);
+        //  //if (this.isCollapsed || !this.childEntries.length) {
+        //  //  this.showDropAsChildArea();
+        //  //}
+        //}
 
         function determineDragOverZone(thisTimeEntry, event) {
           const borderWrapper =
@@ -824,7 +825,7 @@
           } else if (rel > 0.7) {
             return 'bottom';
           } else {
-            return null;
+            return 'middle';
           }
         }
       }
@@ -832,52 +833,11 @@
       dropHandler(e) {
         e.preventDefault();
         e.stopPropagation();
-        this.hideSiblingDropArea();
       }
 
-      showDropAsChildArea() {
-        this.classList.add('drop-as-child-area');
-      }
+      handleDropAreaCssClasses(dragOverZone) {}
 
-      showSiblingTopDropArea() {
-        const paddingTopCssClass = 'padding-top';
-        const paddingBottomCssClass = 'padding-bottom';
-        const prevTimeEntry = this.previousElementSibling;
-        if (this.classList.contains(paddingTopCssClass)) {
-          return;
-        } else if (prevTimeEntry?.classList.contains(paddingBottomCssClass)) {
-          return;
-        } else {
-          this.classList.add(paddingTopCssClass);
-        }
-      }
-
-      showSiblingBottomDropArea() {
-        const paddingTopCssClass = 'padding-top';
-        const paddingBottomCssClass = 'padding-bottom';
-        const nextTimeEntry = this.nextElementSibling;
-        if (this.classList.contains(paddingBottomCssClass)) {
-          return;
-        } else if (nextTimeEntry?.classList.contains(paddingTopCssClass)) {
-          return;
-        } else {
-          this.classList.add(paddingBottomCssClass);
-        }
-      }
-
-      hideSiblingDropArea(eventTarget) {
-        const prevTimeEntry = this.previousElementSibling;
-        const nextTimeEntry = this.nextElementSibling;
-        prevTimeEntry?.classList.remove('padding-bottom');
-        nextTimeEntry?.classList.remove('padding-top');
-        eventTarget?.classList.remove('padding-bottom');
-        eventTarget?.classList.remove('padding-top');
-        this.childEntries[0]?.classList.remove('padding-bottom', 'padding-top');
-        this.classList.remove('padding-bottom', 'padding-top');
-      }
-
-      isValidDropTargetForBeingDraggedElement() {
-      }
+      removeDropAreaCssClasses() {}
 
       generateMessageArr(paddingLevel, useTotalNotOwnTime = false) {
         const pad = '  ';
