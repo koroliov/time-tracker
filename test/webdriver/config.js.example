@@ -17,10 +17,10 @@ const config = {
           '--no-sandbox',
           '--disable-gpu',
           //'--user-data-dir=/path/to/project/time-tracker/test/' +
-            //'automated/chrome-profile',
+            //'webdriver/chrome-profile',
           //For Windows
           //'--user-data-dir=C:/Users/foo/Documents/' +
-            //'path-to-project/test/automated/chrome-profile',
+            //'path-to-project/test/webdriver/chrome-profile',
         ],
       },
     }
