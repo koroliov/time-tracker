@@ -1,5 +1,5 @@
 'use strict';
-const handleDropAreaCssClassesModule =
+const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
     require('./handle-drop-area-css-classes.js');
 
 (function() {

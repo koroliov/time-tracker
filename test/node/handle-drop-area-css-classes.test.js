@@ -1,16 +1,11 @@
 'use strict';
 const tp = require('tape');
-const handleDropAreaCssClasses =
-    require('../../src/handle-drop-area-css-classes.js');
+const {
+    handleDropAreaCssClasses,
+    dropAreaCssClassesMap,
+  } = require('../../src/handle-drop-area-css-classes.js');
+const allowedDropAreaCssClassesSet = new Set(dropAreaCssClassesMap.keys());
 
-const siblingTopDropAreaCssClass = 'drop-as-siblint-top';
-const siblingBottomDropAreaCssClass = 'drop-as-sibling-bottom';
-const childDropAreaCssClass = 'drop-as-child';
-const allowedDropAreaCssClasses = new Set([
-  siblingTopDropAreaCssClass,
-  siblingBottomDropAreaCssClass,
-  childDropAreaCssClass
-]);
 
 tp('dragOverZone = middle', t => {
   const mockTimeTracker = {
@@ -127,7 +122,7 @@ function getClassListClass() {
 
     add(...tokens) {
       tokens.forEach((t) => {
-        if (!allowedDropAreaCssClasses.has(t)) {
+        if (!allowedDropAreaCssClassesSet.has(t)) {
           throw new Error(`Unexpected CSS class added ${t}`);
         }
         this.#list.add(t);
@@ -136,7 +131,7 @@ function getClassListClass() {
 
     remove(...tokens) {
       tokens.forEach((t) => {
-        if (!allowedDropAreaCssClasses.has(t)) {
+        if (!allowedDropAreaCssClassesSet.has(t)) {
           throw new Error(`Unexpected CSS class removed ${t}`);
         }
         this.#list.delete(t);
