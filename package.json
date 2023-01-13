@@ -5,7 +5,7 @@
   "main": "",
   "directories": {},
   "scripts": {
-    "test-webdriver-full": "tape ./test/automated/cases/**/*.test.js",
+    "test-webdriver-full": "tape ./test/webdriver/cases/**/*.test.js",
     "test-node-full": "tape ./test/node/**/*.test.js",
     "build": "browserify --entry ./src/script.js --outfile ./build/script.js"
   },
