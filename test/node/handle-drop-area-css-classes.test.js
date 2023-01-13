@@ -4,7 +4,7 @@ const {
     handleDropAreaCssClasses,
     dropAreaCssClassesMap,
   } = require('../../src/handle-drop-area-css-classes.js');
-const allowedDropAreaCssClassesSet = new Set(dropAreaCssClassesMap.keys());
+const allowedDropAreaCssClassesSet = new Set(dropAreaCssClassesMap.values());
 const spewDiffs = require('../utils/spew-diffs.js');
 
 tp('dragOverZone = middle', t => {
