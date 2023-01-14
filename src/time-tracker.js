@@ -6,9 +6,10 @@ const Base = require('./base.js');
 const TimeEntry = require('./time-entry.js');
 
 class TimeTracker extends Base {
-  constructor(data) {
+  constructor(data, initFunc) {
     data.templateId = 'time-tracker';
     super();
+    this.#initFunc = initFunc;
     this.initData(data);
     this.initAuxProperties();
     this.initSelfDom(data.templateId);
@@ -18,6 +19,8 @@ class TimeTracker extends Base {
     this.favIconData.favIcon
       .setAttribute('href', this.favIconData.inactiveHref);
   }
+
+  #initFunc
 
   initAuxProperties() {
     this.entryBeingDragged = null;
@@ -142,7 +145,7 @@ class TimeTracker extends Base {
     e.stopPropagation();
     const json = await e.target.files[0].text();
     e.target.value = '';
-    init(json);
+    this.#initFunc.call(undefined, json);
   }
 
   initiateImport(e) {

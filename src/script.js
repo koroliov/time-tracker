@@ -42,7 +42,7 @@
       const {isAcceptable, versionToRestore} = checkVersion(data);
       if (isAcceptable) {
         data.version = version;
-        tt = new TimeTracker(data);
+        tt = new TimeTracker(data, init);
         document.body.appendChild(tt);
       } else {
         const message = [
@@ -64,7 +64,7 @@
       function createTimeTrackerFromScratch() {
         const data = Object.create(null);
         data.version = version;
-        tt = new TimeTracker(data);
+        tt = new TimeTracker(data, init);
         document.body.appendChild(tt);
       }
 
@@ -86,7 +86,7 @@
       const {isAcceptable, versionToRestore} = checkVersion(data);
       if (isAcceptable) {
         tt.destroy();
-        tt = new TimeTracker(data);
+        tt = new TimeTracker(data, init);
         document.body.appendChild(tt);
       } else if (versionToRestore === 'unknown') {
         alert(brokenDataErrorMessage);
