@@ -34,6 +34,9 @@ function handleDropAreaCssClasses(dragOverZone) {
         .contains(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM)) {
       return;
     }
+    if (this.previousElementSibling === this.timeTracker.entryBeingDragged) {
+      return;
+    }
     this.classList.remove(DROP_AREA_CSS_CLASSES.CHILD);
     this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
     this.timeTracker.entryWithDropAreaCssClasses = this;
