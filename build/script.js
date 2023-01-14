@@ -59,16 +59,16 @@ const {
 } = require('./handle-drop-area-css-classes.js');
 
 (function() {
+  const { TimeTracker, } = defineClasses();
+  let autoSaveInterval = 0;
+  let tt = null;
   init();
 
   function init(jsonArg) {
-    let autoSaveInterval = 0;
-    let tt = null;
     const version = [0, 0, 0];
     const versionStr = version.join('.');
     const storageEntryName = getStorageEntryName();
     const {restoreType, json} = getRestoreData();
-    const { TimeTracker, } = defineClasses();
     if (restoreType === 'fileImport') {
       attemptRestoreFromFileImport();
     } else if (restoreType === 'localStorage') {
