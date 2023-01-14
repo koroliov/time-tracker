@@ -356,7 +356,7 @@ module.exports = {
       const {isAcceptable, versionToRestore} = checkVersion(data);
       if (isAcceptable) {
         data.version = version;
-        tt = new TimeTracker(data);
+        tt = new TimeTracker(data, init);
         document.body.appendChild(tt);
       } else {
         const message = [
@@ -378,7 +378,7 @@ module.exports = {
       function createTimeTrackerFromScratch() {
         const data = Object.create(null);
         data.version = version;
-        tt = new TimeTracker(data);
+        tt = new TimeTracker(data, init);
         document.body.appendChild(tt);
       }
 
@@ -400,7 +400,7 @@ module.exports = {
       const {isAcceptable, versionToRestore} = checkVersion(data);
       if (isAcceptable) {
         tt.destroy();
-        tt = new TimeTracker(data);
+        tt = new TimeTracker(data, init);
         document.body.appendChild(tt);
       } else if (versionToRestore === 'unknown') {
         alert(brokenDataErrorMessage);
@@ -766,9 +766,10 @@ const Base = require('./base.js');
 const TimeEntry = require('./time-entry.js');
 
 class TimeTracker extends Base {
-  constructor(data) {
+  constructor(data, initFunc) {
     data.templateId = 'time-tracker';
     super();
+    this.#initFunc = initFunc;
     this.initData(data);
     this.initAuxProperties();
     this.initSelfDom(data.templateId);
@@ -778,6 +779,8 @@ class TimeTracker extends Base {
     this.favIconData.favIcon
       .setAttribute('href', this.favIconData.inactiveHref);
   }
+
+  #initFunc
 
   initAuxProperties() {
     this.entryBeingDragged = null;
@@ -854,21 +857,21 @@ class TimeTracker extends Base {
   addListeners() {
     super.addListeners(this.shadowRoot);
     this.shadowRoot.querySelector('.clear')
-      .addEventListener('click', this.clear.bind(this));
+        .addEventListener('click', this.clear.bind(this));
     this.shadowRoot.querySelector('.percent-target')
-      .addEventListener('blur', this.handleTargetPercentChange.bind(this));
+        .addEventListener('blur', this.handleTargetPercentChange.bind(this));
     this.shadowRoot.querySelector('.abs-target')
-      .addEventListener('blur', this.handleTargetValueChange.bind(this));
+        .addEventListener('blur', this.handleTargetValueChange.bind(this));
     this.shadowRoot.querySelector('.import')
-      .addEventListener('click', this.initiateImport.bind(this));
+        .addEventListener('click', this.initiateImport.bind(this));
     this.shadowRoot.querySelector('.import-input')
-      .addEventListener('input', this.handleImport.bind(this));
+        .addEventListener('input', this.handleImport.bind(this));
     this.shadowRoot.querySelector('.export')
-      .addEventListener('click', this.handleExport.bind(this));
+        .addEventListener('click', this.handleExport.bind(this));
     this.shadowRoot.querySelector('#time-tracker')
-      .addEventListener('showmessage', this.showMessageHander.bind(this));
+        .addEventListener('showmessage', this.showMessageHander.bind(this));
     this.shadowRoot.querySelector('#message')
-      .addEventListener('blur', this.hideMessageHander.bind(this));
+        .addEventListener('blur', this.hideMessageHander.bind(this));
   }
 
   async hideMessageHander(e) {
@@ -902,7 +905,7 @@ class TimeTracker extends Base {
     e.stopPropagation();
     const json = await e.target.files[0].text();
     e.target.value = '';
-    init(json);
+    this.#initFunc.call(undefined, json);
   }
 
   initiateImport(e) {
