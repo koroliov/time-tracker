@@ -113,6 +113,7 @@ function rigMockTimeTracker(mockTimeTracker) {
       prevChild.nextElementSibling = child;
     }
     child.classList = new ClassList(child.classList);
+    child.timeTracker = mockTimeTracker;
     if (child.childEntries.length) {
       childrenStack.push({
         childEntries,
@@ -209,11 +210,13 @@ function unrigMockTimeTracker(mockTimeTrackerInstance) {
       continue;
     }
     if (i === childEntries.length - 1) {
-      const popped = childrenStack.pop();
-      childEntries = popped.childEntries;
-      childEntriesUnrigged = popped.childEntriesUnrigged;
-      i = popped.i;
-      continue;
+      if (childrenStack.length) {
+        const popped = childrenStack.pop();
+        childEntries = popped.childEntries;
+        childEntriesUnrigged = popped.childEntriesUnrigged;
+        i = popped.i;
+        continue;
+      }
     }
   }
   return unrigged;
