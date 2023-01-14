@@ -1,31 +1,31 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
-const dropAreaCssClassesMap = new Map([
-  [ 'siblingTopDropAreaCssClass', 'drop-as-sibling-top', ],
-  [ 'siblingBottomDropAreaCssClass', 'drop-as-sibling-bottom', ],
-  [ 'childDropAreaCssClass', 'drop-as-child', ],
-]);
+const DROP_AREA_CSS_CLASSES = {
+  SIBLING_TOP: 'drop-as-sibling-top',
+  SIBLING_BOTTOM: 'drop-as-sibling-bottom',
+  CHILD: 'drop-as-child',
+};
 
 function handleDropAreaCssClasses(dragOverZone) {
   if (this === this.timeTracker.entryBeingDragged) {
     return;
   }
   if (dragOverZone === 'top') {
-    this.classList.remove(dropAreaCssClassesMap.get('childDropAreaCssClass'));
-    this.classList.add(dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'));
+    this.classList.remove(DROP_AREA_CSS_CLASSES.CHILD);
+    this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
     return;
   }
   if (dragOverZone === 'middle') {
     this.classList
-        .remove(dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'));
-    this.classList.add(dropAreaCssClassesMap.get('childDropAreaCssClass'));
+        .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+    this.classList.add(DROP_AREA_CSS_CLASSES.CHILD);
     this.timeTracker.entryWithDropAreaCssClasses = this;
   }
 };
 
 module.exports = {
   handleDropAreaCssClasses,
-  dropAreaCssClassesMap,
+  DROP_AREA_CSS_CLASSES,
 };
 
 },{}],2:[function(require,module,exports){
