@@ -7,9 +7,10 @@ const {
 const allowedDropAreaCssClassesSet = new Set(dropAreaCssClassesMap.values());
 const spewDiffs = require('../utils/spew-diffs.js');
 
-tp('dragOverZone = middle', t => {
+tp('example', t => {
   const mockTimeTracker = {
     entryWithDropAreaCssClasses: { mockName: '0-1-0', },
+    entryBeingDragged: { mockName: '0-1-0', },
     childEntries: [
       {
         mockName: '0',
@@ -53,6 +54,7 @@ tp('dragOverZone = middle', t => {
   const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
   const expectedTimeTracker = {
     entryWithDropAreaCssClasses: { mockName: '0-1-0', },
+    entryBeingDragged: { mockName: '0-1-0', },
     childEntries: [
       {
         mockName: '0',
@@ -92,7 +94,9 @@ tp('dragOverZone = middle', t => {
   t.deepEqual(
       mockTimeTrackerInstance.childEntries[0].childEntries[1].childEntries[0],
           mockTimeTrackerInstance.entryWithDropAreaCssClasses);
-  spewDiffs('./local-ignore/diff/', actualTimeTracker, expectedTimeTracker);
+  t.deepEqual(
+      mockTimeTrackerInstance.childEntries[0].childEntries[1].childEntries[0],
+          mockTimeTrackerInstance.entryBeingDragged);
   t.deepEqual(actualTimeTracker, expectedTimeTracker);
   t.end();
 });
@@ -127,14 +131,24 @@ function rigMockTimeTracker(mockTimeTracker) {
       }
     }
   }
-  if (mockTimeTracker.entryWithDropAreaCssClasses) {
-    const address =
-        mockTimeTracker.entryWithDropAreaCssClasses.mockName.split('-');
-    mockTimeTracker.entryWithDropAreaCssClasses = address.reduce((v, i) => {
+  const linkEntryPropNames = [
+    'entryWithDropAreaCssClasses',
+    'entryBeingDragged',
+  ];
+  linkEntryPropNames.forEach((pn) => {
+    if (mockTimeTracker[pn]) {
+    replaceLinkEntryPropWithActualLinkToEntry(mockTimeTracker, pn);
+    }
+  });
+  return mockTimeTracker;
+
+  function replaceLinkEntryPropWithActualLinkToEntry(mockTimeTracker,
+      propName) {
+    const address = mockTimeTracker[propName].mockName.split('-');
+    mockTimeTracker[propName] = address.reduce((v, i) => {
       return v.childEntries[i];
     }, mockTimeTracker);
   }
-  return mockTimeTracker;
 }
 
 function getClassListClass() {
@@ -170,8 +184,10 @@ function getClassListClass() {
 
 function unrigMockTimeTracker(mockTimeTrackerInstance) {
   const unrigged = {
-    entryWithDropAreaCssClasses:
-        getEntryWithDropAreaCssClassesValue(mockTimeTrackerInstance),
+    entryWithDropAreaCssClasses: restoreValueFromLink(mockTimeTrackerInstance,
+      'entryWithDropAreaCssClasses'),
+    entryBeingDragged: restoreValueFromLink(mockTimeTrackerInstance,
+      'entryBeingDragged'),
     childEntries: [],
   };
   const childrenStack = [];
@@ -202,13 +218,13 @@ function unrigMockTimeTracker(mockTimeTrackerInstance) {
   }
   return unrigged;
 
-  function getEntryWithDropAreaCssClassesValue(mockTimeTrackerInstance) {
-    if (mockTimeTrackerInstance.entryWithDropAreaCssClasses) {
+  function restoreValueFromLink(mockTimeTrackerInstance, entryLinkPropName) {
+    if (mockTimeTrackerInstance[entryLinkPropName]) {
       return {
-        mockName: mockTimeTrackerInstance.entryWithDropAreaCssClasses.mockName,
+        mockName: mockTimeTrackerInstance[entryLinkPropName].mockName,
       };
     }
-    return mockTimeTrackerInstance.entryWithDropAreaCssClasses;
+    return mockTimeTrackerInstance[entryLinkPropName];
   }
 
   function unrigEntryWithEmptyChildren(entry) {
