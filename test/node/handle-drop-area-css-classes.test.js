@@ -782,7 +782,7 @@ TREE_$0_$1_$2: {
   });
 }
 
-TREE_$0_$0_1: {
+TREE_$0_$0_0: {
   tp('0-0 over 0 bottom from bottom', { objectPrintDepth: 1, }, t => {
     const mockTimeTracker = {
       entryWithDropAreaCssClasses: null,
@@ -833,7 +833,7 @@ TREE_$0_$0_1: {
   });
 }
 
-TREE_$0_$0_1_$1: {
+TREE_$0_$0_0_$1: {
   tp('0-0 over 1 middle from top', { objectPrintDepth: 1, }, t => {
     const mockTimeTracker = {
       entryWithDropAreaCssClasses: { mockName: '1', },
