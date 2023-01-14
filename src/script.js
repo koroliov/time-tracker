@@ -1,6 +1,8 @@
 'use strict';
-const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
-    require('./handle-drop-area-css-classes.js');
+const {
+  handleDropAreaCssClasses: handleDropAreaCssClassesModule,
+  DROP_AREA_CSS_CLASSES,
+} = require('./handle-drop-area-css-classes.js');
 
 (function() {
   init();
@@ -840,7 +842,9 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
 
       handleDropAreaCssClasses = handleDropAreaCssClassesModule
 
-      removeDropAreaCssClasses() {}
+      removeDropAreaCssClasses() {
+        this.classList.remove(...Object.values(DROP_AREA_CSS_CLASSES));
+      }
 
       generateMessageArr(paddingLevel, useTotalNotOwnTime = false) {
         const pad = '  ';
