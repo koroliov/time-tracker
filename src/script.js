@@ -402,7 +402,7 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
       }
 
       initAuxProperties() {
-        this.elementBeingDragged = null;
+        this.entryBeingDragged = null;
         this.entryWithDropAreaCssClasses = null;
       }
 
@@ -441,7 +441,7 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
           'activeChildOrSelf',
           'timeTracker',
           'parentTimeEntry',
-          'elementBeingDragged',
+          'entryBeingDragged',
           'favIconData',
           'percentBillableTargetDefault',
           'timeTotalTargetDefault',
@@ -749,13 +749,13 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
           e.preventDefault();
           return;
         }
-        this.timeTracker.elementBeingDragged = this;
+        this.timeTracker.entryBeingDragged = this;
       }
 
       dragEndHandler(e) {
         e.stopPropagation();
         this.mouseDownOnEl = null;
-        this.timeTracker.elementBeingDragged = null;
+        this.timeTracker.entryBeingDragged = null;
         this.timeTracker.entryWithDropAreaCssClasses.removeDropAreaCssClasses();
         this.timeTracker.entryWithDropAreaCssClasses = null;
       }
@@ -778,12 +778,12 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
 
         //function entryIsBeingDraggedBackOnItselfDownwards() {
         //  return e.target?.nextElementSibling ===
-        //      e.target.timeTracker.elementBeingDragged;
+        //      e.target.timeTracker.entryBeingDragged;
         //}
 
         //function entryIsBeingDraggedBackOnItselUpwards() {
         //  return e.target?.prevElementSibling ===
-        //      e.target.timeTracker.elementBeingDragged;
+        //      e.target.timeTracker.entryBeingDragged;
         //}
       }
 
