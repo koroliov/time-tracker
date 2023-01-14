@@ -795,10 +795,13 @@ function rigMockTimeTracker(mockTimeTracker) {
     }
     child.classList = new ClassList(child.classList);
     child.timeTracker = mockTimeTracker;
+    child.parentTimeEntry =
+        childrenStack[childrenStack.length - 1]?.child || null;
     if (child.childEntries.length) {
       childrenStack.push({
         childEntries,
         i,
+        child,
       });
       childEntries = child.childEntries;
       i = -1;
@@ -819,7 +822,7 @@ function rigMockTimeTracker(mockTimeTracker) {
   ];
   linkEntryPropNames.forEach((pn) => {
     if (mockTimeTracker[pn]) {
-    replaceLinkEntryPropWithActualLinkToEntry(mockTimeTracker, pn);
+      replaceLinkEntryPropWithActualLinkToEntry(mockTimeTracker, pn);
     }
   });
   return mockTimeTracker;
