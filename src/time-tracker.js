@@ -151,16 +151,18 @@ class TimeTracker extends Base {
   initiateImport(e) {
     e.preventDefault();
     e.stopPropagation();
-    const message = [
-      'You are about to import a previously exported JSON file',
-      'Have you exported a backup copy?',
-      'In case of success, your current data will get overwritten and',
-      'lost. In case of an error, your current data may get lost',
-    ].join('\n');
-    if (!window.confirm(message)) {
-      return;
-    }
-    this.shadowRoot.querySelector('.import-input').click();
+    return Promise.resolve().then(() => {
+      const message = [
+        'You are about to import a previously exported JSON file',
+        'Have you exported a backup copy?',
+        'In case of success, your current data will get overwritten and',
+        'lost. In case of an error, your current data may get lost',
+      ].join('\n');
+      if (!window.confirm(message)) {
+        return;
+      }
+      this.shadowRoot.querySelector('.import-input').click();
+    });
   }
 
   handleTargetValueChange(e) {
