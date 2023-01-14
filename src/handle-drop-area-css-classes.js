@@ -7,9 +7,26 @@ const DROP_AREA_CSS_CLASSES = {
 
 function handleDropAreaCssClasses(dragOverZone) {
   if (this.timeTracker.entryBeingDragged.parentTimeEntry === this) {
+    if (dragOverZone === 'top') {
+      if (this.previousElementSibling?.classList
+          .contains(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM)) {
+        return;
+      }
+      this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+      this.timeTracker.entryWithDropAreaCssClasses = this;
+      return;
+    }
+    if (dragOverZone === 'middle') {
+      this.classList.remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+      this.timeTracker.entryWithDropAreaCssClasses = null;
+      return;
+    }
     return;
   }
   if (this === this.timeTracker.entryBeingDragged) {
+    this.timeTracker.entryWithDropAreaCssClasses?.classList
+        .remove(...Object.values(DROP_AREA_CSS_CLASSES));
+    this.timeTracker.entryWithDropAreaCssClasses = null;
     return;
   }
   if (dragOverZone === 'top') {
@@ -19,6 +36,7 @@ function handleDropAreaCssClasses(dragOverZone) {
     }
     this.classList.remove(DROP_AREA_CSS_CLASSES.CHILD);
     this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+    this.timeTracker.entryWithDropAreaCssClasses = this;
     return;
   }
   if (dragOverZone === 'bottom') {
@@ -37,7 +55,8 @@ function handleDropAreaCssClasses(dragOverZone) {
   if (dragOverZone === 'middle') {
     this.classList.remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP,
       DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
-    this.nextElementSibling.classList.remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+    this.nextElementSibling?.classList
+        .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
     this.previousElementSibling?.classList
         .remove(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
     this.classList.add(DROP_AREA_CSS_CLASSES.CHILD);
