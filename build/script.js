@@ -7,6 +7,9 @@ const DROP_AREA_CSS_CLASSES = {
 };
 
 function handleDropAreaCssClasses(dragOverZone) {
+  if (this.timeTracker.entryBeingDragged.parentTimeEntry === this) {
+    return;
+  }
   if (this === this.timeTracker.entryBeingDragged) {
     return;
   }
@@ -20,7 +23,7 @@ function handleDropAreaCssClasses(dragOverZone) {
     return;
   }
   if (dragOverZone === 'bottom') {
-    if (this.nextElementSibling.classList
+    if (this.nextElementSibling?.classList
         .contains(DROP_AREA_CSS_CLASSES.SIBLING_TOP)) {
       return;
     }
@@ -809,7 +812,8 @@ const {
         e.stopPropagation();
         this.mouseDownOnEl = null;
         this.timeTracker.entryBeingDragged = null;
-        this.timeTracker.entryWithDropAreaCssClasses.removeDropAreaCssClasses();
+        this.timeTracker.entryWithDropAreaCssClasses
+            ?.removeDropAreaCssClasses();
         this.timeTracker.entryWithDropAreaCssClasses = null;
       }
 

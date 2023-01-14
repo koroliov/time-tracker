@@ -758,7 +758,8 @@ const {
         e.stopPropagation();
         this.mouseDownOnEl = null;
         this.timeTracker.entryBeingDragged = null;
-        this.timeTracker.entryWithDropAreaCssClasses.removeDropAreaCssClasses();
+        this.timeTracker.entryWithDropAreaCssClasses
+            ?.removeDropAreaCssClasses();
         this.timeTracker.entryWithDropAreaCssClasses = null;
       }
 
