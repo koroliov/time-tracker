@@ -782,6 +782,57 @@ TREE_$0_$1_$2: {
   });
 }
 
+TREE_$0_$0_1: {
+  tp('0-0 over 0 bottom from bottom', { objectPrintDepth: 1, }, t => {
+    const mockTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+      ],
+    };
+    const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
+    const thisEntry = mockTimeTrackerInstance.childEntries[0];
+    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+
+    const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
+    const expectedTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    t.deepEqual(actualTimeTracker, expectedTimeTracker);
+    t.end();
+  });
+}
+
 function rigMockTimeTracker(mockTimeTracker) {
   const ClassList = getClassListClass();
   const childrenStack = [];
