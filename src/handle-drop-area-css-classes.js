@@ -1,28 +1,28 @@
 'use strict';
-const dropAreaCssClassesMap = new Map([
-  [ 'siblingTopDropAreaCssClass', 'drop-as-sibling-top', ],
-  [ 'siblingBottomDropAreaCssClass', 'drop-as-sibling-bottom', ],
-  [ 'childDropAreaCssClass', 'drop-as-child', ],
-]);
+const DROP_AREA_CSS_CLASSES = {
+  SIBLING_TOP: 'drop-as-sibling-top',
+  SIBLING_BOTTOM: 'drop-as-sibling-bottom',
+  CHILD: 'drop-as-child',
+};
 
 function handleDropAreaCssClasses(dragOverZone) {
   if (this === this.timeTracker.entryBeingDragged) {
     return;
   }
   if (dragOverZone === 'top') {
-    this.classList.remove(dropAreaCssClassesMap.get('childDropAreaCssClass'));
-    this.classList.add(dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'));
+    this.classList.remove(DROP_AREA_CSS_CLASSES.CHILD);
+    this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
     return;
   }
   if (dragOverZone === 'middle') {
     this.classList
-        .remove(dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'));
-    this.classList.add(dropAreaCssClassesMap.get('childDropAreaCssClass'));
+        .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+    this.classList.add(DROP_AREA_CSS_CLASSES.CHILD);
     this.timeTracker.entryWithDropAreaCssClasses = this;
   }
 };
 
 module.exports = {
   handleDropAreaCssClasses,
-  dropAreaCssClassesMap,
+  DROP_AREA_CSS_CLASSES,
 };

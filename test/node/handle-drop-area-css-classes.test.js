@@ -2,9 +2,10 @@
 const tp = require('tape');
 const {
     handleDropAreaCssClasses,
-    dropAreaCssClassesMap,
+    DROP_AREA_CSS_CLASSES,
   } = require('../../src/handle-drop-area-css-classes.js');
-const allowedDropAreaCssClassesSet = new Set(dropAreaCssClassesMap.values());
+const allowedDropAreaCssClassesSet =
+    new Set(Object.values(DROP_AREA_CSS_CLASSES));
 const spewDiffs = require('../utils/spew-diffs.js');
 
 tp('show drop child on 1 if dragged 2 from bottom', { objectPrintDepth: 1, },
@@ -51,7 +52,7 @@ tp('show drop child on 1 if dragged 2 from bottom', { objectPrintDepth: 1, },
       {
         mockName: '1',
         isCollapsed: false,
-        classList: [ dropAreaCssClassesMap.get('childDropAreaCssClass'), ],
+        classList: [ DROP_AREA_CSS_CLASSES.CHILD, ],
         childEntries: [],
       },
       {
@@ -141,7 +142,7 @@ tp('entry 2 over 1 top from middle', { objectPrintDepth: 1, }, t => {
       {
         mockName: '1',
         isCollapsed: false,
-        classList: [ dropAreaCssClassesMap.get('childDropAreaCssClass'), ],
+        classList: [ DROP_AREA_CSS_CLASSES.CHILD, ],
         childEntries: [],
       },
       {
@@ -170,7 +171,7 @@ tp('entry 2 over 1 top from middle', { objectPrintDepth: 1, }, t => {
       {
         mockName: '1',
         isCollapsed: false,
-        classList: [ dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'), ],
+        classList: [ DROP_AREA_CSS_CLASSES.SIBLING_TOP, ],
         childEntries: [],
       },
       {
@@ -200,7 +201,7 @@ tp('entry 2 over 1 middle from top', { objectPrintDepth: 1, }, t => {
       {
         mockName: '1',
         isCollapsed: false,
-        classList: [ dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'), ],
+        classList: [ DROP_AREA_CSS_CLASSES.SIBLING_TOP, ],
         childEntries: [],
       },
       {
@@ -229,7 +230,7 @@ tp('entry 2 over 1 middle from top', { objectPrintDepth: 1, }, t => {
       {
         mockName: '1',
         isCollapsed: false,
-        classList: [ dropAreaCssClassesMap.get('childDropAreaCssClass'), ],
+        classList: [ DROP_AREA_CSS_CLASSES.CHILD, ],
         childEntries: [],
       },
       {
