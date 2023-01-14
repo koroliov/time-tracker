@@ -7,6 +7,7 @@
   "scripts": {
     "test-webdriver-full": "tape ./test/webdriver/cases/**/*.test.js",
     "test-node-full": "tape ./test/node/**/*.test.js",
+    "test": "tape",
     "build": "browserify --entry ./src/script.js --outfile ./build/script.js"
   },
   "author": "d.koroliov@gmail.com",
