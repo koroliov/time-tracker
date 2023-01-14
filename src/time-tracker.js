@@ -94,21 +94,21 @@ class TimeTracker extends Base {
   addListeners() {
     super.addListeners(this.shadowRoot);
     this.shadowRoot.querySelector('.clear')
-      .addEventListener('click', this.clear.bind(this));
+        .addEventListener('click', this.clear.bind(this));
     this.shadowRoot.querySelector('.percent-target')
-      .addEventListener('blur', this.handleTargetPercentChange.bind(this));
+        .addEventListener('blur', this.handleTargetPercentChange.bind(this));
     this.shadowRoot.querySelector('.abs-target')
-      .addEventListener('blur', this.handleTargetValueChange.bind(this));
+        .addEventListener('blur', this.handleTargetValueChange.bind(this));
     this.shadowRoot.querySelector('.import')
-      .addEventListener('click', this.initiateImport.bind(this));
+        .addEventListener('click', this.initiateImport.bind(this));
     this.shadowRoot.querySelector('.import-input')
-      .addEventListener('input', this.handleImport.bind(this));
+        .addEventListener('input', this.handleImport.bind(this));
     this.shadowRoot.querySelector('.export')
-      .addEventListener('click', this.handleExport.bind(this));
+        .addEventListener('click', this.handleExport.bind(this));
     this.shadowRoot.querySelector('#time-tracker')
-      .addEventListener('showmessage', this.showMessageHander.bind(this));
+        .addEventListener('showmessage', this.showMessageHander.bind(this));
     this.shadowRoot.querySelector('#message')
-      .addEventListener('blur', this.hideMessageHander.bind(this));
+        .addEventListener('blur', this.hideMessageHander.bind(this));
   }
 
   async hideMessageHander(e) {
