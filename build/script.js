@@ -1,16 +1,31 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
-module.exports = {
-  handleDropAreaCssClasses,
-  dropAreaCssClassesMap: new Map([
-    [ 'siblingTopDropAreaCssClass', 'drop-as-sibling-top', ],
-    [ 'siblingBottomDropAreaCssClass', 'drop-as-sibling-bottom', ],
-    [ 'childDropAreaCssClass', 'drop-as-child', ],
-  ]),
-};
+const dropAreaCssClassesMap = new Map([
+  [ 'siblingTopDropAreaCssClass', 'drop-as-sibling-top', ],
+  [ 'siblingBottomDropAreaCssClass', 'drop-as-sibling-bottom', ],
+  [ 'childDropAreaCssClass', 'drop-as-child', ],
+]);
 
 function handleDropAreaCssClasses(dragOverZone) {
-  /* replaced */
+  if (this === this.timeTracker.entryBeingDragged) {
+    return;
+  }
+  if (dragOverZone === 'top') {
+    this.classList.remove(dropAreaCssClassesMap.get('childDropAreaCssClass'));
+    this.classList.add(dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'));
+    return;
+  }
+  if (dragOverZone === 'middle') {
+    this.classList
+        .remove(dropAreaCssClassesMap.get('siblingTopDropAreaCssClass'));
+    this.classList.add(dropAreaCssClassesMap.get('childDropAreaCssClass'));
+    this.timeTracker.entryWithDropAreaCssClasses = this;
+  }
+};
+
+module.exports = {
+  handleDropAreaCssClasses,
+  dropAreaCssClassesMap,
 };
 
 },{}],2:[function(require,module,exports){
@@ -418,7 +433,7 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
       }
 
       initAuxProperties() {
-        this.elementBeingDragged = null;
+        this.entryBeingDragged = null;
         this.entryWithDropAreaCssClasses = null;
       }
 
@@ -457,7 +472,7 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
           'activeChildOrSelf',
           'timeTracker',
           'parentTimeEntry',
-          'elementBeingDragged',
+          'entryBeingDragged',
           'favIconData',
           'percentBillableTargetDefault',
           'timeTotalTargetDefault',
@@ -765,13 +780,13 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
           e.preventDefault();
           return;
         }
-        this.timeTracker.elementBeingDragged = this;
+        this.timeTracker.entryBeingDragged = this;
       }
 
       dragEndHandler(e) {
         e.stopPropagation();
         this.mouseDownOnEl = null;
-        this.timeTracker.elementBeingDragged = null;
+        this.timeTracker.entryBeingDragged = null;
         this.timeTracker.entryWithDropAreaCssClasses.removeDropAreaCssClasses();
         this.timeTracker.entryWithDropAreaCssClasses = null;
       }
@@ -794,12 +809,12 @@ const { handleDropAreaCssClasses: handleDropAreaCssClassesModule, } =
 
         //function entryIsBeingDraggedBackOnItselfDownwards() {
         //  return e.target?.nextElementSibling ===
-        //      e.target.timeTracker.elementBeingDragged;
+        //      e.target.timeTracker.entryBeingDragged;
         //}
 
         //function entryIsBeingDraggedBackOnItselUpwards() {
         //  return e.target?.prevElementSibling ===
-        //      e.target.timeTracker.elementBeingDragged;
+        //      e.target.timeTracker.entryBeingDragged;
         //}
       }
 
