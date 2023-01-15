@@ -1337,6 +1337,10 @@ TREE_$0_$1: {
   });
 }
 
+//TODO: function determineDragOverZone() also may return null, so potentially
+//we may need to have tests here for this situation. But since I've not spotted
+//yet any problems with it being null, no tests for now
+
 function rigMockTimeTracker(mockTimeTracker) {
   const ClassList = getClassListClass();
   const childrenStack = [];
