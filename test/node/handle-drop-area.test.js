@@ -1,9 +1,9 @@
 'use strict';
 const tp = require('tape');
 const {
-    handleDropAreaCssClasses,
+    handleDropArea,
     DROP_AREA_CSS_CLASSES,
-  } = require('../../src/handle-drop-area-css-classes.js');
+  } = require('../../src/handle-drop-area.js');
 const allowedDropAreaCssClassesSet =
     new Set(Object.values(DROP_AREA_CSS_CLASSES));
 const spewDiffs = require('../utils/spew-diffs.js');
@@ -37,7 +37,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[2];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -96,7 +96,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -155,7 +155,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -215,7 +215,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -275,7 +275,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -335,7 +335,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -394,7 +394,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -453,7 +453,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -512,7 +512,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -571,7 +571,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -631,7 +631,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -690,7 +690,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -749,7 +749,7 @@ TREE_$0_$1_$2: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -805,7 +805,7 @@ TREE_$0_$0_0: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -862,7 +862,7 @@ TREE_$0_$0_0_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -923,7 +923,7 @@ TREE_$0_$0_0_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -984,7 +984,7 @@ TREE_$0_$0_0_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -1045,7 +1045,7 @@ TREE_$0_$0_0_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'middle');
+    handleDropArea.call(thisEntry, 'middle');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -1106,7 +1106,7 @@ TREE_$0_$0_0_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0].childEntries[0];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -1175,7 +1175,7 @@ TREE_$0_$0_0_$0_1_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -1248,7 +1248,7 @@ TREE_$0_$0_0_$0_1_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[0].childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+    handleDropArea.call(thisEntry, 'bottom');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
@@ -1310,7 +1310,7 @@ TREE_$0_$1: {
     };
     const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
     const thisEntry = mockTimeTrackerInstance.childEntries[1];
-    handleDropAreaCssClasses.call(thisEntry, 'top');
+    handleDropArea.call(thisEntry, 'top');
 
     const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
     const expectedTimeTracker = {
