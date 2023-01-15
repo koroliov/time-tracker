@@ -247,7 +247,7 @@ const DROP_AREA_CSS_CLASSES = {
   CHILD: 'drop-as-child',
 };
 
-function handleDropAreaCssClasses(dragOverZone) {
+function handleDropArea(dragOverZone) {
   if (this.timeTracker.entryBeingDragged.parentTimeEntry === this) {
     if (dragOverZone === 'top') {
       if (this.previousElementSibling?.classList
@@ -315,7 +315,7 @@ function handleDropAreaCssClasses(dragOverZone) {
 };
 
 module.exports = {
-  handleDropAreaCssClasses,
+  handleDropArea,
   DROP_AREA_CSS_CLASSES,
 };
 
@@ -474,9 +474,9 @@ module.exports = {
 'use strict';
 
 const {
-  handleDropAreaCssClasses: handleDropAreaCssClassesModule,
+  handleDropArea: handleDropAreaModule,
   DROP_AREA_CSS_CLASSES,
-} = require('./handle-drop-area-css-classes.js');
+} = require('./handle-drop-area.js');
 const Base = require('./base.js');
 
 class TimeEntry extends Base {
@@ -554,7 +554,7 @@ class TimeEntry extends Base {
     e.preventDefault();
     e.stopPropagation();
     const dragOverZone = determineDragOverZone(this, e);
-    this.handleDropAreaCssClasses(dragOverZone);
+    this.handleDropArea(dragOverZone);
 
     function determineDragOverZone(thisTimeEntry, event) {
       const borderWrapper =
@@ -589,7 +589,7 @@ class TimeEntry extends Base {
     e.stopPropagation();
   }
 
-  handleDropAreaCssClasses = handleDropAreaCssClassesModule
+  handleDropArea = handleDropAreaModule
 
   removeDropAreaCssClasses() {
     this.classList.remove(...Object.values(DROP_AREA_CSS_CLASSES));
@@ -734,7 +734,7 @@ window.customElements.define('time-entry', TimeEntry);
 
 module.exports = TimeEntry;
 
-},{"./base.js":1,"./handle-drop-area-css-classes.js":2}],5:[function(require,module,exports){
+},{"./base.js":1,"./handle-drop-area.js":2}],5:[function(require,module,exports){
 'use strict';
 const Base = require('./base.js');
 //Need to require TimeEntry first, just in order for it to register the custom

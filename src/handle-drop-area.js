@@ -5,7 +5,7 @@ const DROP_AREA_CSS_CLASSES = {
   CHILD: 'drop-as-child',
 };
 
-function handleDropAreaCssClasses(dragOverZone) {
+function handleDropArea(dragOverZone) {
   if (this.timeTracker.entryBeingDragged.parentTimeEntry === this) {
     if (dragOverZone === 'top') {
       if (this.previousElementSibling?.classList
@@ -73,6 +73,6 @@ function handleDropAreaCssClasses(dragOverZone) {
 };
 
 module.exports = {
-  handleDropAreaCssClasses,
+  handleDropArea,
   DROP_AREA_CSS_CLASSES,
 };

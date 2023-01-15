@@ -1,9 +1,9 @@
 'use strict';
 
 const {
-  handleDropAreaCssClasses: handleDropAreaCssClassesModule,
+  handleDropArea: handleDropAreaModule,
   DROP_AREA_CSS_CLASSES,
-} = require('./handle-drop-area-css-classes.js');
+} = require('./handle-drop-area.js');
 const Base = require('./base.js');
 
 class TimeEntry extends Base {
@@ -81,7 +81,7 @@ class TimeEntry extends Base {
     e.preventDefault();
     e.stopPropagation();
     const dragOverZone = determineDragOverZone(this, e);
-    this.handleDropAreaCssClasses(dragOverZone);
+    this.handleDropArea(dragOverZone);
 
     function determineDragOverZone(thisTimeEntry, event) {
       const borderWrapper =
@@ -116,7 +116,7 @@ class TimeEntry extends Base {
     e.stopPropagation();
   }
 
-  handleDropAreaCssClasses = handleDropAreaCssClassesModule
+  handleDropArea = handleDropAreaModule
 
   removeDropAreaCssClasses() {
     this.classList.remove(...Object.values(DROP_AREA_CSS_CLASSES));
