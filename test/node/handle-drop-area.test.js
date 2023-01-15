@@ -8,6 +8,9 @@ const allowedDropAreaCssClassesSet =
     new Set(Object.values(DROP_AREA_CSS_CLASSES));
 const spewDiffs = require('../utils/spew-diffs.js');
 
+//TODO: Consider refactor these tests with sort of a data provider approach:
+//move the mock, expected etc. data to a separate module and here just call the
+//tape funciton. But now I don't have time for this, let it be this way
 TREE_$0_$1_$2: {
   tp('2 over 2 middle from middle, just started drag',
       { objectPrintDepth: 1, }, t => {
