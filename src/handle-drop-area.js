@@ -63,6 +63,10 @@ function handleDropArea(dragOverZone) {
       this.timeTracker.entryWithDropAreaCssClasses = null;
       return;
     }
+    if (!this.isCollapsed && this.childEntries.length) {
+      this.timeTracker.entryWithDropAreaCssClasses = null;
+      return;
+    }
     this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
     this.timeTracker.entryWithDropAreaCssClasses = this;
     return;
@@ -74,6 +78,10 @@ function handleDropArea(dragOverZone) {
         .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
     this.previousElementSibling?.classList
         .remove(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
+    if (!this.isCollapsed && this.childEntries.length) {
+      this.timeTracker.entryWithDropAreaCssClasses = null;
+      return;
+    }
     this.classList.add(DROP_AREA_CSS_CLASSES.CHILD);
     this.timeTracker.entryWithDropAreaCssClasses = this;
   }
