@@ -1140,6 +1140,154 @@ TREE_$0_$0_0_$1: {
   });
 }
 
+TREE_$0_$0_0_$0_1_$1: {
+  tp('0-0 over 1 top from top', { objectPrintDepth: 1, }, t => {
+    const mockTimeTracker = {
+      entryWithDropAreaCssClasses: { mockName: '0-1', },
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+            {
+              mockName: '0-1',
+              isCollapsed: false,
+              classList: [ DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM, ],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [],
+        },
+      ],
+    };
+    const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
+    const thisEntry = mockTimeTrackerInstance.childEntries[1];
+    handleDropAreaCssClasses.call(thisEntry, 'top');
+
+    const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
+    const expectedTimeTracker = {
+      entryWithDropAreaCssClasses: { mockName: '1', },
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+            {
+              mockName: '0-1',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [ DROP_AREA_CSS_CLASSES.SIBLING_TOP, ],
+          childEntries: [],
+        },
+      ],
+    };
+
+    t.deepEqual(actualTimeTracker, expectedTimeTracker);
+    t.end();
+  });
+
+  tp('0-0 over 0-1 bottom from bottom', { objectPrintDepth: 1, }, t => {
+    const mockTimeTracker = {
+      entryWithDropAreaCssClasses: { mockName: '1', },
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+            {
+              mockName: '0-1',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [ DROP_AREA_CSS_CLASSES.SIBLING_TOP, ],
+          childEntries: [],
+        },
+      ],
+    };
+    const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
+    const thisEntry = mockTimeTrackerInstance.childEntries[0].childEntries[1];
+    handleDropAreaCssClasses.call(thisEntry, 'bottom');
+
+    const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
+    const expectedTimeTracker = {
+      entryWithDropAreaCssClasses: { mockName: '0-1', },
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+            {
+              mockName: '0-1',
+              isCollapsed: false,
+              classList: [ DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM, ],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [],
+        },
+      ],
+    };
+
+    t.deepEqual(actualTimeTracker, expectedTimeTracker);
+    t.end();
+  });
+}
+
 TREE_$0_$1: {
   tp('0 over 1 top from top', { objectPrintDepth: 1, }, t => {
     const mockTimeTracker = {
