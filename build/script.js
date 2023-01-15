@@ -548,25 +548,6 @@ class TimeEntry extends Base {
 
   dragLeaveHandler(e) {
     e.stopPropagation();
-    //if (e.target instanceof TimeEntry) {
-    //  if (entryIsBeingDraggedBackOnItselfDownwards()) {
-    //    e.target.classList.remove('padding-bottom');
-    //  }
-    //  if (entryIsBeingDraggedBackOnItselUpwards()) {
-    //    e.target.classList.remove('padding-top');
-    //  }
-    //  e.target.childEntries[0]?.classList.remove('padding-top');
-    //}
-
-    //function entryIsBeingDraggedBackOnItselfDownwards() {
-    //  return e.target?.nextElementSibling ===
-    //      e.target.timeTracker.entryBeingDragged;
-    //}
-
-    //function entryIsBeingDraggedBackOnItselUpwards() {
-    //  return e.target?.prevElementSibling ===
-    //      e.target.timeTracker.entryBeingDragged;
-    //}
   }
 
   dragOverHandler(e) {
@@ -574,18 +555,6 @@ class TimeEntry extends Base {
     e.stopPropagation();
     const dragOverZone = determineDragOverZone(this, e);
     this.handleDropAreaCssClasses(dragOverZone);
-    //if (dragOverZone === 'top') {
-    //  this.showSiblingTopDropArea();
-    //} else if (dragOverZone === 'bottom') {
-    //  if (this.isCollapsed || !this.childEntries.length) {
-    //    this.showSiblingBottomDropArea();
-    //  }
-    //} else {
-    //  this.hideSiblingDropArea(e.target);
-    //  //if (this.isCollapsed || !this.childEntries.length) {
-    //  //  this.showDropAsChildArea();
-    //  //}
-    //}
 
     function determineDragOverZone(thisTimeEntry, event) {
       const borderWrapper =
