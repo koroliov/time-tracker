@@ -1435,6 +1435,158 @@ TREE_$0_$1: {
   });
 }
 
+TREE_$0_$0_0_$1_$1_0: {
+  tp('0-0 over 1 middle from top', { objectPrintDepth: 1, }, t => {
+    const mockTimeTracker = {
+      entryWithDropAreaCssClasses: { mockName: '1', },
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [ DROP_AREA_CSS_CLASSES.SIBLING_TOP, ],
+          childEntries: [
+            {
+              mockName: '1-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+      ],
+    };
+    const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
+    const thisEntry = mockTimeTrackerInstance.childEntries[1];
+    handleDropArea.call(thisEntry, 'middle');
+
+    const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
+    const expectedTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '1-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    t.deepEqual(actualTimeTracker, expectedTimeTracker);
+    t.end();
+  });
+
+  tp('0-0 over 1 bottom from top', { objectPrintDepth: 1, }, t => {
+    const mockTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '1-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+      ],
+    };
+    const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
+    const thisEntry = mockTimeTrackerInstance.childEntries[1];
+    handleDropArea.call(thisEntry, 'bottom');
+
+    const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
+    const expectedTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0-0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '0-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+        {
+          mockName: '1',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [
+            {
+              mockName: '1-0',
+              isCollapsed: false,
+              classList: [],
+              childEntries: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    t.deepEqual(actualTimeTracker, expectedTimeTracker);
+    t.end();
+  });
+}
+
 //TODO: function determineDragOverZone() also may return null, so potentially
 //we may need to have tests here for this situation. But since I've not spotted
 //yet any problems with it being null, no tests for now
