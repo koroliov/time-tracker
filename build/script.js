@@ -279,7 +279,8 @@ function handleDropAreaCssClasses(dragOverZone) {
     if (this.previousElementSibling === this.timeTracker.entryBeingDragged) {
       return;
     }
-    this.classList.remove(DROP_AREA_CSS_CLASSES.CHILD);
+    this.timeTracker.entryWithDropAreaCssClasses?.classList
+        .remove(...Object.values(DROP_AREA_CSS_CLASSES));
     this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
     this.timeTracker.entryWithDropAreaCssClasses = this;
     return;
@@ -289,12 +290,16 @@ function handleDropAreaCssClasses(dragOverZone) {
         .contains(DROP_AREA_CSS_CLASSES.SIBLING_TOP)) {
       return;
     }
+    this.timeTracker.entryWithDropAreaCssClasses?.classList
+        .remove(...Object.values(DROP_AREA_CSS_CLASSES));
+    this.timeTracker.entryWithDropAreaCssClasses = null;
     this.classList.remove(DROP_AREA_CSS_CLASSES.CHILD);
     if (this.timeTracker.entryBeingDragged === this.nextElementSibling) {
       this.timeTracker.entryWithDropAreaCssClasses = null;
       return;
     }
     this.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
+    this.timeTracker.entryWithDropAreaCssClasses = this;
     return;
   }
   if (dragOverZone === 'middle') {
