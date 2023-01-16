@@ -1436,6 +1436,55 @@ TREE_$0_$1: {
     t.deepEqual(actualTimeTracker, expectedTimeTracker);
     t.end();
   });
+
+  tp("0 over 1 middle from top (if collapsed, don't allow drop as a child)",
+      { objectPrintDepth: 1, }, t => {
+    const mockTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [],
+        },
+        {
+          mockName: '1',
+          isCollapsed: true,
+          classList: [],
+          childEntries: [],
+        },
+      ],
+    };
+    const mockTimeTrackerInstance = rigMockTimeTracker(mockTimeTracker);
+    const thisEntry = mockTimeTrackerInstance.childEntries[1];
+    handleDropArea.call(thisEntry, 'middle');
+
+    const actualTimeTracker = unrigMockTimeTracker(mockTimeTrackerInstance);
+    const expectedTimeTracker = {
+      entryWithDropAreaCssClasses: null,
+      entryBeingDragged: { mockName: '0', },
+      childEntries: [
+        {
+          mockName: '0',
+          isCollapsed: false,
+          classList: [],
+          childEntries: [],
+        },
+        {
+          mockName: '1',
+          isCollapsed: true,
+          classList: [],
+          childEntries: [],
+        },
+      ],
+    };
+
+    //spewDiffs('./local-ignore/diff/', actualTimeTracker, expectedTimeTracker);
+    t.deepEqual(actualTimeTracker, expectedTimeTracker);
+    t.end();
+  });
 }
 
 TREE_$0_$0_0_$1_$1_0: {
