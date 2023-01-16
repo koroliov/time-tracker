@@ -22,24 +22,31 @@ function handleDropArea(dragOverZone) {
     handleDragOverTop();
   } else if (dragOverZone === 'bottom') {
     handleDragOverBottom();
+  } else if (dragOverZone === 'middle') {
+    handleDragOverMiddle();
   }
-  if (dragOverZone === 'middle') {
-    this.classList.remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP,
-      DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
-    this.nextElementSibling?.classList
-        .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
-    if (this.isCollapsed) {
-      this.timeTracker.entryWithDropAreaCssClasses = null;
+
+  function handleDragOverMiddle() {
+    removePotentiallyPresentClasses();
+    if (entryOverWhichDragIsBeingPerformedIsCollapsedOrHasOpenChildren()) {
+      timeTracker.entryWithDropAreaCssClasses = null;
       return;
     }
-    previousSiblingEntry?.classList
-        .remove(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
-    if (!this.isCollapsed && this.childEntries.length) {
-      this.timeTracker.entryWithDropAreaCssClasses = null;
-      return;
+    showSiblingChildDropAreaOver(entryOverWhichDragIsBeingPerformed);
+
+    function entryOverWhichDragIsBeingPerformedIsCollapsedOrHasOpenChildren() {
+      return entryOverWhichDragIsBeingPerformed.isCollapsed ||
+          entryOverWhichDragIsBeingPerformed.childEntries.length
     }
-    this.classList.add(DROP_AREA_CSS_CLASSES.CHILD);
-    this.timeTracker.entryWithDropAreaCssClasses = this;
+
+    function removePotentiallyPresentClasses() {
+      entryOverWhichDragIsBeingPerformed.classList
+          .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP,
+              DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
+      nextSiblingEntry?.classList.remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+      previousSiblingEntry?.classList
+          .remove(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
+    }
   }
 
   function handleDragOverBottom() {
@@ -47,20 +54,23 @@ function handleDropArea(dragOverZone) {
       return;
     }
     hideAllDropAreas();
-    if (noReasonToDropNextSiblingAsNextSibling()) {
+    if (noDropAreaAllowed()) {
       return;
     }
+    showSiblingBottomDropAreaOver(entryOverWhichDragIsBeingPerformed);
 
-    if (!entryOverWhichDragIsBeingPerformed.isCollapsed &&
-        entryOverWhichDragIsBeingPerformed.childEntries.length) {
-      return;
-    }
-    entryOverWhichDragIsBeingPerformed.classList
-      .add(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
-    timeTracker.entryWithDropAreaCssClasses = entryOverWhichDragIsBeingPerformed;
+    function noDropAreaAllowed() {
+      return noReasonToDropNextSiblingAsNextSibling() ||
+          isEntryOverWhichDragIsBeingPerformedHavingVisibleChildren();
 
-    function noReasonToDropNextSiblingAsNextSibling() {
-      return timeTracker.entryBeingDragged === nextSiblingEntry;
+      function noReasonToDropNextSiblingAsNextSibling() {
+        return timeTracker.entryBeingDragged === nextSiblingEntry;
+      }
+
+      function isEntryOverWhichDragIsBeingPerformedHavingVisibleChildren() {
+        return !entryOverWhichDragIsBeingPerformed.isCollapsed &&
+            entryOverWhichDragIsBeingPerformed.childEntries.length;
+      }
     }
 
     function equivalentDropAreaAlreadyExists() {
@@ -135,6 +145,16 @@ function handleDropArea(dragOverZone) {
 
   function showSiblingTopDropAreaOver(entry) {
     entry.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+    timeTracker.entryWithDropAreaCssClasses = entry;
+  }
+
+  function showSiblingBottomDropAreaOver(entry) {
+    entry.classList.add(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
+    timeTracker.entryWithDropAreaCssClasses = entry;
+  }
+
+  function showSiblingChildDropAreaOver(entry) {
+    entry.classList.add(DROP_AREA_CSS_CLASSES.CHILD);
     timeTracker.entryWithDropAreaCssClasses = entry;
   }
 }
