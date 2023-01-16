@@ -89,10 +89,12 @@ class TimeEntry extends Base {
       const childrenEl = thisTimeEntry.querySelector('.children');
       if (!thisTimeEntry.isCollapsed &&
           (borderWrapper.offsetParent !== childrenEl.offsetParent)) {
-        throw new Error([
+        const errorMessage = [
           'Sorry, an error has occurred, please report to',
           'd.koroliov@gmail.com with steps to reproduce',
-        ].join('\n'));
+        ].join('\n');
+        alert(errorMessage);
+        throw new Error(errorMessage);
       } else if (noGuaranteeDragIsNotOverOpenChildren()) {
         return null;
       }
