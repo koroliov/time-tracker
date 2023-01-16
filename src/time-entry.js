@@ -80,10 +80,10 @@ class TimeEntry extends Base {
   dragOverHandler(e) {
     e.preventDefault();
     e.stopPropagation();
-    const dragOverZone = determineDragOverZone(this, e);
+    const dragOverZone = determineDragOverZone(this);
     this.handleDropArea(dragOverZone);
 
-    function determineDragOverZone(thisTimeEntry, event) {
+    function determineDragOverZone(thisTimeEntry) {
       const borderWrapper =
           thisTimeEntry.querySelector('.border-and-grid-wrapper');
       const childrenEl = thisTimeEntry.querySelector('.children');
@@ -93,7 +93,7 @@ class TimeEntry extends Base {
           'Sorry, an error has occurred, please report to',
           'd.koroliov@gmail.com with steps to reproduce',
         ].join('\n'));
-      } else if (event.clientX < childrenEl.offsetLeft) {
+      } else if (noGuaranteeDragIsNotOverOpenChildren()) {
         return null;
       }
       const boundingRect = borderWrapper.getBoundingClientRect();
@@ -107,6 +107,31 @@ class TimeEntry extends Base {
         return 'bottom';
       } else {
         return 'middle';
+      }
+
+      function noGuaranteeDragIsNotOverOpenChildren() {
+        //since the interface currently looks this way:
+        //
+        //  (the x below demonstrates the position of the cursor)
+        //  (the | below demonstrates the border of an entry element)
+        //
+        // | entry 0:
+        // | | entry 0-1
+        // |x| entry 0-2
+        // | | entry 0-3
+        //
+        //then, when the user drags over a child entry, when the cursor is out
+        //of the child entry itself and is over its parent (as on the scheme
+        //above), we need to prevent a drop on the parent, since its counter
+        //intuitive, ugly etc.
+        //
+        //If the user wants to insert a dragged element as a sibling of the
+        //parent on the scheme, he needs to drag either above the children or
+        //below the children
+        //
+        //If the user wants to drop the element as a sibling of the children,
+        //then he will have to drag it to the right, over the children block
+        return e.clientX < childrenEl.offsetLeft;
       }
     }
   }
