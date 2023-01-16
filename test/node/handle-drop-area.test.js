@@ -1754,6 +1754,8 @@ function rigMockTimeTracker(mockTimeTracker) {
   for (let i = 0; i < childEntries.length; i++) {
     const child = childEntries[i];
     const prevChild = childEntries[i - 1];
+    child.previousElementSibling = null;
+    child.nextElementSibling = null;
     if (prevChild) {
       child.previousElementSibling = prevChild;
       prevChild.nextElementSibling = child;
