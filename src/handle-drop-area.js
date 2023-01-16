@@ -21,6 +21,12 @@ function handleDropArea(dragOverZone) {
       this.timeTracker.entryWithDropAreaCssClasses = null;
       return;
     }
+    if (dragOverZone === 'bottom') {
+      this.timeTracker.entryWithDropAreaCssClasses?.classList
+          .remove(...Object.values(DROP_AREA_CSS_CLASSES));
+      this.timeTracker.entryWithDropAreaCssClasses = null;
+      return;
+    }
     return;
   }
   if (this === this.timeTracker.entryBeingDragged) {
