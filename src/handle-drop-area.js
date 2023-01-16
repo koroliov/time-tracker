@@ -76,6 +76,10 @@ function handleDropArea(dragOverZone) {
       DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
     this.nextElementSibling?.classList
         .remove(DROP_AREA_CSS_CLASSES.SIBLING_TOP);
+    if (this.isCollapsed) {
+      this.timeTracker.entryWithDropAreaCssClasses = null;
+      return;
+    }
     this.previousElementSibling?.classList
         .remove(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM);
     if (!this.isCollapsed && this.childEntries.length) {
