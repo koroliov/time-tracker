@@ -87,13 +87,13 @@ class TimeEntry extends Base {
       const borderWrapper =
           thisTimeEntry.querySelector('.border-and-grid-wrapper');
       const childrenEl = thisTimeEntry.querySelector('.children');
-      if (borderWrapper.offsetParent !== childrenEl.offsetParent) {
+      if (!thisTimeEntry.isCollapsed &&
+          (borderWrapper.offsetParent !== childrenEl.offsetParent)) {
         throw new Error([
           'Sorry, an error has occurred, please report to',
           'd.koroliov@gmail.com with steps to reproduce',
         ].join('\n'));
-      }
-      if (e.clientX < childrenEl.offsetLeft) {
+      } else if (event.clientX < childrenEl.offsetLeft) {
         return null;
       }
       const boundingRect = borderWrapper.getBoundingClientRect();
