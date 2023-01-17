@@ -7,7 +7,7 @@ class Base extends HTMLElement {
 
   addListeners(timeTrackerShadowRootOrTimeEntry) {
     timeTrackerShadowRootOrTimeEntry.querySelector('.controls .new-entry')
-      .addEventListener('click', this.addNewTimeEntry.bind(this));
+        .addEventListener('click', this.addNewTimeEntry.bind(this));
     timeTrackerShadowRootOrTimeEntry
         .querySelector('.controls .collapse-open').addEventListener('click',
             this.toggleChildEntriesVisible.bind(this));
@@ -216,10 +216,10 @@ class Base extends HTMLElement {
 
   startCount() {
     this.countUpdatedAt = Date.now();
-    this.intervalId = setInterval(this.updateTime.bind(this), 1000);
+    this.intervalId = setInterval(this.updateTimeOnInterval.bind(this), 1000);
   }
 
-  updateTime() {
+  updateTimeOnInterval() {
     const now = Date.now();
     const timeSpentCurrent = now - this.countUpdatedAt;
     this.countUpdatedAt = now;
@@ -230,7 +230,6 @@ class Base extends HTMLElement {
       this.timeSpentBillable += timeSpentCurrent;
     }
     this.timeSpentTotal += timeSpentCurrent;
-
     this.updateTimeText();
   }
 
