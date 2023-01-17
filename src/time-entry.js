@@ -232,16 +232,15 @@ class TimeEntry extends Base {
 
   updateTimeText() {
     this.querySelector('.total-value').innerText =
-      this.convertTimeToText(this.timeSpentTotal);
+        this.convertTimeToText(this.timeSpentTotal);
     this.querySelector('.own-value > div').innerText =
-      this.convertTimeToText(this.timeSpentOwn);
+        this.convertTimeToText(this.timeSpentOwn);
     this.querySelector('.billable-value').innerText =
-      this.convertTimeToText(this.timeSpentBillable);
+        this.convertTimeToText(this.timeSpentBillable);
     const billablePercent = this.timeSpentTotal ?
-      Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) :
-      0;
+        Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) : 0;
     this.querySelector('.billable-percent').innerText =
-      `${billablePercent}%`;
+        `${billablePercent}%`;
   }
 
   handleChildEntriesVisibility() {
