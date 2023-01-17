@@ -917,23 +917,24 @@ class TimeTracker extends Base {
     this.setBillableFavicon();
   }
 
+  #propertiesNotToIncludeInJson = new Set([
+    'activeDescendantOrSelf',
+    'timeTracker',
+    'parentTimeEntry',
+    'entryBeingDragged',
+    'favIconData',
+    'percentBillableTargetDefault',
+    'timeTotalTargetDefault',
+    'mouseDownOnEl',
+    'entryWithDropAreaCssClasses',
+    'intervalId',
+    'dragEl',
+    'countUpdatedAt',
+  ])
+
   toString() {
-    const propertiesNotToIncludeInJson = new Set([
-      'activeDescendantOrSelf',
-      'timeTracker',
-      'parentTimeEntry',
-      'entryBeingDragged',
-      'favIconData',
-      'percentBillableTargetDefault',
-      'timeTotalTargetDefault',
-      'mouseDownOnEl',
-      'entryWithDropAreaCssClasses',
-      'intervalId',
-      'dragEl',
-      'countUpdatedAt',
-    ]);
     return JSON.stringify(this, (key, val) => {
-      if (propertiesNotToIncludeInJson.has(key)) {
+      if (this.#propertiesNotToIncludeInJson.has(key)) {
         return;
       } else {
         return val;
