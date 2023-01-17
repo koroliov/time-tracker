@@ -68,6 +68,9 @@ class TimeTracker extends Base {
       'timeTotalTargetDefault',
       'mouseDownOnEl',
       'entryWithDropAreaCssClasses',
+      'intervalId',
+      'dragEl',
+      'countUpdatedAt',
     ]);
     return JSON.stringify(this, (key, val) => {
       if (propertiesNotToIncludeInJson.has(key)) {
