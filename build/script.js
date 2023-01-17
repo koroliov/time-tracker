@@ -23,7 +23,7 @@ class Base extends HTMLElement {
   }
 
   handleIsBillableChanged(e) {
-    if (e.target === this.activeChildOrSelf) {
+    if (e.target === this.activeDescendantOrSelf) {
       this.isCountBillable = e.detail.isBillable;
     }
     this.timeSpentBillable += e.detail.billableTimeChange;
@@ -35,14 +35,14 @@ class Base extends HTMLElement {
       this.handleWhenActiveItself();
     }
     this.isCountBillable = e.detail.isBillable;
-    if (this.activeChildOrSelf) {
-      if (this.activeChildOrSelf !== this) {
+    if (this.activeDescendantOrSelf) {
+      if (this.activeDescendantOrSelf !== this) {
         this.fireDisactivateEventToCurrentlyActiveEntry();
       }
       this.fireActiveEntryChangedEvent(e.target);
       e.stopPropagation();
     }
-    this.activeChildOrSelf = e.target;
+    this.activeDescendantOrSelf = e.target;
     this.stopCount();
     this.startCount();
   }
@@ -61,7 +61,7 @@ class Base extends HTMLElement {
       detail: { firedFrom: this, },
       bubbles: true,
     });
-    this.activeChildOrSelf.dispatchEvent(disactivateEvent);
+    this.activeDescendantOrSelf.dispatchEvent(disactivateEvent);
   }
 
   handleWhenInactiveItself() {
@@ -70,25 +70,25 @@ class Base extends HTMLElement {
   }
 
   handleEntryActiveChangedEvent(e) {
-    if (this.activeChildOrSelf === this) {
+    if (this.activeDescendantOrSelf === this) {
       this.handleWhenInactiveItself();
     }
     this.isCountBillable = e.detail.activeEntry.isOwnTimeBillable;
-    this.activeChildOrSelf = e.detail.activeEntry;
+    this.activeDescendantOrSelf = e.detail.activeEntry;
   }
 
   disactivate(evTarget) {
     if (evTarget === this) {
       this.handleWhenInactiveItself();
     }
-    this.activeChildOrSelf = null;
+    this.activeDescendantOrSelf = null;
     this.isCountBillable = false;
     this.stopCount();
   }
 
   handleDisactivateEvent(e) {
     if (e.detail.firedFrom === this) {
-      if (this.activeChildOrSelf) {
+      if (this.activeDescendantOrSelf) {
         e.stopPropagation();
       }
     } else {
@@ -107,8 +107,8 @@ class Base extends HTMLElement {
     this.handleChildEntriesVisibility();
 
     function hasActiveChild(thisEntry) {
-      return thisEntry.activeChildOrSelf &&
-          thisEntry.activeChildOrSelf !== thisEntry;
+      return thisEntry.activeDescendantOrSelf &&
+          thisEntry.activeDescendantOrSelf !== thisEntry;
     }
   }
 
@@ -206,7 +206,7 @@ class Base extends HTMLElement {
 
     this.isCollapsed = data?.isCollapsed || false;
     this.childEntries = [];
-    this.activeChildOrSelf = null;
+    this.activeDescendantOrSelf = null;
   }
 
   stopCount() {
@@ -223,7 +223,7 @@ class Base extends HTMLElement {
     const now = Date.now();
     const timeSpentCurrent = now - this.countUpdatedAt;
     this.countUpdatedAt = now;
-    if (this.activeChildOrSelf === this) {
+    if (this.activeDescendantOrSelf === this) {
       this.timeSpentOwn += timeSpentCurrent;
     }
     if (this.isCountBillable) {
@@ -622,7 +622,7 @@ class TimeEntry extends Base {
 
   dragStartHandler(e) {
     e.stopPropagation();
-    if (this.mouseDownOnEl !== this.dragEl || this.activeChildOrSelf) {
+    if (this.mouseDownOnEl !== this.dragEl || this.activeDescendantOrSelf) {
       e.preventDefault();
       return;
     }
@@ -768,7 +768,7 @@ class TimeEntry extends Base {
   handleStartStopClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (this.activeChildOrSelf === this) {
+    if (this.activeDescendantOrSelf === this) {
       this.disactivate(this);
       const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },
@@ -888,19 +888,19 @@ class TimeTracker extends Base {
   }
 
   destroy() {
-    if (this.activeChildOrSelf) {
+    if (this.activeDescendantOrSelf) {
       const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },
         bubbles: true,
       });
-      this.activeChildOrSelf.dispatchEvent(disactivateEvent);
+      this.activeDescendantOrSelf.dispatchEvent(disactivateEvent);
     }
     this.remove();
   }
 
   handleIsBillableChanged(e) {
     super.handleIsBillableChanged(e);
-    if (this.activeChildOrSelf) {
+    if (this.activeDescendantOrSelf) {
       this.setBillableFavicon();
     }
   }
@@ -919,7 +919,7 @@ class TimeTracker extends Base {
 
   toString() {
     const propertiesNotToIncludeInJson = new Set([
-      'activeChildOrSelf',
+      'activeDescendantOrSelf',
       'timeTracker',
       'parentTimeEntry',
       'entryBeingDragged',
