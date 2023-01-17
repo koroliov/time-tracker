@@ -53,7 +53,7 @@ class TimeEntry extends Base {
 
   dragStartHandler(e) {
     e.stopPropagation();
-    if (this.mouseDownOnEl !== this.dragEl) {
+    if (this.mouseDownOnEl !== this.dragEl || this.activeChildOrSelf) {
       e.preventDefault();
       return;
     }
