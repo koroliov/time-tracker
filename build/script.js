@@ -20,6 +20,8 @@ class Base extends HTMLElement {
         this.handleDisactivateEvent.bind(this));
     timeTrackerShadowRootOrTimeEntry.addEventListener('is-billable-changed',
         this.handleIsBillableChanged.bind(this));
+    timeTrackerShadowRootOrTimeEntry.addEventListener('update-time',
+        this.handleUpdateTimeEvent.bind(this));
   }
 
   handleIsBillableChanged(e) {
@@ -27,6 +29,12 @@ class Base extends HTMLElement {
       this.isCountBillable = e.detail.isBillable;
     }
     this.timeSpentBillable += e.detail.billableTimeChange;
+    this.updateTimeText();
+  }
+
+  handleUpdateTimeEvent(e) {
+    this.timeSpentBillable += e.detail.billableTimeChange;
+    this.timeSpentTotal += e.detail.totalTimeChange;
     this.updateTimeText();
   }
 
@@ -43,6 +51,13 @@ class Base extends HTMLElement {
       e.stopPropagation();
     }
     this.activeDescendantOrSelf = e.target;
+    //Not sure why do we need this stopCount() call. Probably b/c it's possible
+    //that an entry or the time tracker itself may receive the activate event
+    //even though they are being active already. To prevent having lots of
+    //intervals, we need to clear an existing one
+    //
+    //This can be changed, if we rework the intervals mechanism: instead of
+    //each entry having its own interval, we will have just one
     this.stopCount();
     this.startCount();
   }
@@ -117,10 +132,11 @@ class Base extends HTMLElement {
     //This will be a recursive call, but it's acceptable, since no huge data
     //structures are expected
     const TimeEntry = window.customElements.get('time-entry');
+    this.childrenDomEl =
+        timeTrackerShadowRootOrTimeEntry.querySelector('.children');
     this.childEntries = childEntries.map((c) => {
       const te = new TimeEntry(c, timeTracker, parentTimeEntry);
-      timeTrackerShadowRootOrTimeEntry
-          .querySelector('.children').appendChild(te);
+      this.childrenDomEl.appendChild(te);
       return te;
     });
     this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
@@ -195,6 +211,11 @@ class Base extends HTMLElement {
       collapseOpenLink.innerText = `Collapse (${this.childEntries.length})`;
       childEntriesWrapper.style.display = 'block';
     }
+  }
+
+  removeChild(child) {
+    this.childEntries.splice(this.childEntries.findIndex(c => c === child), 1);
+    this.childrenDomEl.removeChild(child);
   }
 
   initData(data) {
@@ -632,9 +653,7 @@ class TimeEntry extends Base {
     e.stopPropagation();
     this.mouseDownOnEl = null;
     this.timeTracker.entryBeingDragged = null;
-    this.timeTracker.entryWithDropAreaCssClasses
-        ?.removeDropAreaCssClasses();
-    this.timeTracker.entryWithDropAreaCssClasses = null;
+    this.hideAllDropAreas();
   }
 
   dragEnterHandler(e) {
@@ -709,12 +728,29 @@ class TimeEntry extends Base {
   dropHandler(e) {
     e.preventDefault();
     e.stopPropagation();
+    if (this.timeTracker.entryWithDropAreaCssClasses) {
+      this.timeTracker.entryBeingDragged.removeFromParent();
+    } else {
+      return;
+    }
+  }
+
+  removeFromParent() {
+    const timeChange = {
+      totalTimeChange: -this.timeSpentTotal,
+      billableTimeChange: -this.timeSpentBillable,
+    };
+    const target = this.parentTimeEntry || this.timeTracker;
+    this.fireUpdateTimeEvent(target, timeChange);
+    target.removeChild(this);
   }
 
   handleDropArea = handleDropAreaModule
 
-  removeDropAreaCssClasses() {
-    this.classList.remove(...Object.values(DROP_AREA_CSS_CLASSES));
+  hideAllDropAreas() {
+    this.timeTracker.entryWithDropAreaCssClasses?.classList
+        .remove(...Object.values(DROP_AREA_CSS_CLASSES));
+    this.timeTracker.entryWithDropAreaCssClasses = null;
   }
 
   generateMessageArr(paddingLevel, useTotalNotOwnTime = false) {
@@ -798,18 +834,25 @@ class TimeEntry extends Base {
     this.dispatchEvent(ev);
   }
 
+  fireUpdateTimeEvent(target, timeChange) {
+    const updateTimeEvent = new CustomEvent('update-time', {
+      detail: timeChange,
+      bubbles: true,
+    });
+    target.dispatchEvent(updateTimeEvent);
+  }
+
   updateTimeText() {
     this.querySelector('.total-value').innerText =
-      this.convertTimeToText(this.timeSpentTotal);
+        this.convertTimeToText(this.timeSpentTotal);
     this.querySelector('.own-value > div').innerText =
-      this.convertTimeToText(this.timeSpentOwn);
+        this.convertTimeToText(this.timeSpentOwn);
     this.querySelector('.billable-value').innerText =
-      this.convertTimeToText(this.timeSpentBillable);
+        this.convertTimeToText(this.timeSpentBillable);
     const billablePercent = this.timeSpentTotal ?
-      Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) :
-      0;
+        Math.floor(this.timeSpentBillable / this.timeSpentTotal * 100) : 0;
     this.querySelector('.billable-percent').innerText =
-      `${billablePercent}%`;
+        `${billablePercent}%`;
   }
 
   handleChildEntriesVisibility() {
@@ -929,6 +972,7 @@ class TimeTracker extends Base {
     'intervalId',
     'dragEl',
     'countUpdatedAt',
+    'childrenDomEl',
   ])
 
   toString() {

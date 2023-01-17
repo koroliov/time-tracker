@@ -64,9 +64,7 @@ class TimeEntry extends Base {
     e.stopPropagation();
     this.mouseDownOnEl = null;
     this.timeTracker.entryBeingDragged = null;
-    this.timeTracker.entryWithDropAreaCssClasses
-        ?.removeDropAreaCssClasses();
-    this.timeTracker.entryWithDropAreaCssClasses = null;
+    this.hideAllDropAreas();
   }
 
   dragEnterHandler(e) {
@@ -141,12 +139,29 @@ class TimeEntry extends Base {
   dropHandler(e) {
     e.preventDefault();
     e.stopPropagation();
+    if (this.timeTracker.entryWithDropAreaCssClasses) {
+      this.timeTracker.entryBeingDragged.removeFromParent();
+    } else {
+      return;
+    }
+  }
+
+  removeFromParent() {
+    const timeChange = {
+      totalTimeChange: -this.timeSpentTotal,
+      billableTimeChange: -this.timeSpentBillable,
+    };
+    const target = this.parentTimeEntry || this.timeTracker;
+    this.fireUpdateTimeEvent(target, timeChange);
+    target.removeChild(this);
   }
 
   handleDropArea = handleDropAreaModule
 
-  removeDropAreaCssClasses() {
-    this.classList.remove(...Object.values(DROP_AREA_CSS_CLASSES));
+  hideAllDropAreas() {
+    this.timeTracker.entryWithDropAreaCssClasses?.classList
+        .remove(...Object.values(DROP_AREA_CSS_CLASSES));
+    this.timeTracker.entryWithDropAreaCssClasses = null;
   }
 
   generateMessageArr(paddingLevel, useTotalNotOwnTime = false) {
@@ -228,6 +243,14 @@ class TimeEntry extends Base {
       bubbles: true,
     });
     this.dispatchEvent(ev);
+  }
+
+  fireUpdateTimeEvent(target, timeChange) {
+    const updateTimeEvent = new CustomEvent('update-time', {
+      detail: timeChange,
+      bubbles: true,
+    });
+    target.dispatchEvent(updateTimeEvent);
   }
 
   updateTimeText() {

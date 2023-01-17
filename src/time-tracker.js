@@ -70,6 +70,7 @@ class TimeTracker extends Base {
     'intervalId',
     'dragEl',
     'countUpdatedAt',
+    'childrenDomEl',
   ])
 
   toString() {
