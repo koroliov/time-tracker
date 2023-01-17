@@ -673,9 +673,9 @@ class TimeEntry extends Base {
     function determineDragOverZone(thisTimeEntry) {
       const borderWrapper =
           thisTimeEntry.querySelector('.border-and-grid-wrapper');
-      const childrenEl = thisTimeEntry.querySelector('.children');
       if (!thisTimeEntry.isCollapsed &&
-          (borderWrapper.offsetParent !== childrenEl.offsetParent)) {
+          (borderWrapper.offsetParent !==
+              thisTimeEntry.childrenDomEl.offsetParent)) {
         const errorMessage = [
           'Sorry, an error has occurred, please report to',
           'd.koroliov@gmail.com with steps to reproduce',
@@ -688,7 +688,7 @@ class TimeEntry extends Base {
       const boundingRect = borderWrapper.getBoundingClientRect();
       const mouseYInElement = e.clientY - boundingRect.y;
       const borderWrapperHeightWoChildrenSection =
-        borderWrapper.offsetHeight - childrenEl.offsetHeight;
+        borderWrapper.offsetHeight - thisTimeEntry.childrenDomEl.offsetHeight;
       const rel = mouseYInElement / borderWrapperHeightWoChildrenSection;
       if (rel < 0.3) {
         return 'top';
@@ -720,7 +720,7 @@ class TimeEntry extends Base {
         //
         //If the user wants to drop the element as a sibling of the children,
         //then he will have to drag it to the right, over the children block
-        return e.clientX < childrenEl.offsetLeft;
+        return e.clientX < thisTimeEntry.childrenDomEl.offsetLeft;
       }
     }
   }
