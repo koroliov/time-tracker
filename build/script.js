@@ -33,8 +33,8 @@ class Base extends HTMLElement {
   }
 
   handleUpdateTimeEvent(e) {
-    this.timeSpentBillable += e.detail.billableTimeChange;
     this.timeSpentTotal += e.detail.totalTimeChange;
+    this.timeSpentBillable += e.detail.billableTimeChange;
     this.updateTimeText();
   }
 
@@ -216,6 +216,51 @@ class Base extends HTMLElement {
   removeChild(child) {
     this.childEntries.splice(this.childEntries.findIndex(c => c === child), 1);
     this.childrenDomEl.removeChild(child);
+  }
+
+  addChild(child, where, sibling) {
+    if (where) {
+      const siblingI = this.childEntries.findIndex(c => c === sibling);
+      if (where === 'before') {
+        this.childrenDomEl.insertBefore(child, sibling);
+        this.childEntries.splice(siblingI, 0, child);
+      } else if (where === 'after') {
+        if (siblingI === this.childEntries.length - 1) {
+          this.childEntries.push(child);
+          this.childrenDomEl.appendChild(child);
+        } else {
+          const sibling = this.childEntries[siblingI + 1];
+          this.childrenDomEl.insertBefore(child, sibling);
+          this.childEntries.splice(siblingI + 1, 0, child);
+        }
+      }
+    } else {
+      this.childEntries.push(child);
+      this.childrenDomEl.appendChild(child);
+    }
+    const timeChange = {
+      totalTimeChange: child.timeSpentTotal,
+      billableTimeChange: child.timeSpentBillable,
+    };
+    if (isTimeEntry(this)) {
+      this.fireUpdateTimeEvent(this, timeChange);
+      child.parentTimeEntry = this;
+    } else {
+      this.fireUpdateTimeEvent(this.shadowRoot, timeChange);
+      child.parentTimeEntry = null;
+    }
+
+    function isTimeEntry(thisObj) {
+      return !Boolean(thisObj.shadowRoot);
+    }
+  }
+
+  fireUpdateTimeEvent(target, timeChange) {
+    const updateTimeEvent = new CustomEvent('update-time', {
+      detail: timeChange,
+      bubbles: true,
+    });
+    target.dispatchEvent(updateTimeEvent);
   }
 
   initData(data) {
@@ -729,9 +774,25 @@ class TimeEntry extends Base {
     e.preventDefault();
     e.stopPropagation();
     if (this.timeTracker.entryWithDropAreaCssClasses) {
-      this.timeTracker.entryBeingDragged.removeFromParent();
+      const dragged = this.timeTracker.entryBeingDragged;
+      dragged.removeFromParent();
+      this.timeTracker.entryWithDropAreaCssClasses.handleDroppedEntry(dragged);
     } else {
       return;
+    }
+  }
+
+  handleDroppedEntry(droppedEntry) {
+    if (this.classList.contains(DROP_AREA_CSS_CLASSES.CHILD)) {
+      this.addChild(droppedEntry);
+    } else {
+      const parent = this.parentTimeEntry || this.timeTracker;
+      if (this.classList.contains(DROP_AREA_CSS_CLASSES.SIBLING_TOP)) {
+        parent.addChild(droppedEntry, 'before', this);
+      } else if (this.classList
+          .contains(DROP_AREA_CSS_CLASSES.SIBLING_BOTTOM)) {
+        parent.addChild(droppedEntry, 'after', this);
+      }
     }
   }
 
@@ -740,9 +801,10 @@ class TimeEntry extends Base {
       totalTimeChange: -this.timeSpentTotal,
       billableTimeChange: -this.timeSpentBillable,
     };
-    const target = this.parentTimeEntry || this.timeTracker;
-    this.fireUpdateTimeEvent(target, timeChange);
-    target.removeChild(this);
+    const eventTarget = this.parentTimeEntry || this.timeTracker.shadowRoot;
+    this.fireUpdateTimeEvent(eventTarget, timeChange);
+    const parent = this.parentTimeEntry || this.timeTracker;
+    parent.removeChild(this);
   }
 
   handleDropArea = handleDropAreaModule
@@ -832,14 +894,6 @@ class TimeEntry extends Base {
       bubbles: true,
     });
     this.dispatchEvent(ev);
-  }
-
-  fireUpdateTimeEvent(target, timeChange) {
-    const updateTimeEvent = new CustomEvent('update-time', {
-      detail: timeChange,
-      bubbles: true,
-    });
-    target.dispatchEvent(updateTimeEvent);
   }
 
   updateTimeText() {

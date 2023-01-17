@@ -32,8 +32,8 @@ class Base extends HTMLElement {
   }
 
   handleUpdateTimeEvent(e) {
-    this.timeSpentBillable += e.detail.billableTimeChange;
     this.timeSpentTotal += e.detail.totalTimeChange;
+    this.timeSpentBillable += e.detail.billableTimeChange;
     this.updateTimeText();
   }
 
@@ -215,6 +215,51 @@ class Base extends HTMLElement {
   removeChild(child) {
     this.childEntries.splice(this.childEntries.findIndex(c => c === child), 1);
     this.childrenDomEl.removeChild(child);
+  }
+
+  addChild(child, where, sibling) {
+    if (where) {
+      const siblingI = this.childEntries.findIndex(c => c === sibling);
+      if (where === 'before') {
+        this.childrenDomEl.insertBefore(child, sibling);
+        this.childEntries.splice(siblingI, 0, child);
+      } else if (where === 'after') {
+        if (siblingI === this.childEntries.length - 1) {
+          this.childEntries.push(child);
+          this.childrenDomEl.appendChild(child);
+        } else {
+          const sibling = this.childEntries[siblingI + 1];
+          this.childrenDomEl.insertBefore(child, sibling);
+          this.childEntries.splice(siblingI + 1, 0, child);
+        }
+      }
+    } else {
+      this.childEntries.push(child);
+      this.childrenDomEl.appendChild(child);
+    }
+    const timeChange = {
+      totalTimeChange: child.timeSpentTotal,
+      billableTimeChange: child.timeSpentBillable,
+    };
+    if (isTimeEntry(this)) {
+      this.fireUpdateTimeEvent(this, timeChange);
+      child.parentTimeEntry = this;
+    } else {
+      this.fireUpdateTimeEvent(this.shadowRoot, timeChange);
+      child.parentTimeEntry = null;
+    }
+
+    function isTimeEntry(thisObj) {
+      return !Boolean(thisObj.shadowRoot);
+    }
+  }
+
+  fireUpdateTimeEvent(target, timeChange) {
+    const updateTimeEvent = new CustomEvent('update-time', {
+      detail: timeChange,
+      bubbles: true,
+    });
+    target.dispatchEvent(updateTimeEvent);
   }
 
   initData(data) {
