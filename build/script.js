@@ -99,8 +99,17 @@ class Base extends HTMLElement {
   toggleChildEntriesVisible(e) {
     e.preventDefault();
     e.stopPropagation();
+    if (!this.childEntries.length || hasActiveChild(this)) {
+      this.isCollapsed = false;
+      return;
+    }
     this.isCollapsed = !this.isCollapsed;
     this.handleChildEntriesVisibility();
+
+    function hasActiveChild(thisEntry) {
+      return thisEntry.activeChildOrSelf &&
+          thisEntry.activeChildOrSelf !== thisEntry;
+    }
   }
 
   initChildEntries(childEntries = [], timeTrackerShadowRootOrTimeEntry,
