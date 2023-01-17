@@ -19,6 +19,8 @@ class Base extends HTMLElement {
         this.handleDisactivateEvent.bind(this));
     timeTrackerShadowRootOrTimeEntry.addEventListener('is-billable-changed',
         this.handleIsBillableChanged.bind(this));
+    timeTrackerShadowRootOrTimeEntry.addEventListener('update-time',
+        this.handleUpdateTimeEvent.bind(this));
   }
 
   handleIsBillableChanged(e) {
@@ -26,6 +28,12 @@ class Base extends HTMLElement {
       this.isCountBillable = e.detail.isBillable;
     }
     this.timeSpentBillable += e.detail.billableTimeChange;
+    this.updateTimeText();
+  }
+
+  handleUpdateTimeEvent(e) {
+    this.timeSpentBillable += e.detail.billableTimeChange;
+    this.timeSpentTotal += e.detail.totalTimeChange;
     this.updateTimeText();
   }
 
@@ -42,6 +50,13 @@ class Base extends HTMLElement {
       e.stopPropagation();
     }
     this.activeDescendantOrSelf = e.target;
+    //Not sure why do we need this stopCount() call. Probably b/c it's possible
+    //that an entry or the time tracker itself may receive the activate event
+    //even though they are being active already. To prevent having lots of
+    //intervals, we need to clear an existing one
+    //
+    //This can be changed, if we rework the intervals mechanism: instead of
+    //each entry having its own interval, we will have just one
     this.stopCount();
     this.startCount();
   }
@@ -116,10 +131,11 @@ class Base extends HTMLElement {
     //This will be a recursive call, but it's acceptable, since no huge data
     //structures are expected
     const TimeEntry = window.customElements.get('time-entry');
+    this.childrenDomEl =
+        timeTrackerShadowRootOrTimeEntry.querySelector('.children');
     this.childEntries = childEntries.map((c) => {
       const te = new TimeEntry(c, timeTracker, parentTimeEntry);
-      timeTrackerShadowRootOrTimeEntry
-          .querySelector('.children').appendChild(te);
+      this.childrenDomEl.appendChild(te);
       return te;
     });
     this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
@@ -194,6 +210,11 @@ class Base extends HTMLElement {
       collapseOpenLink.innerText = `Collapse (${this.childEntries.length})`;
       childEntriesWrapper.style.display = 'block';
     }
+  }
+
+  removeChild(child) {
+    this.childEntries.splice(this.childEntries.findIndex(c => c === child), 1);
+    this.childrenDomEl.removeChild(child);
   }
 
   initData(data) {
