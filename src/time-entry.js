@@ -53,7 +53,7 @@ class TimeEntry extends Base {
 
   dragStartHandler(e) {
     e.stopPropagation();
-    if (this.mouseDownOnEl !== this.dragEl || this.activeChildOrSelf) {
+    if (this.mouseDownOnEl !== this.dragEl || this.activeDescendantOrSelf) {
       e.preventDefault();
       return;
     }
@@ -199,7 +199,7 @@ class TimeEntry extends Base {
   handleStartStopClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (this.activeChildOrSelf === this) {
+    if (this.activeDescendantOrSelf === this) {
       this.disactivate(this);
       const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },

@@ -28,19 +28,19 @@ class TimeTracker extends Base {
   }
 
   destroy() {
-    if (this.activeChildOrSelf) {
+    if (this.activeDescendantOrSelf) {
       const disactivateEvent = new CustomEvent('disactivate', {
         detail: { firedFrom: this, },
         bubbles: true,
       });
-      this.activeChildOrSelf.dispatchEvent(disactivateEvent);
+      this.activeDescendantOrSelf.dispatchEvent(disactivateEvent);
     }
     this.remove();
   }
 
   handleIsBillableChanged(e) {
     super.handleIsBillableChanged(e);
-    if (this.activeChildOrSelf) {
+    if (this.activeDescendantOrSelf) {
       this.setBillableFavicon();
     }
   }
@@ -59,7 +59,7 @@ class TimeTracker extends Base {
 
   toString() {
     const propertiesNotToIncludeInJson = new Set([
-      'activeChildOrSelf',
+      'activeDescendantOrSelf',
       'timeTracker',
       'parentTimeEntry',
       'entryBeingDragged',
