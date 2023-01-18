@@ -452,7 +452,7 @@ module.exports = {
   init();
 
   function init(jsonArg) {
-    const version = [0, 0, 0];
+    const version = [0, 1, 0];
     const versionStr = version.join('.');
     const storageEntryName = getStorageEntryName();
     const {restoreType, json} = getRestoreData();
