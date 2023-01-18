@@ -146,17 +146,9 @@ class Base extends HTMLElement {
     const te = new TimeEntry(Object.create(null), timeTracker, parentTimeEntry);
     this.childEntries.push(te);
     this.isCollapsed = false;
-    addDepthLevelCssClass(this);
     this.handleChildEntriesVisibility();
     this.setCollapseOpenLink();
     this.childrenDomEl.appendChild(te);
-
-    function addDepthLevelCssClass(that) {
-      const classVal =
-          that.parentTimeEntry?.classList.contains('depth-level-odd') ?
-              'depth-level-odd' : 'depth-level-even';
-      te.classList.add(classVal);
-    }
   }
 
   setCollapseOpenLink() {
