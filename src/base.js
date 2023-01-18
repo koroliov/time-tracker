@@ -141,8 +141,8 @@ class Base extends HTMLElement {
     e.preventDefault();
     e.stopPropagation();
     const TimeEntry = window.customElements.get('time-entry');
-    const te = new TimeEntry(Object.create(null), timeTracker);
-    te.parentTimeEntry = this.shadowRoot ? null : this;
+    const parentTimeEntry = this.shadowRoot ? null : this;
+    const te = new TimeEntry(Object.create(null), timeTracker, parentTimeEntry);
     this.childEntries.push(te);
     this.isCollapsed = false;
     addDepthLevelCssClass(this);
@@ -170,13 +170,15 @@ class Base extends HTMLElement {
 
   handleChildEntriesVisibility() {
     const domEl = this.shadowRoot || this;
+    const childrenDomEl = this.childrenDomEl ||
+        domEl.querySelector('.children');
     const collapseOpenLink = domEl.querySelector('.controls .collapse-open');
     if (this.isCollapsed) {
       collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
-      this.childrenDomEl.style.display = 'none';
+      childrenDomEl.style.display = 'none';
     } else {
       collapseOpenLink.innerText = `Collapse (${this.childEntries.length})`;
-      this.childrenDomEl.style.display = 'block';
+      childrenDomEl.style.display = 'block';
     }
   }
 
