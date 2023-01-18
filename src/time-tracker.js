@@ -101,7 +101,14 @@ class TimeTracker extends Base {
   }
 
   getNewDateCreatedValue() {
-    return new Date().toDateString().toLowerCase().replace(/\s+/g, '-');
+    const days = [ 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', ];
+    const d = new Date();
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, '0'),
+      d.getDate(),
+      days[d.getDay()],
+    ].join('-');
   }
 
   addListeners() {
