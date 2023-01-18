@@ -275,11 +275,6 @@ class TimeEntry extends Base {
         `${billablePercent}%`;
   }
 
-  handleChildEntries() {
-    this.childrenDomEl = this.querySelector('.children');
-    this.handleChildEntriesVisibility();
-  }
-
   initData(data) {
     super.initData(data);
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
@@ -293,6 +288,7 @@ class TimeEntry extends Base {
   initDomElementReferences(timeTracker, parentTimeEntry) {
     this.timeTracker = timeTracker;
     this.parentTimeEntry = parentTimeEntry;
+    this.childrenDomEl = this.querySelector('.children');
     this.dragEl = this.querySelector('.drag-n-drop');
     this.mouseDownOnEl = null;
   }
@@ -303,7 +299,7 @@ class TimeEntry extends Base {
     const clone = templateContent.cloneNode(true);
     this.setAttribute('draggable', 'true');
     this.appendChild(clone);
-    this.handleChildEntries();
+    this.handleChildEntriesVisibility();
     this.querySelector('.title').innerText = this.titleText;
     this.querySelector('.comment').innerText = this.commentText;
     this.querySelector('.is-own-time-billable input').checked =

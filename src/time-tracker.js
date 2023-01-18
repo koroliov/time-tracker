@@ -13,6 +13,7 @@ class TimeTracker extends Base {
     this.initData(data);
     this.initAuxProperties();
     this.initSelfDom(data.templateId);
+    this.initDomElementReferences();
     this.initChildEntries(data.childEntries, this);
     this.addListeners();
     this.setFaviconData();
@@ -21,6 +22,10 @@ class TimeTracker extends Base {
   }
 
   #initFunc
+
+  initDomElementReferences() {
+    this.childrenDomEl = this.shadowRoot.querySelector('.children');
+  }
 
   initAuxProperties() {
     this.entryBeingDragged = null;
@@ -230,18 +235,13 @@ class TimeTracker extends Base {
       this.timeTotalTarget = this.timeTotalTargetDefault;
       this.percentBillableTarget = this.percentBillableTargetDefault;
       this.childEntries = [];
-      this.shadowRoot.querySelector('.children').innerHTML = '';
+      this.childrenDomEl.innerHTML = '';
       this.setCollapseOpenLink(this.shadowRoot);
       this.stopCount();
       this.updateTargetText();
       this.updateTimeText();
       this.dateCreated = this.getNewDateCreatedValue();
     });
-  }
-
-  handleChildEntries() {
-    this.childrenDomEl = this.shadowRoot.querySelector('.children');
-    this.handleChildEntriesVisibility();
   }
 
   addNewTimeEntry(e) {
@@ -254,7 +254,7 @@ class TimeTracker extends Base {
       document.querySelector(`#${templateId}`).content;
     const clone = templateContent.cloneNode(true);
     this.shadowRoot.appendChild(clone);
-    this.handleChildEntries();
+    this.handleChildEntriesVisibility();
     this.updateTargetText();
     this.updateTimeText();
     showVersionNumer(this);
