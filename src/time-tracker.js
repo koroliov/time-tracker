@@ -101,7 +101,7 @@ class TimeTracker extends Base {
   }
 
   getNewDateCreatedValue() {
-    const days = [ 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', ];
+    const days = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', ];
     const d = new Date();
     return [
       d.getFullYear(),
