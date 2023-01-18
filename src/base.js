@@ -4,22 +4,20 @@ class Base extends HTMLElement {
     super();
   }
 
-  addListeners(timeTrackerShadowRootOrTimeEntry) {
-    timeTrackerShadowRootOrTimeEntry.querySelector('.controls .new-entry')
+  addListeners() {
+    const domEl = this.shadowRoot || this;
+    domEl.querySelector('.controls .new-entry')
         .addEventListener('click', this.addNewTimeEntry.bind(this));
-    timeTrackerShadowRootOrTimeEntry
-        .querySelector('.controls .collapse-open').addEventListener('click',
+    domEl.querySelector('.controls .collapse-open').addEventListener('click',
             this.toggleChildEntriesVisible.bind(this));
-    timeTrackerShadowRootOrTimeEntry
-        .addEventListener('activate', this.handleActivateEvent.bind(this));
-    timeTrackerShadowRootOrTimeEntry
-        .addEventListener('active-entry-changed',
+    domEl.addEventListener('activate', this.handleActivateEvent.bind(this));
+    domEl.addEventListener('active-entry-changed',
             this.handleEntryActiveChangedEvent.bind(this));
-    timeTrackerShadowRootOrTimeEntry.addEventListener('disactivate',
+    domEl.addEventListener('disactivate',
         this.handleDisactivateEvent.bind(this));
-    timeTrackerShadowRootOrTimeEntry.addEventListener('is-billable-changed',
+    domEl.addEventListener('is-billable-changed',
         this.handleIsBillableChanged.bind(this));
-    timeTrackerShadowRootOrTimeEntry.addEventListener('update-time',
+    domEl.addEventListener('update-time',
         this.handleUpdateTimeEvent.bind(this));
   }
 
@@ -130,68 +128,39 @@ class Base extends HTMLElement {
     //This will be a recursive call, but it's acceptable, since no huge data
     //structures are expected
     const TimeEntry = window.customElements.get('time-entry');
-    const timeTrackerShadowRootOrTimeEntry = this.shadowRoot || this;
-    this.childrenDomEl =
-        timeTrackerShadowRootOrTimeEntry.querySelector('.children');
     const parentTimeEntry = this.shadowRoot ? null : this;
     this.childEntries = childEntries.map((c) => {
       const te = new TimeEntry(c, timeTracker, parentTimeEntry);
       this.childrenDomEl.appendChild(te);
       return te;
     });
-    this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
+    this.setCollapseOpenLink();
   }
 
-  addNewTimeEntry(e, timeTrackerShadowRootOrTimeEntry, timeTracker,
-      parentTimeEntry) {
+  addNewTimeEntry(e, timeTracker) {
     e.preventDefault();
     e.stopPropagation();
     const TimeEntry = window.customElements.get('time-entry');
-    const te =
-        new TimeEntry(Object.create(null), timeTracker, parentTimeEntry);
+    const te = new TimeEntry(Object.create(null), timeTracker);
+    te.parentTimeEntry = this.shadowRoot ? null : this;
     this.childEntries.push(te);
     this.isCollapsed = false;
-    addWhiteBlackClass(this);
+    addDepthLevelCssClass(this);
     this.handleChildEntriesVisibility();
-    this.setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry);
-    timeTrackerShadowRootOrTimeEntry
-        .querySelector('.children').appendChild(te);
+    this.setCollapseOpenLink();
+    this.childrenDomEl.appendChild(te);
 
-    function addWhiteBlackClass(that) {
-      if (isFirstBlackWhite()) {
-        addClass('black-white', 'white-black');
-      } else {
-        addClass('white-black', 'black-white');
-      }
-
-      function isFirstBlackWhite() {
-        return isTimeTracker() || timeTrackerShadowRootOrTimeEntry
-            .classList.contains('black-white');
-
-        function isTimeTracker() {
-          return !timeTrackerShadowRootOrTimeEntry.classList;
-        }
-      }
-
-      function addClass(classEven, classOdd) {
-        if (nextChildIsOdd()) {
-          te.classList.add(classOdd);
-          te.classesToPreserve.push(classOdd);
-        } else {
-          te.classList.add(classEven);
-          te.classesToPreserve.push(classEven);
-        }
-      }
-
-      function nextChildIsOdd() {
-        return that.childEntries.length % 2;
-      }
+    function addDepthLevelCssClass(that) {
+      const classVal =
+          that.parentTimeEntry?.classList.contains('depth-level-odd') ?
+              'depth-level-odd' : 'depth-level-even';
+      te.classList.add(classVal);
     }
   }
 
-  setCollapseOpenLink(timeTrackerShadowRootOrTimeEntry) {
-    const collapseOpenLink = timeTrackerShadowRootOrTimeEntry
-        .querySelector('.controls .collapse-open');
+  setCollapseOpenLink() {
+    const domEl = this.shadowRoot || this;
+    const collapseOpenLink = domEl.querySelector('.controls .collapse-open');
     if (this.isCollapsed) {
       collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
     } else {
@@ -199,17 +168,15 @@ class Base extends HTMLElement {
     }
   }
 
-  handleChildEntriesVisibility(timeTrackerShadowRootOrTimeEntry) {
-    const collapseOpenLink = timeTrackerShadowRootOrTimeEntry
-        .querySelector('.controls .collapse-open');
-    const childEntriesWrapper = timeTrackerShadowRootOrTimeEntry
-        .querySelector('.children');
+  handleChildEntriesVisibility() {
+    const domEl = this.shadowRoot || this;
+    const collapseOpenLink = domEl.querySelector('.controls .collapse-open');
     if (this.isCollapsed) {
       collapseOpenLink.innerText = `Open (${this.childEntries.length})`;
-      childEntriesWrapper.style.display = 'none';
+      this.childrenDomEl.style.display = 'none';
     } else {
       collapseOpenLink.innerText = `Collapse (${this.childEntries.length})`;
-      childEntriesWrapper.style.display = 'block';
+      this.childrenDomEl.style.display = 'block';
     }
   }
 

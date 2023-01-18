@@ -275,8 +275,9 @@ class TimeEntry extends Base {
         `${billablePercent}%`;
   }
 
-  handleChildEntriesVisibility() {
-    super.handleChildEntriesVisibility(this);
+  handleChildEntries() {
+    this.childrenDomEl = this.querySelector('.children');
+    this.handleChildEntriesVisibility();
   }
 
   initData(data) {
@@ -287,7 +288,6 @@ class TimeEntry extends Base {
 
     this.timeSpentOwn = data?.timeSpentOwn || 0;
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
-    this.classesToPreserve = data?.classesToPreserve || [];
   }
 
   initDomElementReferences(timeTracker, parentTimeEntry) {
@@ -301,10 +301,9 @@ class TimeEntry extends Base {
     const templateContent =
       document.querySelector(`#${templateId}`).content;
     const clone = templateContent.cloneNode(true);
-    this.classesToPreserve.forEach((c) => this.classList.add(c));
     this.setAttribute('draggable', 'true');
     this.appendChild(clone);
-    this.handleChildEntriesVisibility();
+    this.handleChildEntries();
     this.querySelector('.title').innerText = this.titleText;
     this.querySelector('.comment').innerText = this.commentText;
     this.querySelector('.is-own-time-billable input').checked =
@@ -312,7 +311,7 @@ class TimeEntry extends Base {
   }
 
   addNewTimeEntry(e) {
-    super.addNewTimeEntry(e, this, this.timeTracker, this);
+    super.addNewTimeEntry(e, this.timeTracker);
   }
 }
 window.customElements.define('time-entry', TimeEntry);

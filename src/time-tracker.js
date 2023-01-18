@@ -239,12 +239,13 @@ class TimeTracker extends Base {
     });
   }
 
-  handleChildEntriesVisibility() {
-    super.handleChildEntriesVisibility(this.shadowRoot);
+  handleChildEntries() {
+    this.childrenDomEl = this.shadowRoot.querySelector('.children');
+    this.handleChildEntriesVisibility();
   }
 
   addNewTimeEntry(e) {
-    super.addNewTimeEntry(e, this.shadowRoot, this, null);
+    super.addNewTimeEntry(e, this);
   }
 
   initSelfDom(templateId) {
@@ -253,7 +254,7 @@ class TimeTracker extends Base {
       document.querySelector(`#${templateId}`).content;
     const clone = templateContent.cloneNode(true);
     this.shadowRoot.appendChild(clone);
-    this.handleChildEntriesVisibility();
+    this.handleChildEntries();
     this.updateTargetText();
     this.updateTimeText();
     showVersionNumer(this);
