@@ -126,13 +126,14 @@ class Base extends HTMLElement {
     }
   }
 
-  initChildEntries(childEntries = [], timeTrackerShadowRootOrTimeEntry,
-      timeTracker, parentTimeEntry) {
+  initChildEntries(childEntries = [], timeTracker) {
     //This will be a recursive call, but it's acceptable, since no huge data
     //structures are expected
     const TimeEntry = window.customElements.get('time-entry');
+    const timeTrackerShadowRootOrTimeEntry = this.shadowRoot || this;
     this.childrenDomEl =
         timeTrackerShadowRootOrTimeEntry.querySelector('.children');
+    const parentTimeEntry = this.shadowRoot ? null : this;
     this.childEntries = childEntries.map((c) => {
       const te = new TimeEntry(c, timeTracker, parentTimeEntry);
       this.childrenDomEl.appendChild(te);
