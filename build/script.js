@@ -127,13 +127,14 @@ class Base extends HTMLElement {
     }
   }
 
-  initChildEntries(childEntries = [], timeTrackerShadowRootOrTimeEntry,
-      timeTracker, parentTimeEntry) {
+  initChildEntries(childEntries = [], timeTracker) {
     //This will be a recursive call, but it's acceptable, since no huge data
     //structures are expected
     const TimeEntry = window.customElements.get('time-entry');
+    const timeTrackerShadowRootOrTimeEntry = this.shadowRoot || this;
     this.childrenDomEl =
         timeTrackerShadowRootOrTimeEntry.querySelector('.children');
+    const parentTimeEntry = this.shadowRoot ? null : this;
     this.childEntries = childEntries.map((c) => {
       const te = new TimeEntry(c, timeTracker, parentTimeEntry);
       this.childrenDomEl.appendChild(te);
@@ -647,7 +648,7 @@ class TimeEntry extends Base {
     this.initData(data);
     this.initSelfDom(data.templateId);
     this.initDomElementReferences(timeTracker, parentTimeEntry);
-    this.initChildEntries(data.childEntries, this, timeTracker, this);
+    this.initChildEntries(data.childEntries, timeTracker);
     this.addListeners();
     this.updateTimeText();
   }
@@ -969,7 +970,7 @@ class TimeTracker extends Base {
     this.initData(data);
     this.initAuxProperties();
     this.initSelfDom(data.templateId);
-    this.initChildEntries(data.childEntries, this.shadowRoot, this, null);
+    this.initChildEntries(data.childEntries, this);
     this.addListeners();
     this.setFaviconData();
     this.favIconData.favIcon

@@ -13,7 +13,7 @@ class TimeEntry extends Base {
     this.initData(data);
     this.initSelfDom(data.templateId);
     this.initDomElementReferences(timeTracker, parentTimeEntry);
-    this.initChildEntries(data.childEntries, this, timeTracker, this);
+    this.initChildEntries(data.childEntries, timeTracker);
     this.addListeners();
     this.updateTimeText();
   }

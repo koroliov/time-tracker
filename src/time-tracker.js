@@ -13,7 +13,7 @@ class TimeTracker extends Base {
     this.initData(data);
     this.initAuxProperties();
     this.initSelfDom(data.templateId);
-    this.initChildEntries(data.childEntries, this.shadowRoot, this, null);
+    this.initChildEntries(data.childEntries, this);
     this.addListeners();
     this.setFaviconData();
     this.favIconData.favIcon
