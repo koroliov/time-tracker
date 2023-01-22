@@ -210,6 +210,7 @@ class Base extends HTMLElement {
       this.fireUpdateTimeEvent(this.shadowRoot, timeChange);
       child.parentTimeEntry = null;
     }
+    this.setCollapseOpenLink();
 
     function isTimeEntry(thisObj) {
       return !Boolean(thisObj.shadowRoot);
