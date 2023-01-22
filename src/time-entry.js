@@ -33,6 +33,8 @@ class TimeEntry extends Base {
       'click', this.handleIsOwnTimeBillableClick.bind(this));
     this.querySelector('.start-stop')
       .addEventListener('click', this.handleStartStopClick.bind(this));
+    this.querySelector('.controls .delete-entry')
+        .addEventListener('click', this.handleDeleteEntry.bind(this));
     this.querySelector('.generate-message')
       .addEventListener('click', this.generateMessageHandler.bind(this));
 
@@ -44,6 +46,32 @@ class TimeEntry extends Base {
     this.addEventListener('dragover', this.dragOverHandler.bind(this));
     this.addEventListener('dragend', this.dragEndHandler.bind(this));
     this.addEventListener('drop', this.dropHandler.bind(this));
+  }
+
+  handleDeleteEntry(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return Promise.resolve().then(() => {
+      if (!window.confirm('Are you sure?')) {
+        return;
+      }
+      if (this.activeDescendantOrSelf === this) {
+        this.disactivate(this);
+        const disactivateEvent = new CustomEvent('disactivate', {
+          detail: { firedFrom: this, },
+          bubbles: true,
+        });
+        this.dispatchEvent(disactivateEvent);
+      }
+      const timeChange = {
+        totalTimeChange: -this.timeSpentTotal,
+        billableTimeChange: -this.timeSpentBillable,
+      };
+      const eventTarget = this.parentTimeEntry || this.timeTracker.shadowRoot;
+      this.fireUpdateTimeEvent(eventTarget, timeChange);
+      const parent = this.parentTimeEntry || this.timeTracker;
+      parent.removeChild(this);
+    });
   }
 
   mouseDownHander(e) {

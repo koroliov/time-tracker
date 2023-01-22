@@ -9,10 +9,10 @@ class Base extends HTMLElement {
     domEl.querySelector('.controls .new-entry')
         .addEventListener('click', this.addNewTimeEntry.bind(this));
     domEl.querySelector('.controls .collapse-open').addEventListener('click',
-            this.toggleChildEntriesVisible.bind(this));
+        this.toggleChildEntriesVisible.bind(this));
     domEl.addEventListener('activate', this.handleActivateEvent.bind(this));
     domEl.addEventListener('active-entry-changed',
-            this.handleEntryActiveChangedEvent.bind(this));
+        this.handleEntryActiveChangedEvent.bind(this));
     domEl.addEventListener('disactivate',
         this.handleDisactivateEvent.bind(this));
     domEl.addEventListener('is-billable-changed',
@@ -177,6 +177,7 @@ class Base extends HTMLElement {
   removeChild(child) {
     this.childEntries.splice(this.childEntries.findIndex(c => c === child), 1);
     this.childrenDomEl.removeChild(child);
+    this.setCollapseOpenLink();
   }
 
   addChild(child, where, sibling) {
