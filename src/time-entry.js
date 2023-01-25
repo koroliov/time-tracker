@@ -26,17 +26,19 @@ class TimeEntry extends Base {
   addListeners() {
     super.addListeners(this);
     this.querySelector('.title')
-      .addEventListener('blur', e => this.titleText = e.target.innerText);
-    this.querySelector('.comment')
-      .addEventListener('blur', e => this.commentText = e.target.innerText);
+        .addEventListener('blur', e => this.titleText = e.target.innerText);
+    this.querySelector('.comment > .public')
+        .addEventListener('blur', e => this.commentText = e.target.innerText);
+    this.querySelector('.comment > .internal').addEventListener(
+        'blur', e => this.commentInternalText = e.target.innerText);
     this.querySelector('.is-own-time-billable input').addEventListener(
-      'click', this.handleIsOwnTimeBillableClick.bind(this));
+        'click', this.handleIsOwnTimeBillableClick.bind(this));
     this.querySelector('.start-stop')
-      .addEventListener('click', this.handleStartStopClick.bind(this));
+        .addEventListener('click', this.handleStartStopClick.bind(this));
     this.querySelector('.controls .delete-entry')
         .addEventListener('click', this.handleDeleteEntry.bind(this));
     this.querySelector('.generate-message')
-      .addEventListener('click', this.generateMessageHandler.bind(this));
+        .addEventListener('click', this.generateMessageHandler.bind(this));
 
     this.addEventListener('mousedown', this.mouseDownHander.bind(this));
 
@@ -308,6 +310,7 @@ class TimeEntry extends Base {
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
     this.titleText = data?.titleText || 'SB-xxxx';
     this.commentText = data?.commentText || '';
+    this.commentInternalText = data?.commentInternalText || '';
 
     this.timeSpentOwn = data?.timeSpentOwn || 0;
     this.isOwnTimeBillable = data?.isOwnTimeBillable || false;
@@ -329,9 +332,11 @@ class TimeEntry extends Base {
     this.appendChild(clone);
     this.handleChildEntriesVisibility();
     this.querySelector('.title').innerText = this.titleText;
-    this.querySelector('.comment').innerText = this.commentText;
+    this.querySelector('.comment > .public').innerText = this.commentText;
+    this.querySelector('.comment > .internal').innerText =
+        this.commentInternalText;
     this.querySelector('.is-own-time-billable input').checked =
-      this.isOwnTimeBillable;
+        this.isOwnTimeBillable;
   }
 
   addNewTimeEntry(e) {

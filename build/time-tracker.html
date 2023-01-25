@@ -155,6 +155,29 @@
         border: 1px solid black;
         padding: 0 1ex;
       }
+
+      .comment {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .comment > div {
+        padding: 0 0.5em;
+        height: 1em;
+        overflow: hidden;
+      }
+      .comment > div:focus {
+        height: auto;
+      }
+      .comment > div::before {
+        opacity: 0.2;
+        margin-right: 0.2em;
+      }
+      .comment > div:nth-child(1)::before {
+        content: 'Internal';
+      }
+      .comment > div:nth-child(2)::before {
+        content: 'Public';
+      }
     </style>
 
     <div id="time-tracker">
@@ -206,8 +229,9 @@
       <div class="time-spent-value">value</div>
       <div class="time-spent-percent">percent</div>
 
-      <div>
-        <div class="comment" contenteditable="true"></div>
+      <div class="comment">
+        <div class="internal" contenteditable="true"></div>
+        <div class="public" contenteditable="true"></div>
       </div>
       <div class="total-title">Total:</div>
       <div class="total-value">—</div>
