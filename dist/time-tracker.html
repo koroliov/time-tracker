@@ -160,22 +160,22 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
       }
-      .comment > div {
+      .comment div div {
         padding: 0 0.5em;
         height: 1em;
         overflow: hidden;
       }
-      .comment > div:focus {
+      .comment div div:focus {
         height: auto;
       }
-      .comment > div::before {
+      .comment div div::before {
         opacity: 0.2;
         margin-right: 0.2em;
       }
-      .comment > div:nth-child(1)::before {
+      .comment div.internal::before {
         content: 'Internal';
       }
-      .comment > div:nth-child(2)::before {
+      .comment div.public::before {
         content: 'Public';
       }
     </style>
@@ -230,8 +230,12 @@
       <div class="time-spent-percent">percent</div>
 
       <div class="comment">
-        <div class="internal" contenteditable="true"></div>
-        <div class="public" contenteditable="true"></div>
+        <div>
+          <div class="internal" contenteditable="true"></div>
+        </div>
+        <div>
+          <div class="public" contenteditable="true"></div>
+        </div>
       </div>
       <div class="total-title">Total:</div>
       <div class="total-value">—</div>
@@ -895,9 +899,9 @@ class TimeEntry extends Base {
     super.addListeners(this);
     this.querySelector('.title')
         .addEventListener('blur', e => this.titleText = e.target.innerText);
-    this.querySelector('.comment > .public')
+    this.querySelector('.comment .public')
         .addEventListener('blur', e => this.commentText = e.target.innerText);
-    this.querySelector('.comment > .internal').addEventListener(
+    this.querySelector('.comment .internal').addEventListener(
         'blur', e => this.commentInternalText = e.target.innerText);
     this.querySelector('.is-own-time-billable input').addEventListener(
         'click', this.handleIsOwnTimeBillableClick.bind(this));
@@ -1200,8 +1204,8 @@ class TimeEntry extends Base {
     this.appendChild(clone);
     this.handleChildEntriesVisibility();
     this.querySelector('.title').innerText = this.titleText;
-    this.querySelector('.comment > .public').innerText = this.commentText;
-    this.querySelector('.comment > .internal').innerText =
+    this.querySelector('.comment .public').innerText = this.commentText;
+    this.querySelector('.comment .internal').innerText =
         this.commentInternalText;
     this.querySelector('.is-own-time-billable input').checked =
         this.isOwnTimeBillable;

@@ -27,9 +27,9 @@ class TimeEntry extends Base {
     super.addListeners(this);
     this.querySelector('.title')
         .addEventListener('blur', e => this.titleText = e.target.innerText);
-    this.querySelector('.comment > .public')
+    this.querySelector('.comment .public')
         .addEventListener('blur', e => this.commentText = e.target.innerText);
-    this.querySelector('.comment > .internal').addEventListener(
+    this.querySelector('.comment .internal').addEventListener(
         'blur', e => this.commentInternalText = e.target.innerText);
     this.querySelector('.is-own-time-billable input').addEventListener(
         'click', this.handleIsOwnTimeBillableClick.bind(this));
@@ -332,8 +332,8 @@ class TimeEntry extends Base {
     this.appendChild(clone);
     this.handleChildEntriesVisibility();
     this.querySelector('.title').innerText = this.titleText;
-    this.querySelector('.comment > .public').innerText = this.commentText;
-    this.querySelector('.comment > .internal').innerText =
+    this.querySelector('.comment .public').innerText = this.commentText;
+    this.querySelector('.comment .internal').innerText =
         this.commentInternalText;
     this.querySelector('.is-own-time-billable input').checked =
         this.isOwnTimeBillable;
