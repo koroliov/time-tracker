@@ -4,6 +4,8 @@
 
 ### General Principles
 
+For a preview, please see: https://koroliov.github.io/time-tracker/
+
 It works in a web browser, uses `localStorage` to save/restore data.  The path
 to the saved file will be used as the address for the `localStorage`. This way
 it's possible to track time separately (if needed, e.g.  if working for
