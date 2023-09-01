@@ -1,7 +1,7 @@
 {
   "name": "time-tracker",
   "version": "0.1.0",
-  "description": "",
+  "description": "Tool to track work time with an inuitive interface",
   "main": "",
   "directories": {},
   "scripts": {
